@@ -1,0 +1,25 @@
+#--- 컴파일 및 빌드 결과물 ---
+Binaries/
+Intermediate/
+Build/
+DerivedDataCache/
+
+#--- 프로젝트 관련 임시 파일 ---
+.vscode/
+.vs/
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docattachments.res
+
+#--- 에셋 및 로그 ---
+Saved/
+FileOpenOrder/
+
+#--- OS 생성 파일 ---
+.DS_Store
+Thumbs.db
+
+#--- 플러그인 전용 (필요 시 주석 해제) ---
+# Resources/ 폴더 내 아이콘 외의 임시 생성 데이터가 있다면 추가
