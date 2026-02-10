@@ -1,0 +1,38 @@
+\doxysection{JWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider.\+h}
+\hypertarget{_j_w_n_u___g_i_s___api_host_provider_8h_source}{}\label{_j_w_n_u___g_i_s___api_host_provider_8h_source}\index{Source/JWNetworkUtility/Public/JWNU\_GIS\_ApiHostProvider.h@{Source/JWNetworkUtility/Public/JWNU\_GIS\_ApiHostProvider.h}}
+\doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_host_provider_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2026\ Prayslaks.\ All\ rights\ reserved.\ Unauthorized\ copying,\ modification,\ or\ distribution\ of\ this\ file,\ via\ any\ medium\ is\ strictly\ prohibited.\ Proprietary\ and\ confidential.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_types_8h}{JWNetworkUtilityTypes.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}JWNU\_GIS\_ApiHostProvider.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00013\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_host_provider_8h_add4d78bde3d8acd77a52f9bcb347b889}{DECLARE\_LOG\_CATEGORY\_EXTERN}}(LogJWNU\_GIS\_ApiHostProvider,\ Log,\ All);}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00019\ UCLASS(Config=\doxymbox{\hyperlink{class_j_w_network_utility}{JWNetworkUtility}})}
+\DoxyCodeLine{00020\ class\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider}{UJWNU\_GIS\_ApiHostProvider}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_abb1cf50beaa0c39ef9ac717372cb4d9e}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{static}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider}{UJWNU\_GIS\_ApiHostProvider}}*\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3ac55582518cba2c464f29f5bae1c68def}{Get}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject);}
+\DoxyCodeLine{00034\ \ \ \ \ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_a9aad515ab6ea0ab78f8d7de32ac91de1}{GetHost}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ OutHost)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00042\ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category=\textcolor{stringliteral}{"{}JWNetworkUtiltiy|Configuration"{}})}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_a9aad515ab6ea0ab78f8d7de32ac91de1}{GetHost}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a356d2020d7ee12491a237a2afaf32557}{EJWNU\_HostGetResult}}\&\ OutHostGetResult,\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ OutHost)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00058\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ Category\ =\ \textcolor{stringliteral}{"{}JWNetworkUtiltiy|Configuration"{}})}
+\DoxyCodeLine{00059\ \ \ \ \ TMap<\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}},\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}>\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_a46d0b76e7bba486a63cd08a234ebe788}{ServiceTypeToHostMap}};}
+\DoxyCodeLine{00060\ \};}
+
+\end{DoxyCode}

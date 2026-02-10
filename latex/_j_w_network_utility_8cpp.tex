@@ -1,0 +1,60 @@
+\doxysection{Source/\+\+JWNetwork\+Utility/\+\+Private/\+\+JWNetwork\+Utility.cpp File Reference}
+\hypertarget{_j_w_network_utility_8cpp}{}\label{_j_w_network_utility_8cpp}\index{Source/JWNetworkUtility/Private/JWNetworkUtility.cpp@{Source/JWNetworkUtility/Private/JWNetworkUtility.cpp}}
+{\ttfamily \+\#include "{}JWNetwork\+Utility.\+h"{}}\newline
+{\ttfamily \+\#include "{}Generic\+Platform/\+\+Generic\+Platform\+Http.\+h"{}}\newline
+Include dependency graph for JWNetwork\+Utility.\+cpp:\+
+% FIG 0
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\+\#define \doxymbox{\hyperlink{_j_w_network_utility_8cpp_a0de3ae51f3a629a8e5d113f1b9390da7}{LOCTEXT\+\_\+\+NAMESPACE}}~"{}FJWNetwork\+Utility\+Module"{}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{_j_w_network_utility_8cpp_a4a3c3a0ba55b47e07aa41532a86f9dcf}{DEFINE\+\_\+\+LOG\+\_\+\+CATEGORY}} (JWLog)
+\item 
+\doxymbox{\hyperlink{_j_w_network_utility_8cpp_ac37d1111791f00bf6c80ced3f89477d2}{DEFINE\+\_\+\+LOG\+\_\+\+CATEGORY}} (JWLog\+Wall)
+\item 
+TAuto\+Console\+Variable$<$ bool $>$ \doxymbox{\hyperlink{_j_w_network_utility_8cpp_a97c44ae784bb0a0f7b5506464fbf1292}{CVar\+JWNU\+\_\+\+Debug\+Screen}} (TEXT("{}JWNU.\+Debug\+Screen"{}), false, TEXT("{}Enable/\+disable JWNU on-\/screen debug messages for token refresh flow.\textbackslash{}n\+Usage:\+ JWNU.\+Debug\+Screen 1 (enable) /\+ JWNU.\+Debug\+Screen 0 (disable)"{}), ECVF\+\_\+\+Default)
+\end{DoxyCompactItemize}
+
+
+\label{doc-define-members}
+\Hypertarget{_j_w_network_utility_8cpp_doc-define-members}
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{_j_w_network_utility_8cpp_a0de3ae51f3a629a8e5d113f1b9390da7}\index{JWNetworkUtility.cpp@{JWNetworkUtility.cpp}!LOCTEXT\_NAMESPACE@{LOCTEXT\_NAMESPACE}}
+\index{LOCTEXT\_NAMESPACE@{LOCTEXT\_NAMESPACE}!JWNetworkUtility.cpp@{JWNetworkUtility.cpp}}
+\doxysubsubsection{\texorpdfstring{LOCTEXT\_NAMESPACE}{LOCTEXT\_NAMESPACE}}
+{\footnotesize\ttfamily \label{_j_w_network_utility_8cpp_a0de3ae51f3a629a8e5d113f1b9390da7} 
+\+\#define LOCTEXT\+\_\+\+NAMESPACE~"{}FJWNetwork\+Utility\+Module"{}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{_j_w_network_utility_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_j_w_network_utility_8cpp_a97c44ae784bb0a0f7b5506464fbf1292}\index{JWNetworkUtility.cpp@{JWNetworkUtility.cpp}!CVarJWNU\_DebugScreen@{CVarJWNU\_DebugScreen}}
+\index{CVarJWNU\_DebugScreen@{CVarJWNU\_DebugScreen}!JWNetworkUtility.cpp@{JWNetworkUtility.cpp}}
+\doxysubsubsection{\texorpdfstring{CVarJWNU\_DebugScreen()}{CVarJWNU\_DebugScreen()}}
+{\footnotesize\ttfamily \label{_j_w_network_utility_8cpp_a97c44ae784bb0a0f7b5506464fbf1292} 
+TAuto\+Console\+Variable$<$ bool $>$ CVar\+JWNU\+\_\+\+Debug\+Screen (\begin{DoxyParamCaption}\item[{TEXT("{}JWNU.\+Debug\+Screen"{})}]{}{, }\item[{false}]{}{, }\item[{TEXT("{}Enable/\+disable JWNU on-\/screen debug messages for token refresh flow.\textbackslash{}n\+Usage:\+ JWNU.\+Debug\+Screen 1 (enable) /\+ JWNU.\+Debug\+Screen 0 (disable)"{})}]{}{, }\item[{ECVF\+\_\+\+Default}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_j_w_network_utility_8cpp_a4a3c3a0ba55b47e07aa41532a86f9dcf}\index{JWNetworkUtility.cpp@{JWNetworkUtility.cpp}!DEFINE\_LOG\_CATEGORY@{DEFINE\_LOG\_CATEGORY}}
+\index{DEFINE\_LOG\_CATEGORY@{DEFINE\_LOG\_CATEGORY}!JWNetworkUtility.cpp@{JWNetworkUtility.cpp}}
+\doxysubsubsection{\texorpdfstring{DEFINE\_LOG\_CATEGORY()}{DEFINE\_LOG\_CATEGORY()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{_j_w_network_utility_8cpp_a4a3c3a0ba55b47e07aa41532a86f9dcf} 
+DEFINE\+\_\+\+LOG\+\_\+\+CATEGORY (\begin{DoxyParamCaption}\item[{JWLog}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+% FIG 1
+Here is the caller graph for this function:\+
+% FIG 2
+\Hypertarget{_j_w_network_utility_8cpp_ac37d1111791f00bf6c80ced3f89477d2}\index{JWNetworkUtility.cpp@{JWNetworkUtility.cpp}!DEFINE\_LOG\_CATEGORY@{DEFINE\_LOG\_CATEGORY}}
+\index{DEFINE\_LOG\_CATEGORY@{DEFINE\_LOG\_CATEGORY}!JWNetworkUtility.cpp@{JWNetworkUtility.cpp}}
+\doxysubsubsection{\texorpdfstring{DEFINE\_LOG\_CATEGORY()}{DEFINE\_LOG\_CATEGORY()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{_j_w_network_utility_8cpp_ac37d1111791f00bf6c80ced3f89477d2} 
+DEFINE\+\_\+\+LOG\+\_\+\+CATEGORY (\begin{DoxyParamCaption}\item[{JWLog\+Wall}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+% FIG 3

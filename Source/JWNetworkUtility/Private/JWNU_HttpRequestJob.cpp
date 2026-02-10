@@ -85,16 +85,16 @@ void UJWNU_HttpRequestJob::SendRequest()
 	FString MethodString;
 	switch (Method)
 	{
-	case EJWNU_HttpMethod::GET:
+	case EJWNU_HttpMethod::Get:
 		MethodString = TEXT("GET");
 		break;
-	case EJWNU_HttpMethod::POST:
+	case EJWNU_HttpMethod::Post:
 		MethodString = TEXT("POST");
 		break;
-	case EJWNU_HttpMethod::PUT:
+	case EJWNU_HttpMethod::Put:
 		MethodString = TEXT("PUT");
 		break;
-	case EJWNU_HttpMethod::DELETE:
+	case EJWNU_HttpMethod::Delete:
 		MethodString = TEXT("DELETE");
 		break;
 	}
@@ -168,7 +168,7 @@ void UJWNU_HttpRequestJob::OnResponseReceived(FHttpRequestPtr Request, FHttpResp
 	const FString ResponseBody = Response.IsValid() ? Response->GetContentAsString() : TEXT("");
 
 	// Job 최종 처리 단계
-	CompleteJob(StatusCode, bNetworkAvailable, ResponseBody);
+	CompleteJob(bNetworkAvailable, StatusCode, ResponseBody);
 }
 
 void UJWNU_HttpRequestJob::OnTimeout()
@@ -199,7 +199,7 @@ void UJWNU_HttpRequestJob::OnTimeout()
 	const FString TimeoutResponse = TEXT("{\"message\": \"This is Message from JWNetworkUtility Plugin. Not from Unreal Engine Http Module. Http Request timed out\"}");
 	
 	// Job 최종 처리 단계
-	CompleteJob(408, false, TimeoutResponse);
+	CompleteJob(false, 408, TimeoutResponse);
 }
 
 void UJWNU_HttpRequestJob::ScheduleRetry()
@@ -228,7 +228,7 @@ void UJWNU_HttpRequestJob::ScheduleRetry()
 	}
 }
 
-void UJWNU_HttpRequestJob::CompleteJob(const int32 StatusCode, const bool bNetworkAvailable, const FString& ResponseBody)
+void UJWNU_HttpRequestJob::CompleteJob(const bool bNetworkAvailable, const int32 StatusCode, const FString& ResponseBody)
 {
 	// 상태 정리
 	bIsRunning = false;
@@ -237,7 +237,7 @@ void UJWNU_HttpRequestJob::CompleteJob(const int32 StatusCode, const bool bNetwo
 	
 	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("Job 완료 - 서비스 성공: %s, 총 시도 횟수: %d"), bNetworkAvailable ? TEXT("true") : TEXT("false"), CurrentAttempt);
 	
-	OnHttpRequestJobComplete.ExecuteIfBound(StatusCode, bNetworkAvailable, ResponseBody);
+	OnHttpRequestJobComplete.ExecuteIfBound(bNetworkAvailable, StatusCode, ResponseBody);
 }
 
 bool UJWNU_HttpRequestJob::ShouldRetry(const int32 StatusCode, const bool bNetworkAvailable) const

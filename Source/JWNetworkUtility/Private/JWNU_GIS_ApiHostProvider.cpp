@@ -72,7 +72,7 @@ bool UJWNU_GIS_ApiHostProvider::GetHost(const EJWNU_ServiceType InServiceType, F
 		OutHost = ServiceTypeToHostMap[InServiceType];
 		if (OutHost.IsEmpty())
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiTokenProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty! - 엑세스 토큰 추출에 성공했지만 내용물이 비어있습니다!"));
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty! - 엑세스 토큰 추출에 성공했지만 내용물이 비어있습니다!"));
 			return true;
 		}
 		
@@ -85,25 +85,25 @@ bool UJWNU_GIS_ApiHostProvider::GetHost(const EJWNU_ServiceType InServiceType, F
 	return false;
 }
 
-bool UJWNU_GIS_ApiHostProvider::GetHost(const EJWNU_ServiceType InServiceType, EJWNU_HostExtractionResult& OutHostExtractionResult, FString& OutHost) const
+bool UJWNU_GIS_ApiHostProvider::GetHost(const EJWNU_ServiceType InServiceType, EJWNU_HostGetResult& OutHostGetResult, FString& OutHost) const
 {
 	if (ServiceTypeToHostMap.Find(InServiceType))
 	{
 		OutHost = ServiceTypeToHostMap[InServiceType];
 		if (OutHost.IsEmpty())
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiTokenProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty! - 엑세스 토큰 추출에 성공했지만 내용물이 비어있습니다!"));
-			OutHostExtractionResult = EJWNU_HostExtractionResult::Empty;
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty! - 엑세스 토큰 추출에 성공했지만 내용물이 비어있습니다!"));
+			OutHostGetResult = EJWNU_HostGetResult::Empty;
 			return true;
 		}
 		
 		// 단, 내용물이 유효한지는 보장할 수 없다
-		OutHostExtractionResult = EJWNU_HostExtractionResult::Success;
+		OutHostGetResult = EJWNU_HostGetResult::Success;
 		return true;
 	}
 
 	// 쓰레기 호스트 반환
 	OutHost = TEXT("TRASH_HOST");
-	OutHostExtractionResult = EJWNU_HostExtractionResult::Fail;
+	OutHostGetResult = EJWNU_HostGetResult::Fail;
 	return false;
 }

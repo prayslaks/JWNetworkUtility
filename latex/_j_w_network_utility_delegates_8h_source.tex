@@ -1,0 +1,32 @@
+\doxysection{JWNetwork\+Utility\+Delegates.\+h}
+\hypertarget{_j_w_network_utility_delegates_8h_source}{}\label{_j_w_network_utility_delegates_8h_source}\index{Source/JWNetworkUtility/Public/JWNetworkUtilityDelegates.h@{Source/JWNetworkUtility/Public/JWNetworkUtilityDelegates.h}}
+\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2026\ Prayslaks.\ All\ rights\ reserved.\ Unauthorized\ copying,\ modification,\ or\ distribution\ of\ this\ file,\ via\ any\ medium\ is\ strictly\ prohibited.\ Proprietary\ and\ confidential.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_types_8h}{JWNetworkUtilityTypes.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}JWNetworkUtilityDelegates.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00014\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a92c27c081d4ad8fa267f1afc55056457}{DECLARE\_DELEGATE\_TwoParams}}(FOnJobComplete,\ \textcolor{keywordtype}{bool}\ ,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ );}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00020\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a8ca0e1e044e50d1f5f91c7cbc2cb7182}{DECLARE\_DELEGATE\_OneParam}}(FOnJobRetry,\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ );}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00025\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ae88124e3c71cd55f3f20caa2dbf4a097}{DECLARE\_DELEGATE\_ThreeParams}}(FOnHttpRequestJobCompletedDelegate,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ \textcolor{comment}{/*bNetworkAvailable*/},\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ \textcolor{comment}{/*StatusCode*/},\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ \textcolor{comment}{/*ResponseBody*/})}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00030\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a92c27c081d4ad8fa267f1afc55056457}{DECLARE\_DELEGATE\_TwoParams}}(FOnHttpRequestCompletedDelegate,\ const\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ \textcolor{comment}{/*StatusCode*/},\ const\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ \textcolor{comment}{/*ResponseBody*/})}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00035\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a92c27c081d4ad8fa267f1afc55056457}{DECLARE\_DELEGATE\_TwoParams}}(FOnHttpResponseDelegate,\ const\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fb}{EJWNU\_HttpStatusCode}}\ \textcolor{comment}{/*StatusCode*/},\ const\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ \textcolor{comment}{/*ResponseBody*/})}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00040\ DECLARE\_DYNAMIC\_DELEGATE\_TwoParams(FOnHttpResponseBPEvent,\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fb}{EJWNU\_HttpStatusCode}},\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a7da30d69f5c85b98c86c820f52b86e25}{StatusCode}},\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}},\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ae1a8346e1d8ec0e15a969619e62cb842}{ResponseBody}});}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00045\ USTRUCT()}
+\DoxyCodeLine{00046\ struct\ \doxymbox{\hyperlink{struct_f_j_w_n_u___dummy_struct}{FJWNU\_DummyStruct}}}
+\DoxyCodeLine{00047\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00049\ \};}
+
+\end{DoxyCode}

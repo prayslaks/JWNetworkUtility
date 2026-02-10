@@ -9,7 +9,7 @@
 /**
  * 클래스 전용 로그 카테고리 선언
  */
-DECLARE_LOG_CATEGORY_EXTERN(JW_GIS_SteamWorks, Log, All);
+JWNETWORKUTILITY_API DECLARE_LOG_CATEGORY_EXTERN(JW_GIS_SteamWorks, Log, All);
 
 /**
  * 스팀 인증 작업을 처리하는 게임인스턴스 서브시스템 클래스.

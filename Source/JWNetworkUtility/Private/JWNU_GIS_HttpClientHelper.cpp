@@ -80,7 +80,7 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
 	const FString& InAuthToken, 
 	const FString& InContentBody,
 	const TMap<FString, FString>& InQueryParams, 
-	const FOnHttpResponseDelegate& InOnHttpResponse)
+	const FOnHttpRequestCompletedDelegate& InOnHttpResponse)
 {
 	// 객체 획득
 	UJWNU_GIS_HttpClientHelper* Self = Get(WorldContextObject);
@@ -100,7 +100,7 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
 	const FString& InAuthToken, 
 	const FString& InContentBody,
 	const TMap<FString, FString>& InQueryParams, 
-	const FOnHttpResponseDelegate& InOnHttpResponse)
+	const FOnHttpRequestCompletedDelegate& InOnHttpResponse)
 {
 	// 객체 획득
 	UJWNU_GIS_HttpClientHelper* Self = Get(WorldContextObject);
@@ -118,7 +118,7 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
 	const FString& InAuthToken, 
 	const FString& InContentBody, 
 	const TMap<FString, FString>& InQueryParams, 
-	const FOnHttpResponseDelegate& InOnHttpResponse)
+	const FOnHttpRequestCompletedDelegate& InOnHttpResponse)
 {
 	// 서브시스템 획득
 	UJWNU_GIS_HttpRequestJobProcessor* Subsystem = GetGameInstance()->GetSubsystem<UJWNU_GIS_HttpRequestJobProcessor>();
@@ -129,15 +129,15 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
 	
 	// 콜백에서 리스폰스를 외부 델리게이트에 전달하게 된다
 	FOnHttpRequestJobCompletedDelegate Callback;
-	Callback.BindWeakLambda(this, [this, InOnHttpResponse](const int32 StatusCode, const bool bNetworkAvailable, const FString& ResponseBody)
+	Callback.BindWeakLambda(this, [this, InOnHttpResponse](const bool bNetworkAvailable, const int32 StatusCode, const FString& ResponseBody)
 		{
 			const FString Result = (bNetworkAvailable ? TEXT("Success") : TEXT("Fail"));
 			PRINT_LOG(LogJWNU_GIS_HttpClientHelper, Display, TEXT("%d, %s"), StatusCode, *Result);
-			InOnHttpResponse.ExecuteIfBound(ResponseBody);
+			InOnHttpResponse.ExecuteIfBound(StatusCode, ResponseBody);
 		});
 	
 	// 콜백과 패러미터를 잡 프로세서에 넘긴다
-	Subsystem->ProcessHttpRequestJob(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, {}, Callback);
+	Subsystem->ProcessHttpRequestJob(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, DefaultRequestConfig, Callback);
 }
 
 void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
@@ -146,7 +146,7 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
 	const FString& InAuthToken, 
 	const FString& InContentBody, 
 	const TMap<FString, FString>& InQueryParams, 
-	const FOnHttpResponseDelegate& InOnHttpResponse)
+	const FOnHttpRequestCompletedDelegate& InOnHttpResponse)
 {
 	// 서브시스템 획득
 	UJWNU_GIS_HttpRequestJobProcessor* Subsystem = GetGameInstance()->GetSubsystem<UJWNU_GIS_HttpRequestJobProcessor>();
@@ -157,7 +157,7 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
 	
 	// 콜백에서 리스폰스를 전처리해서 외부 델리게이트에 전달하게 된다
 	FOnHttpRequestJobCompletedDelegate Callback;
-	Callback.BindWeakLambda(this, [this, InOnHttpResponse](const int32 StatusCode, const bool bNetworkAvailable, const FString& ResponseBody)
+	Callback.BindWeakLambda(this, [this, InOnHttpResponse](const bool bNetworkAvailable, const int32 StatusCode, const FString& ResponseBody)
 	{
 		const FString Result = (bNetworkAvailable ? TEXT("Success") : TEXT("Fail"));
 		PRINT_LOG(LogJWNU_GIS_HttpClientHelper, Display, TEXT("%d, %s"), StatusCode, *Result);
@@ -166,8 +166,8 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
 		if (bNetworkAvailable == false)
 		{
 			// { success = false, code = FinalCode, message = FinalMessage } 구조의 가짜 JSON 리스폰스 바디 생성
-			const FString FakeJsonResponseBody = TEXT("{\"success\": false, \"code\": \"NETWORK_ERROR\", \"message\": \"Failed to Send HTTP Request\"}");
-			InOnHttpResponse.ExecuteIfBound(FakeJsonResponseBody);
+			const FString FakeResponseBody = TEXT("{\"success\": false, \"code\": \"NETWORK_ERROR\", \"message\": \"Failed to Send HTTP Request\"}");
+			InOnHttpResponse.ExecuteIfBound(StatusCode, FakeResponseBody);
 			return;
 		}
 				
@@ -175,7 +175,7 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
 		if (StatusCode >= 200 && StatusCode < 300)
 		{
 			// 서버 로직에 도달했을 경우 진짜 JSON 리스폰스 바디를 콜백으로 전달
-			InOnHttpResponse.ExecuteIfBound(ResponseBody);
+			InOnHttpResponse.ExecuteIfBound(StatusCode, ResponseBody);
 		}
 		else
 		{
@@ -194,16 +194,16 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
 			}
 					
 			// { success = false, code = FinalCode, message = FinalMessage } 구조의 가짜 JSON 리스폰스 바디 생성
-			const FString FakeJsonResponseBody = FString::Printf(
+			const FString FakeResponseBody = FString::Printf(
 			TEXT("{\"success\": false, \"code\": \"%s\", \"message\": \"%s\"}"), 
 				*FakeCustomCode, 
 				*FakeCustomMessage);
 				
 			// 상태 코드에 따른 가짜 JSON 리스폰스 바디를 콜백으로 전달
-			InOnHttpResponse.ExecuteIfBound(FakeJsonResponseBody);
+			InOnHttpResponse.ExecuteIfBound(StatusCode, FakeResponseBody);
 		}
 	});
 	
 	// 콜백과 패러미터를 잡 프로세서에 넘긴다
-	Subsystem->ProcessHttpRequestJob(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, {}, Callback);
+	Subsystem->ProcessHttpRequestJob(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, DefaultRequestConfig, Callback);
 }

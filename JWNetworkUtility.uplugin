@@ -3,10 +3,10 @@
 	"Version": 1,
 	"VersionName": "1.0",
 	"FriendlyName": "JWNetworkUtility",
-	"Description": "Unreal Utility Plugin",
-	"Category": "Other",
+	"Description": "Unreal Network Utility Plugin by JungWoo. HTTP Client Helper, API Client Service, Access and Refresh Token Management with Encryption and Services.",
+	"Category": "Code Plugins > Networking",
 	"CreatedBy": "prayslaks",
-	"CreatedByURL": "",
+	"CreatedByURL": "https://github.com/prayslaks",
 	"DocsURL": "",
 	"MarketplaceURL": "",
 	"SupportURL": "",
@@ -17,6 +17,11 @@
 	"Modules": [
 		{
 			"Name": "JWNetworkUtility",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "JWNetworkUtilityTest",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}

@@ -1,0 +1,280 @@
+\doxysection{JWNU\+\_\+\+GIS\+\_\+\+Api\+Client\+Service.\+h}
+\hypertarget{_j_w_n_u___g_i_s___api_client_service_8h_source}{}\label{_j_w_n_u___g_i_s___api_client_service_8h_source}\index{Source/JWNetworkUtility/Public/JWNU\_GIS\_ApiClientService.h@{Source/JWNetworkUtility/Public/JWNU\_GIS\_ApiClientService.h}}
+\doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_client_service_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2026\ Prayslaks.\ All\ rights\ reserved.\ Unauthorized\ copying,\ modification,\ or\ distribution\ of\ this\ file,\ via\ any\ medium\ is\ strictly\ prohibited.\ Proprietary\ and\ confidential.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_8h}{JWNetworkUtility.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_types_8h}{JWNetworkUtilityTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h}{JWNetworkUtilityDelegates.h}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}JsonObjectConverter.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}Dom/JsonObject.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}Serialization/JsonReader.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}Serialization/JsonSerializer.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_n_u___g_i_s___http_client_helper_8h}{JWNU\_GIS\_HttpClientHelper.h}}"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_identity_provider_8h}{JWNU\_GIS\_ApiIdentityProvider.h}}"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_host_provider_8h}{JWNU\_GIS\_ApiHostProvider.h}}"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}JWNU\_GIS\_ApiClientService.generated.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00022\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_client_service_8h_ac456297fd36dcd5eb09fbaeacdd60ccd}{DECLARE\_LOG\_CATEGORY\_EXTERN}}(LogJWNU\_GIS\_ApiClientService,\ Log,\ All);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00027\ UCLASS(Config=\doxymbox{\hyperlink{class_j_w_network_utility}{JWNetworkUtility}})}
+\DoxyCodeLine{00028\ class\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_client_service}{UJWNU\_GIS\_ApiClientService}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00031\ \ \ \ \ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{static}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_client_service}{UJWNU\_GIS\_ApiClientService}}*\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3ac55582518cba2c464f29f5bae1c68def}{Get}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ StructType>}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_client_service_a6010022efa92e43ce3a4da4c4e351ea6}{CallApi\_Template}}(}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ UObject*\ WorldContextObject,}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ InEndpoint,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ TFunction<\textcolor{keywordtype}{void}(\textcolor{keyword}{const}\ StructType\&)>\ OnGetCustomStruct,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ bRequiresAuth\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_client_service_ae62a56a30053e373fa75233a16339871}{CallApi\_NoTemplate}}(}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ UObject*\ WorldContextObject,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InEndpoint,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FOnHttpResponseDelegate\&\ OnHttpResponse,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ bRequiresAuth\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00087\ \ \ \ \ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00089\ \ \ \ \ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{void}\ CallApi\_NoTemplate\_Execution(}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InURL,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InAccessToken,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FOnHttpResponseDelegate\&\ OnHttpResponse,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ bTryTokenRefreshing);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ StructType>}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{void}\ CallApi\_Template\_Execution(}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InURL,}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InAccessToken,}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ TFunction<\textcolor{keywordtype}{void}(\textcolor{keyword}{const}\ StructType\&)>\ OnGetCustomStruct,}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ bTryTokenRefreshing);}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{void}\ RequestTokenRefresh(\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job}{FJWNU\_PendingJob}}\&\&\ InJob);}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{void}\ ExecuteTokenRefresh(\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{void}\ DrainPendingJobs\_Success(\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ NewAccessToken);}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{void}\ DrainPendingJobs\_Failure(\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ ErrorCode,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ ErrorMessage);}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00166\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ BuildRefreshTokenURL()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00171\ \ \ \ \ TMap<EJWNU\_ServiceType,\ bool>\ RefreshInProgressFlags;}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00176\ \ \ \ \ TMap<EJWNU\_ServiceType,\ TArray<FJWNU\_PendingJob>>\ PendingJobQueues;}
+\DoxyCodeLine{00177\ \};}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ StructType>}
+\DoxyCodeLine{00180\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_client_service_a6010022efa92e43ce3a4da4c4e351ea6}{UJWNU\_GIS\_ApiClientService::CallApi\_Template}}(}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keyword}{const}\ UObject*\ WorldContextObject,}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ InEndpoint,}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,}
+\DoxyCodeLine{00187\ \ \ \ \ TFunction<\textcolor{keywordtype}{void}(\textcolor{keyword}{const}\ StructType\&)>\ OnGetCustomStruct,}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ bRequiresAuth)}
+\DoxyCodeLine{00189\ \{}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{comment}{//\ 객체\ 획득}}
+\DoxyCodeLine{00191\ \ \ \ \ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_client_service}{UJWNU\_GIS\_ApiClientService}}*\ Self\ =\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_client_service_a36a562447dbc941c7f2cea794fb77b62}{Get}}(WorldContextObject);}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordflow}{if}\ (Self\ ==\ \textcolor{keyword}{nullptr})}
+\DoxyCodeLine{00193\ \ \ \ \ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00195\ \ \ \ \ \}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{comment}{//\ 호스트\ 프로바이더에서\ 호스트\ 획득}}
+\DoxyCodeLine{00198\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ ProvidedHost;}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ HostProvider\ =\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_ad551b22e5d68599f5a7166fceadd04d3}{UJWNU\_GIS\_ApiHostProvider::Get}}(WorldContextObject))}
+\DoxyCodeLine{00200\ \ \ \ \ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (HostProvider-\/>GetHost(InServiceType,\ ProvidedHost)\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_8h_a5fe470c8e12c83895d2d61b9f81b82f3}{PRINT\_LOG}}(LogJWNU\_GIS\_ApiClientService,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}호스트\ 획득\ 실패!"{}}));}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ StructType\ ErrorResult;}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ ErrorResult.Code\ =\ TEXT(\textcolor{stringliteral}{"{}HOST\_NOT\_FOUND"{}});}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ ErrorResult.Message\ =\ TEXT(\textcolor{stringliteral}{"{}Failed\ to\ get\ host\ from\ provider"{}});}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ OnGetCustomStruct(ErrorResult);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00210\ \ \ \ \ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{comment}{//\ API\ URL\ 구축}}
+\DoxyCodeLine{00213\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ ConstructedURL\ =\ ProvidedHost\ +\ InEndpoint;}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{comment}{//\ 인증이\ 필요하지\ 않은\ 경우,\ 토큰\ 로직을\ 건너뛰고\ 바로\ 실행}}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keywordflow}{if}\ (bRequiresAuth\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00217\ \ \ \ \ \{}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ Self-\/>CallApi\_Template\_Execution(InMethod,\ InServiceType,\ ConstructedURL,\ TEXT(\textcolor{stringliteral}{"{}"{}}),\ InContentBody,\ InQueryParams,\ OnGetCustomStruct,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00220\ \ \ \ \ \}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{comment}{//\ 토큰\ 프로바이더에서\ 엑세스\ 토큰\ 획득}}
+\DoxyCodeLine{00223\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container}{FJWNU\_AccessTokenContainer}}\ ProvidedAccessTokenContainer;}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ TokenProvider\ =\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_aa8569c574b0b44281cf45c2a542ae602}{UJWNU\_GIS\_ApiIdentityProvider::Get}}(WorldContextObject))}
+\DoxyCodeLine{00225\ \ \ \ \ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (TokenProvider-\/>GetAccessTokenContainer(InServiceType,\ ProvidedAccessTokenContainer)\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_8h_a5fe470c8e12c83895d2d61b9f81b82f3}{PRINT\_LOG}}(LogJWNU\_GIS\_ApiClientService,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}엑세스\ 토큰\ 획득\ 실패!"{}}));}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ StructType\ ErrorResult;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ ErrorResult.Code\ =\ TEXT(\textcolor{stringliteral}{"{}TOKEN\_NOT\_FOUND"{}});}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ ErrorResult.Message\ =\ TEXT(\textcolor{stringliteral}{"{}Failed\ to\ get\ access\ token\ from\ provider"{}});}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ OnGetCustomStruct(ErrorResult);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00237\ \ \ \ \ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_8h_a5fe470c8e12c83895d2d61b9f81b82f3}{PRINT\_LOG}}(LogJWNU\_GIS\_ApiClientService,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}토큰\ 프로바이더\ 획득\ 실패!"{}}));}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ StructType\ ErrorResult;}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ ErrorResult.Code\ =\ TEXT(\textcolor{stringliteral}{"{}PROVIDER\_NOT\_FOUND"{}});}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ ErrorResult.Message\ =\ TEXT(\textcolor{stringliteral}{"{}Failed\ to\ get\ token\ provider"{}});}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ OnGetCustomStruct(ErrorResult);}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00244\ \ \ \ \ \}}
+\DoxyCodeLine{00245\ \ \ \ \ }
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{comment}{//\ 토큰\ 만료\ 또는\ 리프레시\ 진행\ 중인\ 경우\ 잡\ 큐에\ 적재}}
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{keyword}{const}\ int64\ CurrentUnixTime\ =\ FDateTime::UtcNow().ToUnixTimestamp();}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ bTokenExpired\ =\ ProvidedAccessTokenContainer.\doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_aa63cf259942395550ec0e9b999c2a1a0}{ExpiresAt}}\ >\ 0\ \&\&\ CurrentUnixTime\ >=\ (ProvidedAccessTokenContainer.\doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_aa63cf259942395550ec0e9b999c2a1a0}{ExpiresAt}}\ -\/\ 30);}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keywordflow}{if}\ (bTokenExpired\ ||\ Self-\/>RefreshInProgressFlags.FindOrAdd(InServiceType))}
+\DoxyCodeLine{00250\ \ \ \ \ \{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_8h_a5fe470c8e12c83895d2d61b9f81b82f3}{PRINT\_LOG}}(LogJWNU\_GIS\_ApiClientService,\ Display,\ TEXT(\textcolor{stringliteral}{"{}엑세스\ 토큰\ 만료\ 또는\ 리프레시\ 진행\ 중,\ 잡\ 큐에\ 적재..."{}}));}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_8h_a7fd4386f8afbc0e07d0af2e5216348a5}{JWNU\_SCREEN\_DEBUG}}(-\/1,\ 5.0f,\ FColor::Yellow,\ TEXT(\textcolor{stringliteral}{"{}[JWNU]\ Access\ Token\ Expired\ —\ Queuing\ refresh\ for\ \%s"{}}),\ *UEnum::GetValueAsString(InServiceType));}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job}{FJWNU\_PendingJob}}\ Job;}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d}{RequestInfo}}.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a2d0e9351a5b803383baddfaf9be774a6}{ServiceType}}\ =\ InServiceType;}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d}{RequestInfo}}.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_aeb2f69ecbbd3db912cc8fce070f413e3}{Method}}\ =\ InMethod;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d}{RequestInfo}}.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a9d49bd8c3c1287d9fa5b1b1013ee0ec3}{URL}}\ =\ ConstructedURL;}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d}{RequestInfo}}.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_aee20d6e99ba684cd8fcad1c83f8d42cf}{ContentBody}}\ =\ InContentBody;}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d}{RequestInfo}}.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a545102d7088780cfe907856ece9b504f}{QueryParams}}\ =\ InQueryParams;}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_ac4ac735c892da6688d268258c022e004}{OnTokenReady}}\ =\ [Self,\ InMethod,\ InServiceType,\ ConstructedURL,\ InContentBody,\ InQueryParams,\ OnGetCustomStruct](\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ NewAccessToken)}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ Self-\/>CallApi\_Template\_Execution<StructType>(InMethod,\ InServiceType,\ ConstructedURL,\ NewAccessToken,\ InContentBody,\ InQueryParams,\ OnGetCustomStruct,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a982f5abf4fd1f47274377a8926e633ab}{OnTokenFailed}}\ =\ [OnGetCustomStruct](\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ ErrorCode,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ ErrorMessage)}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ StructType\ ErrorResult;}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ ErrorResult.Code\ =\ ErrorCode;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ ErrorResult.Message\ =\ ErrorMessage;}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ OnGetCustomStruct(ErrorResult);}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ Self-\/>RequestTokenRefresh(InServiceType,\ MoveTemp(Job));}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00272\ \ \ \ \ \}}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{comment}{//\ 실제\ 처리}}
+\DoxyCodeLine{00275\ \ \ \ \ Self-\/>CallApi\_Template\_Execution(InMethod,\ InServiceType,\ ConstructedURL,\ ProvidedAccessTokenContainer.\doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_a1490cff573f9231abd094cf661df841b}{AccessToken}},\ InContentBody,\ InQueryParams,\ OnGetCustomStruct,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00276\ \}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ StructType>}
+\DoxyCodeLine{00279\ \textcolor{keywordtype}{void}\ UJWNU\_GIS\_ApiClientService::CallApi\_Template\_Execution(}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,}
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InURL,}
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InAccessToken,}
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,}
+\DoxyCodeLine{00286\ \ \ \ \ TFunction<\textcolor{keywordtype}{void}(\textcolor{keyword}{const}\ StructType\&)>\ OnGetCustomStruct,}
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ bTryTokenRefreshing)}
+\DoxyCodeLine{00288\ \{}
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{keywordflow}{if}\ (bTryTokenRefreshing)}
+\DoxyCodeLine{00290\ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 원래\ 요청\ 정보\ 저장\ (401\ 발생\ 시\ 재시도용)}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request}{FJWNU\_PendingApiRequest}}\ PendingRequest;}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a2d0e9351a5b803383baddfaf9be774a6}{ServiceType}}\ =\ InServiceType;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_aeb2f69ecbbd3db912cc8fce070f413e3}{Method}}\ =\ InMethod;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a9d49bd8c3c1287d9fa5b1b1013ee0ec3}{URL}}\ =\ InURL;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_aee20d6e99ba684cd8fcad1c83f8d42cf}{ContentBody}}\ =\ InContentBody;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a545102d7088780cfe907856ece9b504f}{QueryParams}}\ =\ InQueryParams;\ \ \ \ \ }
+\DoxyCodeLine{00298\ \ \ \ \ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 401\ 상태\ 코드를\ 처리할\ 수\ 있는\ 콜백}}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ CallbackManage401\ =\ FOnHttpRequestCompletedDelegate::CreateWeakLambda(\textcolor{keyword}{this},}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ [\textcolor{keyword}{this},\ PendingRequest,\ OnGetCustomStruct](\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a7da30d69f5c85b98c86c820f52b86e25}{StatusCode}},\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ae1a8346e1d8ec0e15a969619e62cb842}{ResponseBody}})}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a7da30d69f5c85b98c86c820f52b86e25}{StatusCode}}\ ==\ 401)}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_8h_a5fe470c8e12c83895d2d61b9f81b82f3}{PRINT\_LOG}}(LogJWNU\_GIS\_ApiClientService,\ Display,\ TEXT(\textcolor{stringliteral}{"{}401\ 토큰\ 만료\ 감지,\ 잡\ 큐에\ 적재\ 후\ 리프레시\ 시도..."{}}));}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_8h_a7fd4386f8afbc0e07d0af2e5216348a5}{JWNU\_SCREEN\_DEBUG}}(-\/1,\ 5.0f,\ FColor::Orange,\ TEXT(\textcolor{stringliteral}{"{}[JWNU]\ 401\ Unauthorized\ —\ Triggering\ token\ refresh\ for\ \%s"{}}),\ *UEnum::GetValueAsString(PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a2d0e9351a5b803383baddfaf9be774a6}{ServiceType}}));}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job}{FJWNU\_PendingJob}}\ Job;}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d}{RequestInfo}}\ =\ PendingRequest;}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_ac4ac735c892da6688d268258c022e004}{OnTokenReady}}\ =\ [\textcolor{keyword}{this},\ PendingRequest,\ OnGetCustomStruct](\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ NewAccessToken)}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CallApi\_Template\_Execution<StructType>(PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_aeb2f69ecbbd3db912cc8fce070f413e3}{Method}},\ PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a2d0e9351a5b803383baddfaf9be774a6}{ServiceType}},\ PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a9d49bd8c3c1287d9fa5b1b1013ee0ec3}{URL}},\ NewAccessToken,\ PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_aee20d6e99ba684cd8fcad1c83f8d42cf}{ContentBody}},\ PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a545102d7088780cfe907856ece9b504f}{QueryParams}},\ OnGetCustomStruct,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Job.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a982f5abf4fd1f47274377a8926e633ab}{OnTokenFailed}}\ =\ [OnGetCustomStruct](\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ ErrorCode,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ ErrorMessage)}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ StructType\ ErrorResult;}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ErrorResult.Code\ =\ ErrorCode;}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ErrorResult.Message\ =\ ErrorMessage;}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OnGetCustomStruct(ErrorResult);}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RequestTokenRefresh(PendingRequest.\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a2d0e9351a5b803383baddfaf9be774a6}{ServiceType}},\ MoveTemp(Job));}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 언리얼\ 구조체\ 파싱\ 시도}}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ StructType\ ResultData;}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (FJsonObjectConverter::JsonObjectStringToUStruct(\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ae1a8346e1d8ec0e15a969619e62cb842}{ResponseBody}},\ \&ResultData,\ 0,\ 0))}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OnGetCustomStruct(ResultData);}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ResultData.Code\ =\ TEXT(\textcolor{stringliteral}{"{}JSON\_PARSE\_ERROR"{}});}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ResultData.Message\ =\ TEXT(\textcolor{stringliteral}{"{}Failed\ to\ Parse\ JSON\ Response\ Body"{}});}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OnGetCustomStruct(ResultData);}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{00337\ \ \ \ \ }
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Http\ 리퀘스트}}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___http_client_helper_a32e71dee89ca6e2ee9c23a4b34d55fd1}{UJWNU\_GIS\_HttpClientHelper::SendReqeust\_CustomResponse}}(GetWorld(),\ InMethod,\ InURL,\ InAccessToken,\ InContentBody,\ InQueryParams,\ CallbackManage401);}
+\DoxyCodeLine{00340\ \ \ \ \ \}}
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00342\ \ \ \ \ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 401\ 상태\ 코드를\ 처리하지\ 않는\ 콜백}}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ CallbackNoManage401\ =\ FOnHttpRequestCompletedDelegate::CreateWeakLambda(\textcolor{keyword}{this},}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ [\textcolor{keyword}{this},\ OnGetCustomStruct](\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a7da30d69f5c85b98c86c820f52b86e25}{StatusCode}},\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ae1a8346e1d8ec0e15a969619e62cb842}{ResponseBody}})}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 언리얼\ 구조체\ 파싱\ 시도}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ StructType\ ResultData;}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (FJsonObjectConverter::JsonObjectStringToUStruct(\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ae1a8346e1d8ec0e15a969619e62cb842}{ResponseBody}},\ \&ResultData,\ 0,\ 0))}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OnGetCustomStruct(ResultData);}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ResultData.Code\ =\ TEXT(\textcolor{stringliteral}{"{}JSON\_PARSE\_ERROR"{}});}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ResultData.Message\ =\ TEXT(\textcolor{stringliteral}{"{}Failed\ to\ Parse\ JSON\ Response\ Body"{}});}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OnGetCustomStruct(ResultData);}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \ }
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{00360\ \ \ \ \ }
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Http\ 리퀘스트}}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___http_client_helper_a32e71dee89ca6e2ee9c23a4b34d55fd1}{UJWNU\_GIS\_HttpClientHelper::SendReqeust\_CustomResponse}}(GetWorld(),\ InMethod,\ InURL,\ InAccessToken,\ InContentBody,\ InQueryParams,\ CallbackNoManage401);}
+\DoxyCodeLine{00363\ \ \ \ \ \}}
+\DoxyCodeLine{00364\ \}}
+\DoxyCodeLine{00365\ }
+
+\end{DoxyCode}

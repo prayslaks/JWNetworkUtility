@@ -1,0 +1,370 @@
+\doxysection{JWNetwork\+Utility\+Types.\+h}
+\hypertarget{_j_w_network_utility_types_8h_source}{}\label{_j_w_network_utility_types_8h_source}\index{Source/JWNetworkUtility/Public/JWNetworkUtilityTypes.h@{Source/JWNetworkUtility/Public/JWNetworkUtilityTypes.h}}
+\doxymbox{\hyperlink{_j_w_network_utility_types_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2026\ Prayslaks.\ All\ rights\ reserved.\ Unauthorized\ copying,\ modification,\ or\ distribution\ of\ this\ file,\ via\ any\ medium\ is\ strictly\ prohibited.\ Proprietary\ and\ confidential.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}JWNetworkUtilityTypes.generated.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00013\ UENUM(BlueprintType)}
+\DoxyCodeLine{00014\ enum\ class\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fb}{EJWNU\_HttpStatusCode}}\ :\ uint8}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{comment}{//\ 기본값\ /\ 비HTTP\ 상태}}
+\DoxyCodeLine{00017\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fba6adf97f83acf6453d4a6a4b1070f3754}{None}}\ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}None"{}}),}
+\DoxyCodeLine{00018\ \ \ \ \ NetworkError\ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}Network\ Error"{}}),}
+\DoxyCodeLine{00019\ \ \ \ \ Timeout\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}Timeout"{}}),}
+\DoxyCodeLine{00020\ \ \ \ \ ParseError\ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}Parse\ Error"{}}),}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{//\ 2XX\ 성공}}
+\DoxyCodeLine{00023\ \ \ \ \ OK\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}200\ OK"{}}),}
+\DoxyCodeLine{00024\ \ \ \ \ Created\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}201\ Created"{}}),}
+\DoxyCodeLine{00025\ \ \ \ \ Accepted\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}202\ Accepted"{}}),}
+\DoxyCodeLine{00026\ \ \ \ \ NoContent\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}204\ No\ Content"{}}),}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{comment}{//\ 3XX\ 리디렉션}}
+\DoxyCodeLine{00029\ \ \ \ \ MovedPermanently\ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}301\ Moved\ Permanently"{}}),}
+\DoxyCodeLine{00030\ \ \ \ \ Found\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}302\ Found"{}}),}
+\DoxyCodeLine{00031\ \ \ \ \ NotModified\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}304\ Not\ Modified"{}}),}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{//\ 4XX\ 클라이언트\ 에러}}
+\DoxyCodeLine{00034\ \ \ \ \ BadRequest\ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}400\ Bad\ Request"{}}),}
+\DoxyCodeLine{00035\ \ \ \ \ Unauthorized\ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}401\ Unauthorized"{}}),}
+\DoxyCodeLine{00036\ \ \ \ \ PaymentRequired\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}402\ Payment\ Required"{}}),}
+\DoxyCodeLine{00037\ \ \ \ \ Forbidden\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}403\ Forbidden"{}}),}
+\DoxyCodeLine{00038\ \ \ \ \ NotFound\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}404\ Not\ Found"{}}),}
+\DoxyCodeLine{00039\ \ \ \ \ MethodNotAllowed\ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}405\ Method\ Not\ Allowed"{}}),}
+\DoxyCodeLine{00040\ \ \ \ \ NotAcceptable\ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}406\ Not\ Acceptable"{}}),}
+\DoxyCodeLine{00041\ \ \ \ \ ProxyAuthRequired\ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}407\ Proxy\ Auth\ Required"{}}),}
+\DoxyCodeLine{00042\ \ \ \ \ RequestTimeout\ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}408\ Request\ Timeout"{}}),}
+\DoxyCodeLine{00043\ \ \ \ \ Conflict\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}409\ Conflict"{}}),}
+\DoxyCodeLine{00044\ \ \ \ \ Gone\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}410\ Gone"{}}),}
+\DoxyCodeLine{00045\ \ \ \ \ TooManyRequests\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}429\ Too\ Many\ Requests"{}}),}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{//\ 5XX\ 서버\ 에러}}
+\DoxyCodeLine{00048\ \ \ \ \ InternalServerError\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}500\ Internal\ Server\ Error"{}}),}
+\DoxyCodeLine{00049\ \ \ \ \ NotImplemented\ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}501\ Not\ Implemented"{}}),}
+\DoxyCodeLine{00050\ \ \ \ \ BadGateway\ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}502\ Bad\ Gateway"{}}),}
+\DoxyCodeLine{00051\ \ \ \ \ ServiceUnavailable\ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}503\ Service\ Unavailable"{}}),}
+\DoxyCodeLine{00052\ \ \ \ \ GatewayTimeout\ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}504\ Gateway\ Timeout"{}}),}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ 미등록\ 상태\ 코드}}
+\DoxyCodeLine{00055\ \ \ \ \ UnknownError\ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fbaa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}Unknown\ Error"{}}),}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00064\ \textcolor{keyword}{inline}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ad119fc90261942ba6fcf7d8f9b10e3fb}{EJWNU\_HttpStatusCode}}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a100f0dce75ba168bfd2973aa8d8f91aa}{JWNU\_IntToHttpStatusCode}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a7da30d69f5c85b98c86c820f52b86e25}{StatusCode}})}
+\DoxyCodeLine{00065\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{switch}\ (\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a7da30d69f5c85b98c86c820f52b86e25}{StatusCode}})}
+\DoxyCodeLine{00067\ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ 0:\ UE\ HTTP\ 모듈에서\ 응답\ 없음\ (연결\ 실패\ 등)}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{case}\ 0:\ \ \ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::NetworkError;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{//\ 2XX}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{case}\ 200:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::OK;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordflow}{case}\ 201:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::Created;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{case}\ 202:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::Accepted;}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{case}\ 204:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::NoContent;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{//\ 3XX}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordflow}{case}\ 301:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::MovedPermanently;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{case}\ 302:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::Found;}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordflow}{case}\ 304:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::NotModified;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//\ 4XX}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{case}\ 400:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::BadRequest;}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordflow}{case}\ 401:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::Unauthorized;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{case}\ 402:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::PaymentRequired;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{case}\ 403:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::Forbidden;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordflow}{case}\ 404:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::NotFound;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{case}\ 405:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::MethodNotAllowed;}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordflow}{case}\ 406:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::NotAcceptable;}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{case}\ 407:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::ProxyAuthRequired;}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordflow}{case}\ 408:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::RequestTimeout;}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordflow}{case}\ 409:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::Conflict;}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{case}\ 410:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::Gone;}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordflow}{case}\ 429:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::TooManyRequests;}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{//\ 5XX}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordflow}{case}\ 500:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::InternalServerError;}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordflow}{case}\ 501:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::NotImplemented;}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{case}\ 502:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::BadGateway;}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordflow}{case}\ 503:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::ServiceUnavailable;}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordflow}{case}\ 504:\ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::GatewayTimeout;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordflow}{default}:\ \ \textcolor{keywordflow}{return}\ EJWNU\_HttpStatusCode::UnknownError;}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00110\ UENUM(BlueprintType)}
+\DoxyCodeLine{00111\ enum\ class\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ :\ uint8}
+\DoxyCodeLine{00112\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3ac55582518cba2c464f29f5bae1c68def}{Get}},}
+\DoxyCodeLine{00114\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3a03d947a2158373c3b9d74325850cb8b9}{Post}},}
+\DoxyCodeLine{00115\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3ad0bf1810982e9728fcf3ac444a015373}{Put}},}
+\DoxyCodeLine{00116\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3af2a6c498fb90ee345d997f888fce3b18}{Delete}},}
+\DoxyCodeLine{00117\ \};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00122\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00123\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_ad4731153260050924f301f05abf07cd9}{FJWNU\_RequestConfig}}}
+\DoxyCodeLine{00124\ \{}
+\DoxyCodeLine{00125\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ }
+\DoxyCodeLine{00130\ \ \ \ \ UPROPERTY(Config,\ EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Config"{}})}
+\DoxyCodeLine{00131\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_af12ecc6e716bb89820ca03e2f9878608}{MaxRetries}};}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00136\ \ \ \ \ UPROPERTY(Config,\ EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Config"{}})}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_a21573b58007cc22fab24b7ce5f312eb6}{RetryDelaySeconds}};}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00142\ \ \ \ \ UPROPERTY(Config,\ EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Config"{}})}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_a8b68e3da42097efaf3dedc31db4078fc}{TimeoutSeconds}};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00148\ \ \ \ \ UPROPERTY(Config,\ EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Config"{}})}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_af5634c03dedcfd6a1bd4c61041e91af1}{bRetryOn5XX}};}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00154\ \ \ \ \ UPROPERTY(Config,\ EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Config"{}})}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_ae08e7df01dd719264edfbf5b61db6439}{bRetryOnTimeout}};}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00160\ \ \ \ \ UPROPERTY(Config,\ EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Config"{}})}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_ab1b5b8d5f440eb327bcdefd3b6eec551}{bRetryOnNetworkError}};}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00166\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_ad4731153260050924f301f05abf07cd9}{FJWNU\_RequestConfig}}()}
+\DoxyCodeLine{00167\ \ \ \ \ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_af12ecc6e716bb89820ca03e2f9878608}{MaxRetries}}\ =\ 3;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_a21573b58007cc22fab24b7ce5f312eb6}{RetryDelaySeconds}}\ =\ 1.0f;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_a8b68e3da42097efaf3dedc31db4078fc}{TimeoutSeconds}}\ =\ 30.0f;}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_af5634c03dedcfd6a1bd4c61041e91af1}{bRetryOn5XX}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_ae08e7df01dd719264edfbf5b61db6439}{bRetryOnTimeout}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config_ab1b5b8d5f440eb327bcdefd3b6eec551}{bRetryOnNetworkError}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00174\ \ \ \ \ \}}
+\DoxyCodeLine{00175\ \};}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00180\ UENUM(BlueprintType)}
+\DoxyCodeLine{00181\ enum\ class\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ :\ uint8}
+\DoxyCodeLine{00182\ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28a1c7d561350ce0a5a7e51b973a3796315}{GameServer}},}
+\DoxyCodeLine{00184\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28a2b278a312d3b12cd9e624f36412ca9d2}{AuthServer}},}
+\DoxyCodeLine{00185\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28a419f3742e6de8e0ec4b22cce005e7630}{Platform}},}
+\DoxyCodeLine{00186\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28ab206a1b4ea1097761f78e8876f6da779}{External}},}
+\DoxyCodeLine{00187\ \};}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00192\ UENUM(BlueprintType)}
+\DoxyCodeLine{00193\ enum\ class\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293}{EJWNU\_TokenGetResult}}\ :\ uint8}
+\DoxyCodeLine{00194\ \{}
+\DoxyCodeLine{00195\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293a505a83f220c02df2f85c3810cd9ceb38}{Success}}\ =\ 0,}
+\DoxyCodeLine{00196\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293aceaa0734f0b3c738120c67344d8f3ec1}{Fail}}\ =\ 1,}
+\DoxyCodeLine{00197\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293ace2c8aed9c2fa0cfbed56cbda4d8bf07}{Empty}}\ =\ 2,\ \ }
+\DoxyCodeLine{00198\ \};}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00203\ UENUM(BlueprintType)}
+\DoxyCodeLine{00204\ enum\ class\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a0869207091beab67d34b610dadd8758c}{EJWNU\_TokenSetResult}}\ :\ uint8}
+\DoxyCodeLine{00205\ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293a505a83f220c02df2f85c3810cd9ceb38}{Success}}\ =\ 0,}
+\DoxyCodeLine{00207\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293aceaa0734f0b3c738120c67344d8f3ec1}{Fail}}\ =\ 1,}
+\DoxyCodeLine{00208\ \};}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00213\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00214\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_a34cb0892b1b3cf0836d85b72e26ea3cf}{FJWNU\_AccessTokenContainer}}}
+\DoxyCodeLine{00215\ \{}
+\DoxyCodeLine{00216\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ }
+\DoxyCodeLine{00221\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00222\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_a1490cff573f9231abd094cf661df841b}{AccessToken}};}
+\DoxyCodeLine{00223\ \ \ \ \ }
+\DoxyCodeLine{00228\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00229\ \ \ \ \ int64\ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_aa63cf259942395550ec0e9b999c2a1a0}{ExpiresAt}};}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00234\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_a34cb0892b1b3cf0836d85b72e26ea3cf}{FJWNU\_AccessTokenContainer}}()}
+\DoxyCodeLine{00235\ \ \ \ \ \{}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_a1490cff573f9231abd094cf661df841b}{AccessToken}}\ =\ TEXT(\textcolor{stringliteral}{"{}TRASH\_TOKEN"{}});}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_aa63cf259942395550ec0e9b999c2a1a0}{ExpiresAt}}\ =\ -\/1;}
+\DoxyCodeLine{00238\ \ \ \ \ \}}
+\DoxyCodeLine{00239\ \ \ \ \ }
+\DoxyCodeLine{00245\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_a2042926e73346d70a78cc90b9f5306e4}{FJWNU\_AccessTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InAccessToken,\ \textcolor{keyword}{const}\ int64\ InExpiresAt)}
+\DoxyCodeLine{00246\ \ \ \ \ \{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_a1490cff573f9231abd094cf661df841b}{AccessToken}}\ =\ InAccessToken;}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container_aa63cf259942395550ec0e9b999c2a1a0}{ExpiresAt}}\ =\ InExpiresAt;}
+\DoxyCodeLine{00249\ \ \ \ \ \}}
+\DoxyCodeLine{00250\ \};}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00255\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00256\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container_ac5d9d9f782ef160a13fbac1f8dacb07d}{FJWNU\_RefreshTokenContainer}}}
+\DoxyCodeLine{00257\ \{}
+\DoxyCodeLine{00258\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00259\ \ \ \ \ }
+\DoxyCodeLine{00260\ \ \ \ \ }
+\DoxyCodeLine{00263\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00264\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container_a5e4344489d47b682225dd27a00010f49}{RefreshToken}};}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00269\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00270\ \ \ \ \ int64\ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container_aaca7e4d889cc80abd3d9b6c4ce861244}{ExpiresAt}};}
+\DoxyCodeLine{00271\ \ \ \ \ }
+\DoxyCodeLine{00275\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container_ac5d9d9f782ef160a13fbac1f8dacb07d}{FJWNU\_RefreshTokenContainer}}()}
+\DoxyCodeLine{00276\ \ \ \ \ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container_a5e4344489d47b682225dd27a00010f49}{RefreshToken}}\ =\ TEXT(\textcolor{stringliteral}{"{}TRASH\_TOKEN"{}});}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container_aaca7e4d889cc80abd3d9b6c4ce861244}{ExpiresAt}}\ =\ -\/1;}
+\DoxyCodeLine{00279\ \ \ \ \ \}}
+\DoxyCodeLine{00280\ \ \ \ \ }
+\DoxyCodeLine{00286\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container_ad47d149fbabce4e64ea43523e664d382}{FJWNU\_RefreshTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InRefreshToken,\ \textcolor{keyword}{const}\ int64\ InExpiresAt)}
+\DoxyCodeLine{00287\ \ \ \ \ \{}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container_a5e4344489d47b682225dd27a00010f49}{RefreshToken}}\ =\ InRefreshToken;}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container_aaca7e4d889cc80abd3d9b6c4ce861244}{ExpiresAt}}\ =\ InExpiresAt;}
+\DoxyCodeLine{00290\ \ \ \ \ \}}
+\DoxyCodeLine{00291\ \};}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00296\ UENUM(BlueprintType)}
+\DoxyCodeLine{00297\ enum\ class\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a356d2020d7ee12491a237a2afaf32557}{EJWNU\_HostGetResult}}\ :\ uint8}
+\DoxyCodeLine{00298\ \{}
+\DoxyCodeLine{00299\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293aceaa0734f0b3c738120c67344d8f3ec1}{Fail}}\ =\ 0,}
+\DoxyCodeLine{00300\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293a505a83f220c02df2f85c3810cd9ceb38}{Success}}\ =\ 1,}
+\DoxyCodeLine{00301\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293ace2c8aed9c2fa0cfbed56cbda4d8bf07}{Empty}}\ =\ 2,\ \ }
+\DoxyCodeLine{00302\ \};}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00307\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00308\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request}{FJWNU\_PendingApiRequest}}}
+\DoxyCodeLine{00309\ \{}
+\DoxyCodeLine{00310\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a2d0e9351a5b803383baddfaf9be774a6}{ServiceType}};}
+\DoxyCodeLine{00313\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_aeb2f69ecbbd3db912cc8fce070f413e3}{Method}};}
+\DoxyCodeLine{00314\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a9d49bd8c3c1287d9fa5b1b1013ee0ec3}{URL}};}
+\DoxyCodeLine{00315\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_aee20d6e99ba684cd8fcad1c83f8d42cf}{ContentBody}};}
+\DoxyCodeLine{00316\ \ \ \ \ TMap<\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}},\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}>\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request_a545102d7088780cfe907856ece9b504f}{QueryParams}};}
+\DoxyCodeLine{00317\ \};}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00323\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00324\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job}{FJWNU\_PendingJob}}}
+\DoxyCodeLine{00325\ \{}
+\DoxyCodeLine{00326\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00327\ \ \ \ \ }
+\DoxyCodeLine{00328\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request}{FJWNU\_PendingApiRequest}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d}{RequestInfo}};}
+\DoxyCodeLine{00329\ \ \ \ \ TFunction<\textcolor{keywordtype}{void}(const\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ \textcolor{comment}{/*NewAccessToken*/})>\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_ac4ac735c892da6688d268258c022e004}{OnTokenReady}};}
+\DoxyCodeLine{00330\ \ \ \ \ TFunction<\textcolor{keywordtype}{void}(const\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ \textcolor{comment}{/*ErrorCode*/},\ const\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ \textcolor{comment}{/*ErrorMessage*/})>\ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a982f5abf4fd1f47274377a8926e633ab}{OnTokenFailed}};}
+\DoxyCodeLine{00331\ \};}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00336\ UENUM(BlueprintType)}
+\DoxyCodeLine{00337\ enum\ class\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a58ffe65028c682b6dbdf45320526270f}{EJWNU\_ConvertJsonToStructResult}}\ :\ uint8}
+\DoxyCodeLine{00338\ \{}
+\DoxyCodeLine{00339\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293a505a83f220c02df2f85c3810cd9ceb38}{Success}}\ =\ 0,}
+\DoxyCodeLine{00340\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293aceaa0734f0b3c738120c67344d8f3ec1}{Fail}}\ =\ 1,}
+\DoxyCodeLine{00341\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a58ffe65028c682b6dbdf45320526270fac52ce04d8d92790ec01705b9a20ddaa4}{InvalidJSON}}\ =\ 2,}
+\DoxyCodeLine{00342\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a58ffe65028c682b6dbdf45320526270fac8b77721c677e0429241a9250972122d}{NoMatch}}\ =\ 3,}
+\DoxyCodeLine{00343\ \};}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00348\ UENUM(BlueprintType)}
+\DoxyCodeLine{00349\ enum\ class\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a76c12a528e508c2e3cf77330be9ff437}{EJWNU\_ConvertStructToJsonResult}}\ :\ uint8}
+\DoxyCodeLine{00350\ \{}
+\DoxyCodeLine{00351\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293a505a83f220c02df2f85c3810cd9ceb38}{Success}}\ =\ 0,}
+\DoxyCodeLine{00352\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293aceaa0734f0b3c738120c67344d8f3ec1}{Fail}}\ =\ 1,}
+\DoxyCodeLine{00353\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a58ffe65028c682b6dbdf45320526270fac8b77721c677e0429241a9250972122d}{NoMatch}}\ =\ 2,}
+\DoxyCodeLine{00354\ \};}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \textcolor{comment}{//\ ====================\ API\ Request\ \&\ Response\ ====================x}}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00361\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00362\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_register_send_code}{FJWNU\_REQ\_AuthRegisterSendCode}}}
+\DoxyCodeLine{00363\ \{}
+\DoxyCodeLine{00364\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00365\ \ \ \ \ }
+\DoxyCodeLine{00366\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00367\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_register_send_code_a89b4bf711557392c6e5012fe6c837c63}{Email}};}
+\DoxyCodeLine{00368\ \};}
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00373\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00374\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_register_verify_code}{FJWNU\_REQ\_AuthRegisterVerifyCode}}}
+\DoxyCodeLine{00375\ \{}
+\DoxyCodeLine{00376\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00377\ \ \ \ \ }
+\DoxyCodeLine{00378\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00379\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_register_verify_code_aa0412e33d7c7f468baea656d048af48c}{Email}};}
+\DoxyCodeLine{00380\ \ \ \ \ }
+\DoxyCodeLine{00381\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00382\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_register_verify_code_a5bd4529507dad3fd47fa4bfa0d9799ea}{Code}};}
+\DoxyCodeLine{00383\ \};}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00388\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00389\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_register}{FJWNU\_REQ\_AuthRegister}}}
+\DoxyCodeLine{00390\ \{}
+\DoxyCodeLine{00391\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00392\ \ \ \ \ }
+\DoxyCodeLine{00393\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00394\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_register_acc2fbe2ab2b22f6cf312218329c7366b}{Email}};}
+\DoxyCodeLine{00395\ \ \ \ \ }
+\DoxyCodeLine{00396\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00397\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_register_a66ec1b3d7c1cf3c4a4a60aa618b9d54e}{Password}};}
+\DoxyCodeLine{00398\ \ \ \ \ }
+\DoxyCodeLine{00399\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00400\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_register_ae2c3ba7d30c9abc619d66d4cd271ff7b}{Code}};}
+\DoxyCodeLine{00401\ \};}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00406\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00407\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_login}{FJWNU\_REQ\_AuthLogin}}}
+\DoxyCodeLine{00408\ \{}
+\DoxyCodeLine{00409\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00410\ \ \ \ \ }
+\DoxyCodeLine{00411\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00412\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_login_adffaf27639a3d05763328de0437cec0b}{Email}};}
+\DoxyCodeLine{00413\ \ \ \ \ }
+\DoxyCodeLine{00414\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite)}
+\DoxyCodeLine{00415\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_q___auth_login_a13e80c6887c574cc9b9185493676be26}{Password}};}
+\DoxyCodeLine{00416\ \};}
+\DoxyCodeLine{00417\ }
+\DoxyCodeLine{00421\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00422\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___base_aa06110b2620d3405cd281b3f0f5a897e}{FJWNU\_RES\_Base}}}
+\DoxyCodeLine{00423\ \{}
+\DoxyCodeLine{00424\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00425\ }
+\DoxyCodeLine{00426\ \ \ \ \ }
+\DoxyCodeLine{00429\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ Category=\textcolor{stringliteral}{"{}API\ Response"{}})}
+\DoxyCodeLine{00430\ \ \ \ \ bool\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___base_a07dab4e1c5185c4ef66231b05f2d1f45}{Success}};}
+\DoxyCodeLine{00431\ }
+\DoxyCodeLine{00435\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ Category=\textcolor{stringliteral}{"{}API\ Response"{}})}
+\DoxyCodeLine{00436\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___base_af3ab014f1a6f7b3f914d244536db97bb}{Code}};}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00441\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ Category=\textcolor{stringliteral}{"{}API\ Response"{}})}
+\DoxyCodeLine{00442\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___base_a6dfc1cd9a035fbb924fca5c2acac44ef}{Message}};}
+\DoxyCodeLine{00443\ }
+\DoxyCodeLine{00447\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___base_aa06110b2620d3405cd281b3f0f5a897e}{FJWNU\_RES\_Base}}()}
+\DoxyCodeLine{00448\ \ \ \ \ \{}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___base_a07dab4e1c5185c4ef66231b05f2d1f45}{Success}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___base_af3ab014f1a6f7b3f914d244536db97bb}{Code}}\ =\ TEXT(\textcolor{stringliteral}{"{}UNKNOWN\_ERROR"{}});}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___base_a6dfc1cd9a035fbb924fca5c2acac44ef}{Message}}\ =\ TEXT(\textcolor{stringliteral}{"{}There\ is\ an\ Unknown\ Error"{}});}
+\DoxyCodeLine{00452\ \ \ \ \ \}}
+\DoxyCodeLine{00453\ \};}
+\DoxyCodeLine{00454\ }
+\DoxyCodeLine{00458\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00459\ struct\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_adbedcaa6051b1fa5b3ad561be9b615b3}{FJWNU\_RES\_AuthRefresh}}\ :\ public\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___base_aa06110b2620d3405cd281b3f0f5a897e}{FJWNU\_RES\_Base}}}
+\DoxyCodeLine{00460\ \{}
+\DoxyCodeLine{00461\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ \ \ \ \ }
+\DoxyCodeLine{00466\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ Category=\textcolor{stringliteral}{"{}API\ Response"{}})}
+\DoxyCodeLine{00467\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_a5b134ce9b9b5b3045dda771736eac8e3}{AccessToken}};}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00472\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ Category=\textcolor{stringliteral}{"{}API\ Response"{}})}
+\DoxyCodeLine{00473\ \ \ \ \ int64\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_ad825c8242b8ca03afbd28ad011b414f7}{ExpiresAt}};}
+\DoxyCodeLine{00474\ \ \ \ \ }
+\DoxyCodeLine{00478\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ Category=\textcolor{stringliteral}{"{}API\ Response"{}})}
+\DoxyCodeLine{00479\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_a048564b3c0ebc5c22c1bdf9b661657ca}{RefreshToken}};}
+\DoxyCodeLine{00480\ }
+\DoxyCodeLine{00484\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ Category=\textcolor{stringliteral}{"{}API\ Response"{}})}
+\DoxyCodeLine{00485\ \ \ \ \ int64\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_a3d1dcca4532b9606decb229b5d9dea6d}{RefreshTokenExpiresAt}};}
+\DoxyCodeLine{00486\ }
+\DoxyCodeLine{00490\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ Category=\textcolor{stringliteral}{"{}API\ Response"{}})}
+\DoxyCodeLine{00491\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_a5b1300029e1e6d20049d4c4634e679f0}{UserId}};}
+\DoxyCodeLine{00492\ }
+\DoxyCodeLine{00496\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_adbedcaa6051b1fa5b3ad561be9b615b3}{FJWNU\_RES\_AuthRefresh}}()}
+\DoxyCodeLine{00497\ \ \ \ \ \{}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_a5b134ce9b9b5b3045dda771736eac8e3}{AccessToken}}\ =\ TEXT(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_ad825c8242b8ca03afbd28ad011b414f7}{ExpiresAt}}\ =\ 0;}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_a048564b3c0ebc5c22c1bdf9b661657ca}{RefreshToken}}\ =\ TEXT(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_a3d1dcca4532b9606decb229b5d9dea6d}{RefreshTokenExpiresAt}}\ =\ 0;}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___r_e_s___auth_refresh_a5b1300029e1e6d20049d4c4634e679f0}{UserId}}\ =\ TEXT(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00503\ \ \ \ \ \}}
+\DoxyCodeLine{00504\ \};}
+\DoxyCodeLine{00505\ }
+
+\end{DoxyCode}

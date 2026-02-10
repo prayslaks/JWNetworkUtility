@@ -8,7 +8,10 @@
 #include "JWNU_HttpRequestJob.h"
 #include "JWNU_GIS_HttpRequestJobProcessor.generated.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogJWNU_GIS_HttpRequestJobProcessor, Log, All);
+/**
+ * 클래스 전용의 로그 카테고리 선언
+ */
+JWNETWORKUTILITY_API DECLARE_LOG_CATEGORY_EXTERN(LogJWNU_GIS_HttpRequestJobProcessor, Log, All);
 
 /**
  * HTTP 요청 Job을 관리하는 서브시스템.
@@ -21,6 +24,7 @@ class JWNETWORKUTILITY_API UJWNU_GIS_HttpRequestJobProcessor : public UGameInsta
 	GENERATED_BODY()
 
 public:
+	
 	/**
 	 * HTTP 요청 Job을 생성하고 실행하는 함수.
 	 * @param InMethod HTTP 메서드
@@ -41,6 +45,7 @@ public:
 		const FOnHttpRequestJobCompletedDelegate& OnHttpRequestJobCompleted);
 
 private:
+	
 	/**
 	 * 기본 URL에 쿼리 패리미터를 조합해서 최종 URL을 구축하는 함수.
 	 * @param BaseURL 리퀘스트를 보낼 기본 URL
@@ -48,4 +53,5 @@ private:
 	 * @return 쿼리 패러미터까지 조합된 최종 URL.
 	 */
 	static FString BuildURL(const FString& BaseURL, const TMap<FString, FString>& QueryParams);
+	
 };

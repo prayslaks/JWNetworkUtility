@@ -20,7 +20,7 @@ void UJWNU_GIS_HttpRequestJobProcessor::ProcessHttpRequestJob(
 	UJWNU_HttpRequestJob* RequestJob = NewObject<UJWNU_HttpRequestJob>(this);
 
 	// GET 메서드에 바디가 달려오는 상황은 표준에서 벗어나있다
-	if (InMethod == EJWNU_HttpMethod::GET && !InContentBody.IsEmpty())
+	if (InMethod == EJWNU_HttpMethod::Get && !InContentBody.IsEmpty())
 	{
 		PRINT_LOG(LogJWNU_GIS_HttpRequestJobProcessor, Warning, TEXT("HTTP 표준 위반, GET 메서드에 Body를 넣으려는 시도..."))
 	}

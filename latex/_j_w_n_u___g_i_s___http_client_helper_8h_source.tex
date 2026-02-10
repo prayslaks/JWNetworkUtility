@@ -1,0 +1,74 @@
+\doxysection{JWNU\+\_\+\+GIS\+\_\+\+Http\+Client\+Helper.\+h}
+\hypertarget{_j_w_n_u___g_i_s___http_client_helper_8h_source}{}\label{_j_w_n_u___g_i_s___http_client_helper_8h_source}\index{Source/JWNetworkUtility/Public/JWNU\_GIS\_HttpClientHelper.h@{Source/JWNetworkUtility/Public/JWNU\_GIS\_HttpClientHelper.h}}
+\doxymbox{\hyperlink{_j_w_n_u___g_i_s___http_client_helper_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2026\ Prayslaks.\ All\ rights\ reserved.\ Unauthorized\ copying,\ modification,\ or\ distribution\ of\ this\ file,\ via\ any\ medium\ is\ strictly\ prohibited.\ Proprietary\ and\ confidential.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_types_8h}{JWNetworkUtilityTypes.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h}{JWNetworkUtilityDelegates.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}JWNU\_GIS\_HttpClientHelper.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00014\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{_j_w_n_u___g_i_s___http_client_helper_8h_a9af50795df634d180c79925bf6d1ea19}{DECLARE\_LOG\_CATEGORY\_EXTERN}}(LogJWNU\_GIS\_HttpClientHelper,\ Log,\ All);}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00020\ UCLASS(Config=\doxymbox{\hyperlink{class_j_w_network_utility}{JWNetworkUtility}})}
+\DoxyCodeLine{00021\ class\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___http_client_helper}{UJWNU\_GIS\_HttpClientHelper}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00024\ \ \ \ \ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00026\ \ \ \ \ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___http_client_helper_a3482ca2dbc2da3b481b2c35b07e7eada}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00028\ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{static}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___http_client_helper}{UJWNU\_GIS\_HttpClientHelper}}*\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3ac55582518cba2c464f29f5bae1c68def}{Get}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject);}
+\DoxyCodeLine{00035\ \ \ \ \ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___http_client_helper_ab1edbe508f94041bdeb6bbf933e7b9af}{SendReqeust\_RawResponse}}(}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ UObject*\ WorldContextObject,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InURL,\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InAuthToken,\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FOnHttpRequestCompletedDelegate\&\ InOnHttpResponse);}
+\DoxyCodeLine{00054\ \ \ \ \ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___http_client_helper_a32e71dee89ca6e2ee9c23a4b34d55fd1}{SendReqeust\_CustomResponse}}(}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ UObject*\ WorldContextObject,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InURL,\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InAuthToken,\ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FOnHttpRequestCompletedDelegate\&\ InOnHttpResponse);}
+\DoxyCodeLine{00073\ \ \ \ \ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00075\ \ \ \ \ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___http_client_helper_ab1edbe508f94041bdeb6bbf933e7b9af}{SendReqeust\_RawResponse}}(}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InURL,\ }
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InAuthToken,\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FOnHttpRequestCompletedDelegate\&\ InOnHttpResponse);}
+\DoxyCodeLine{00092\ \ \ \ \ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___http_client_helper_a32e71dee89ca6e2ee9c23a4b34d55fd1}{SendReqeust\_CustomResponse}}(}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,\ }
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InURL,\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InAuthToken,\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TMap<FString,\ FString>\&\ InQueryParams,\ }
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FOnHttpRequestCompletedDelegate\&\ InOnHttpResponse);}
+\DoxyCodeLine{00109\ \ \ \ \ }
+\DoxyCodeLine{00113\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00114\ \ \ \ \ TMap<int32,\ FString>\ StatusCodeToCustomCodeMap;}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00119\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00120\ \ \ \ \ TMap<int32,\ FString>\ StatusCodeToCustomMessageMap;}
+\DoxyCodeLine{00121\ \ \ \ \ }
+\DoxyCodeLine{00125\ \ \ \ \ UPROPERTY(Config)}
+\DoxyCodeLine{00126\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config}{FJWNU\_RequestConfig}}\ DefaultRequestConfig;}
+\DoxyCodeLine{00127\ \};}
+
+\end{DoxyCode}

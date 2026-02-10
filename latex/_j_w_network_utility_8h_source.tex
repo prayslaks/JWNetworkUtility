@@ -1,0 +1,101 @@
+\doxysection{JWNetwork\+Utility.\+h}
+\hypertarget{_j_w_network_utility_8h_source}{}\label{_j_w_network_utility_8h_source}\index{Source/JWNetworkUtility/Public/JWNetworkUtility.h@{Source/JWNetworkUtility/Public/JWNetworkUtility.h}}
+\doxymbox{\hyperlink{_j_w_network_utility_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2026\ Prayslaks.\ All\ rights\ reserved.\ Unauthorized\ copying,\ modification,\ or\ distribution\ of\ this\ file,\ via\ any\ medium\ is\ strictly\ prohibited.\ Proprietary\ and\ confidential.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Modules/ModuleManager.h"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_f_j_w_network_utility_module}{FJWNetworkUtilityModule}}\ :\ \textcolor{keyword}{public}\ IModuleInterface}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_f_j_w_network_utility_module_ab4abfa01384eefa5cea4857ac855af8f}{StartupModule}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_f_j_w_network_utility_module_a2d3bc6cab5a92a3d28e17f6de75539dd}{ShutdownModule}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00014\ \};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ 디버깅\ 로그\ 카테고리\ 선언}}
+\DoxyCodeLine{00017\ \doxymbox{\hyperlink{_j_w_network_utility_8h_ad7add59ce11f2ceacc2faa2303652132}{DECLARE\_LOG\_CATEGORY\_EXTERN}}(JWLog,\ Log,\ All);}
+\DoxyCodeLine{00018\ \doxymbox{\hyperlink{_j_w_network_utility_8h_ad7add59ce11f2ceacc2faa2303652132}{DECLARE\_LOG\_CATEGORY\_EXTERN}}(JWLogWall,\ Log,\ All);}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ CALL\_INFO\ (FString(\_\_FUNCTION\_\_)\ +\ TEXT("{}("{})\ +\ FString::FromInt(\_\_LINE\_\_)\ +\ TEXT("{})"{}))}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ PRINT\_LOG(cat,\ ver,\ fmt,\ ...)\ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\{\ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{const\ FString\ \_\_LogMessage\_\_\ =\ FString::Printf(fmt,\ \#\#\_\_VA\_ARGS\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{const\ FString\ \_\_FullMessage\_\_\ =\ FString::Printf(TEXT("{}\%s\ :\ \%s"{}),\ *CALL\_INFO,\ *\_\_LogMessage\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{UE\_LOG(cat,\ ver,\ TEXT("{}\%s"{}),\ *\_\_FullMessage\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#pragma\ region\ ScreenDebugger}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{extern}\ JWNETWORKUTILITY\_API\ TAutoConsoleVariable<bool>\ \doxymbox{\hyperlink{_j_w_network_utility_8h_a946c456139399b02a556af75b3998249}{CVarJWNU\_DebugScreen}};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ JWNU\_SCREEN\_DEBUG(Key,\ Duration,\ Color,\ fmt,\ ...)\ \(\backslash\)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\{\ \(\backslash\)}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\ \ \ \ if\ (CVarJWNU\_DebugScreen.GetValueOnGameThread()\ \&\&\ GEngine)\ \(\backslash\)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ const\ FString\ \_\_ScreenMsg\_\_\ =\ FString::Printf(fmt,\ \#\#\_\_VA\_ARGS\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ GEngine-\/>AddOnScreenDebugMessage(Key,\ Duration,\ Color,\ \_\_ScreenMsg\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#pragma\ endregion\ ScreenDebugger}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#pragma\ region\ NetLogger}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{//\ 네트워크\ 디버깅\ 로그\ 카테고리\ 선언}}
+\DoxyCodeLine{00067\ \doxymbox{\hyperlink{_j_w_network_utility_8h_ad7add59ce11f2ceacc2faa2303652132}{DECLARE\_LOG\_CATEGORY\_EXTERN}}(JWNetLog,\ Log,\ All);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{//\ 네트워크\ 정보를\ 문자열로}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#define\ NET\_MODE\_INFO\ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{((GetNetMode()\ ==\ NM\_Client)\ ?\ *FString::Printf(TEXT("{}[CLIENT\ \%d]"{}),\ UE::GetPlayInEditorID())\ \(\backslash\)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{:\ ((GetNetMode()\ ==\ ENetMode::NM\_Standalone)\ ?\ TEXT("{}[STANDALONE]"{})\ :\ TEXT("{}[SERVER]"{})))}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{//\ 간단한\ 디버깅용\ 호출\ 위치\ 로그}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#define\ PRINT\_NET\_INFO()\ UE\_LOG(JWNetLog,\ Display,\ TEXT("{}[\%s]\ \%s"{}),\ NET\_MODE\_INFO,\ *CALL\_INFO)}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{comment}{//\ 로그\ +\ 파일\ 출력}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#define\ PRINT\_NET\_LOG(fmt,\ ...)\ \(\backslash\)}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\{\ \(\backslash\)}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{const\ FString\ \_\_NetMessage\_\_\ =\ FString(NET\_MODE\_INFO);\ \(\backslash\)}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{const\ FString\ \_\_LogMessage\_\_\ =\ FString::Printf(fmt,\ \#\#\_\_VA\_ARGS\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{const\ FString\ \_\_FullMessage\_\_\ =\ FString::Printf(TEXT("{}[\%s]\ \%s\ :\ \%s"{}),\ *\_\_NetMessage\_\_,\ *CALL\_INFO,\ *\_\_LogMessage\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{UE\_LOG(JWNetLog,\ Display,\ TEXT("{}\%s"{}),\ *\_\_FullMessage\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#pragma\ endregion\ NetLogger}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#pragma\ region\ ScopeWallLogger}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{comment}{//\ 범위\ 로그\ 벽의\ 총\ 길이를\ 설정}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#define\ LOG\_WALL\_WIDTH\ 60}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_f_scope_wall_logger_adadf7c8410a4ce597f693a40938b61cf}{FScopeWallLogger}}}
+\DoxyCodeLine{00094\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{struct_f_scope_wall_logger_a3e915524198a7dd2f54f8516139fff96}{FunctionName}};}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keyword}{explicit}\ \doxymbox{\hyperlink{struct_f_scope_wall_logger_adadf7c8410a4ce597f693a40938b61cf}{FScopeWallLogger}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ InFuncName)\ :\ \doxymbox{\hyperlink{struct_f_scope_wall_logger_a3e915524198a7dd2f54f8516139fff96}{FunctionName}}(InFuncName)}
+\DoxyCodeLine{00097\ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ TextLen\ =\ \doxymbox{\hyperlink{struct_f_scope_wall_logger_a3e915524198a7dd2f54f8516139fff96}{FunctionName}}.Len()\ +\ 6;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ SideLen\ =\ FMath::Max(0,\ (\doxymbox{\hyperlink{_j_w_network_utility_8h_a426396fa906e744ccbf893bc7ca52140}{LOG\_WALL\_WIDTH}}\ -\/\ TextLen)\ /\ 2);}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ Padding\ =\ FString::ChrN(SideLen,\ \textcolor{charliteral}{'='});}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ UE\_LOG(JWLogWall,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}\%s\ <\ \%s\ >\ \%s"{}}),\ *Padding,\ *\doxymbox{\hyperlink{struct_f_scope_wall_logger_a3e915524198a7dd2f54f8516139fff96}{FunctionName}},\ *Padding);}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ UE\_LOG(JWLogWall,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}"{}}));}
+\DoxyCodeLine{00103\ \ \ \ \ \}}
+\DoxyCodeLine{00104\ \ \ \ \ \doxymbox{\hyperlink{struct_f_scope_wall_logger_a27a74cca4a1e1827aec469c29cdb2d36}{\string~FScopeWallLogger}}()}
+\DoxyCodeLine{00105\ \ \ \ \ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 함수가\ 끝날\ 때(Scope를\ 벗어날\ 때)\ 자동\ 호출}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ UE\_LOG(JWLogWall,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}"{}}));}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ Padding\ =\ FString::ChrN(\doxymbox{\hyperlink{_j_w_network_utility_8h_a426396fa906e744ccbf893bc7ca52140}{LOG\_WALL\_WIDTH}},\ \textcolor{charliteral}{'='});}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ UE\_LOG(JWLogWall,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}\%s"{}}),\ *Padding);}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ \};}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{comment}{//\ 매크로\ 정의}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#define\ SCOPE\_WALL()\ FScopeWallLogger\ WallLogger(\_\_FUNCTION\_\_);}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#pragma\ endregion\ ScopeWallLogger}}
+
+\end{DoxyCode}

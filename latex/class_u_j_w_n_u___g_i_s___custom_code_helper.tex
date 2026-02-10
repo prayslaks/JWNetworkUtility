@@ -1,0 +1,55 @@
+\doxysection{UJWNU\+\_\+\+GIS\+\_\+\+Custom\+Code\+Helper Class Reference}
+\hypertarget{class_u_j_w_n_u___g_i_s___custom_code_helper}{}\label{class_u_j_w_n_u___g_i_s___custom_code_helper}\index{UJWNU\_GIS\_CustomCodeHelper@{UJWNU\_GIS\_CustomCodeHelper}}
+
+
+{\ttfamily \+\#include $<$JWNU\+\_\+\+GIS\+\_\+\+Custom\+Code\+Helper.\+h$>$}
+
+
+
+Inheritance diagram for UJWNU\+\_\+\+GIS\+\_\+\+Custom\+Code\+Helper:\+
+% FIG 0
+
+
+Collaboration diagram for UJWNU\+\_\+\+GIS\+\_\+\+Custom\+Code\+Helper:\+
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___custom_code_helper_ad8ee0a716359831e635c34a60f95569e}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+FText \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___custom_code_helper_a331a4e64fbef18b7e4bfc06407c60b8a}{Get\+Translated\+Text\+From\+Response\+Code}} (const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&Custom\+Code) const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+커스텀 코드를 게임인스턴스 서브시스템 헬퍼 클래스. 
+
+\label{doc-func-members}
+\Hypertarget{class_u_j_w_n_u___g_i_s___custom_code_helper_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_j_w_n_u___g_i_s___custom_code_helper_a331a4e64fbef18b7e4bfc06407c60b8a}\index{UJWNU\_GIS\_CustomCodeHelper@{UJWNU\_GIS\_CustomCodeHelper}!GetTranslatedTextFromResponseCode@{GetTranslatedTextFromResponseCode}}
+\index{GetTranslatedTextFromResponseCode@{GetTranslatedTextFromResponseCode}!UJWNU\_GIS\_CustomCodeHelper@{UJWNU\_GIS\_CustomCodeHelper}}
+\doxysubsubsection{\texorpdfstring{GetTranslatedTextFromResponseCode()}{GetTranslatedTextFromResponseCode()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___g_i_s___custom_code_helper_a331a4e64fbef18b7e4bfc06407c60b8a} 
+FText UJWNU\+\_\+\+GIS\+\_\+\+Custom\+Code\+Helper::\+\+Get\+Translated\+Text\+From\+Response\+Code (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{Custom\+Code}{}\end{DoxyParamCaption}) const}
+
+주어진 커스텀 코드에 대해 번역된 텍스트를 반환하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em Custom\+Code} & MVE API 리스폰스에서 파싱해서 얻는 코드 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+LOCTEXT에 의해 로컬라이징된 FText. 코드와 매핑되는 값이 없다면 기본값 
+\end{DoxyReturn}
+\Hypertarget{class_u_j_w_n_u___g_i_s___custom_code_helper_ad8ee0a716359831e635c34a60f95569e}\index{UJWNU\_GIS\_CustomCodeHelper@{UJWNU\_GIS\_CustomCodeHelper}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!UJWNU\_GIS\_CustomCodeHelper@{UJWNU\_GIS\_CustomCodeHelper}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___g_i_s___custom_code_helper_ad8ee0a716359831e635c34a60f95569e} 
+void UJWNU\+\_\+\+GIS\+\_\+\+Custom\+Code\+Helper::\+\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+Source/\+\+JWNetwork\+Utility/\+\+Public/\+\doxymbox{\hyperlink{_j_w_n_u___g_i_s___custom_code_helper_8h}{JWNU\+\_\+\+GIS\+\_\+\+Custom\+Code\+Helper.\+h}}\item 
+Source/\+\+JWNetwork\+Utility/\+\+Private/\+\doxymbox{\hyperlink{_j_w_n_u___g_i_s___custom_code_helper_8cpp}{JWNU\+\_\+\+GIS\+\_\+\+Custom\+Code\+Helper.\+cpp}}\end{DoxyCompactItemize}

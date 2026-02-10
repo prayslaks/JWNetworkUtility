@@ -21,5 +21,11 @@ FileOpenOrder/
 .DS_Store
 Thumbs.db
 
+#--- 환경 변수 ---
+TestServer/.env
+
 #--- 플러그인 전용 (필요 시 주석 해제) ---
 # Resources/ 폴더 내 아이콘 외의 임시 생성 데이터가 있다면 추가
+.claude
+CLAUDE.md
+Doxyfile

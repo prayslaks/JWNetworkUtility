@@ -1,0 +1,83 @@
+\doxysection{JWNU\+\_\+\+BFL\+\_\+\+Auth\+Widget.\+h}
+\hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_source}{}\label{_j_w_n_u___b_f_l___auth_widget_8h_source}\index{Source/JWNetworkUtilityTest/Public/JWNU\_BFL\_AuthWidget.h@{Source/JWNetworkUtilityTest/Public/JWNU\_BFL\_AuthWidget.h}}
+\doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2026\ Prayslaks.\ All\ rights\ reserved.\ Unauthorized\ copying,\ modification,\ or\ distribution\ of\ this\ file,\ via\ any\ medium\ is\ strictly\ prohibited.\ Proprietary\ and\ confidential.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Kismet/BlueprintFunctionLibrary.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}JWNU\_BFL\_AuthWidget.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ UENUM(BlueprintType)}
+\DoxyCodeLine{00010\ enum\ class\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752}{EJWNU\_RegisterEmailValidation}}\ :\ uint8}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a5266371003025f1e0426edea2f3e5aed}{Satisfied}},}
+\DoxyCodeLine{00013\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}}}
+\DoxyCodeLine{00014\ \};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ UENUM(BlueprintType)}
+\DoxyCodeLine{00017\ enum\ class\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5}{EJWNU\_RegisterFirstPasswordValidation}}\ :\ uint8}
+\DoxyCodeLine{00018\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}},}
+\DoxyCodeLine{00020\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a5266371003025f1e0426edea2f3e5aed}{Satisfied}},}
+\DoxyCodeLine{00021\ \};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ UENUM(BlueprintType)}
+\DoxyCodeLine{00024\ enum\ class\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8}{EJWNU\_RegisterSecondPasswordValidation}}\ :\ uint8}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8ada648f229f644b5a6d8500fcc005cb41}{FirstPasswordEmpty}},}
+\DoxyCodeLine{00027\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}},}
+\DoxyCodeLine{00028\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a5266371003025f1e0426edea2f3e5aed}{Satisfied}},}
+\DoxyCodeLine{00029\ \};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ UENUM(BlueprintType)}
+\DoxyCodeLine{00032\ enum\ class\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dd}{EJWNU\_LoginEmailValidation}}\ :\ uint8}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a5266371003025f1e0426edea2f3e5aed}{Satisfied}},}
+\DoxyCodeLine{00035\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}}}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ UENUM(BlueprintType)}
+\DoxyCodeLine{00039\ enum\ class\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8a}{EJWNU\_LoginPasswordValidation}}\ :\ uint8}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a5266371003025f1e0426edea2f3e5aed}{Satisfied}},}
+\DoxyCodeLine{00042\ \ \ \ \ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}}}
+\DoxyCodeLine{00043\ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ UCLASS(Config=\doxymbox{\hyperlink{class_j_w_network_utility}{JWNetworkUtility}})}
+\DoxyCodeLine{00046\ class\ JWNETWORKUTILITYTEST\_API\ \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___auth_widget}{UJWNU\_BFL\_AuthWidget}}\ :\ public\ UBlueprintFunctionLibrary}
+\DoxyCodeLine{00047\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00051\ \ \ \ \ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Register\ -\/-\/-\/}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}JWNU|AuthWidget|Register"{}})}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___auth_widget_a4a171f696fbf3da5f26b1d31d0906028}{OnRegisterEmailTextBoxChanged}}(\textcolor{keyword}{const}\ FText\&\ Input,\ FText\&\ OutProcessed,\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752}{EJWNU\_RegisterEmailValidation}}\&\ OutResult);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}JWNU|AuthWidget|Register"{}})}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___auth_widget_ab07015ddd9586abd7949855ce546ccbd}{OnRegisterCodeTextBoxChanged}}(\textcolor{keyword}{const}\ FText\&\ Input,\ FText\&\ OutProcessed,\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752}{EJWNU\_RegisterEmailValidation}}\&\ OutResult);}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}JWNU|AuthWidget|Register"{}})}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___auth_widget_afda7ebed3a89a8e0acd1ad7f3e880480}{OnRegisterPasswordFirstTextBoxChanged}}(\textcolor{keyword}{const}\ FText\&\ Input,\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5}{EJWNU\_RegisterFirstPasswordValidation}}\&\ OutResult);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}JWNU|AuthWidget|Register"{}})}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___auth_widget_acfee227cdd9382b41eb88c2d722c72f6}{OnRegisterPasswordSecondTextBoxChanged}}(\textcolor{keyword}{const}\ FText\&\ Input,\ \textcolor{keyword}{const}\ FText\&\ FirstPassword,\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8}{EJWNU\_RegisterSecondPasswordValidation}}\&\ OutResult);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Login\ -\/-\/-\/}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}JWNU|AuthWidget|Login"{}})}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___auth_widget_a1153caf6392de860b67fe2d4e83d11f7}{OnLoginEmailTextBoxChanged}}(\textcolor{keyword}{const}\ FText\&\ Input,\ FText\&\ OutProcessed,\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dd}{EJWNU\_LoginEmailValidation}}\&\ OutResult);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}JWNU|AuthWidget|Login"{}})}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___auth_widget_aa605e70d86303d8a4c20adfb45e0d623}{OnLoginPasswordTextBoxChanged}}(\textcolor{keyword}{const}\ FText\&\ Input,\ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8a}{EJWNU\_LoginPasswordValidation}}\&\ OutResult);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00075\ \ \ \ \ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ IsPasswordFormatValid(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ Password);}
+\DoxyCodeLine{00077\ \};}
+
+\end{DoxyCode}

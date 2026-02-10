@@ -3,25 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "JWNetworkUtilityTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "JWNU_GIS_ApiTokenProvider.h"
 #include "JWNU_GIS_ApiHostProvider.generated.h"
 
 /**
  * 클래스 전용의 로그 카테고리 선언
  */
-DECLARE_LOG_CATEGORY_EXTERN(LogJWNU_GIS_ApiHostProvider, Log, All);
-
-/**
- * JWNU_GIS_ApiHostProvider에서 호스트 획득 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다.
- */
-UENUM(BlueprintType)
-enum class EJWNU_HostExtractionResult : uint8
-{
-	Fail = 0,
-	Success = 1,
-	Empty = 2,	
-};
+JWNETWORKUTILITY_API DECLARE_LOG_CATEGORY_EXTERN(LogJWNU_GIS_ApiHostProvider, Log, All);
 
 /**
  * DefaultJWNetworkUtility.ini 설정값을 CPP와 블루프린트로 읽을 수 있도록 돕는 게임인스턴스 서브시스템.
@@ -54,12 +43,12 @@ public:
 	/**
 	 * 서비스 타입에 매핑된 호스트를 반환하는 함수. (For Blueprint)
 	 * @param InServiceType 조회할 서비스 타입
-	 * @param OutHostExtractionResult
+	 * @param OutHostGetResult
 	 * @param OutHost API 서버 호스트 주소
 	 * @return 호스트 URL (매핑이 없으면 빈 문자열)
 	 */
 	UFUNCTION(BlueprintCallable, Category="JWNetworkUtiltiy|Configuration")
-	bool GetHost(const EJWNU_ServiceType InServiceType, EJWNU_HostExtractionResult& OutHostExtractionResult, FString& OutHost) const;
+	bool GetHost(const EJWNU_ServiceType InServiceType, EJWNU_HostGetResult& OutHostGetResult, FString& OutHost) const;
 
 protected:
 

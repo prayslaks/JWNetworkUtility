@@ -1,0 +1,114 @@
+\doxysection{UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider Class Reference}
+\hypertarget{class_u_j_w_n_u___g_i_s___api_host_provider}{}\label{class_u_j_w_n_u___g_i_s___api_host_provider}\index{UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}}
+
+
+{\ttfamily \+\#include $<$JWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider.\+h$>$}
+
+
+
+Inheritance diagram for UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider:\+
+% FIG 0
+
+
+Collaboration diagram for UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider:\+
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_abb1cf50beaa0c39ef9ac717372cb4d9e}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+bool \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_a9aad515ab6ea0ab78f8d7de32ac91de1}{Get\+Host}} (const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}} In\+Service\+Type, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&Out\+Host) const
+\item 
+bool \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_ad1b414a338c8493a42872bfba946fb66}{Get\+Host}} (const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}} In\+Service\+Type, \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a356d2020d7ee12491a237a2afaf32557}{EJWNU\+\_\+\+Host\+Get\+Result}} \&Out\+Host\+Get\+Result, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&Out\+Host) const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider}{UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_ad551b22e5d68599f5a7166fceadd04d3}{Get}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+TMap$<$ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} $>$ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider_a46d0b76e7bba486a63cd08a234ebe788}{Service\+Type\+To\+Host\+Map}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Default\+JWNetwork\+Utility.\+ini 설정값을 CPP와 블루프린트로 읽을 수 있도록 돕는 게임인스턴스 서브시스템. 서비스 타입별로 다른 호스트 URL을 TMap으로 관리한다. 
+
+\label{doc-func-members}
+\Hypertarget{class_u_j_w_n_u___g_i_s___api_host_provider_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_j_w_n_u___g_i_s___api_host_provider_ad551b22e5d68599f5a7166fceadd04d3}\index{UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}!Get@{Get}}
+\index{Get@{Get}!UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}}
+\doxysubsubsection{\texorpdfstring{Get()}{Get()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___g_i_s___api_host_provider_ad551b22e5d68599f5a7166fceadd04d3} 
+\doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_host_provider}{UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider}} \texorpdfstring{$\ast$}{*} UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider::\+\+Get (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+외부에서 게임 인스턴스 API 서브시스템을 반환하는 함수. (For CPP) 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+Here is the caller graph for this function:\+
+% FIG 2
+\Hypertarget{class_u_j_w_n_u___g_i_s___api_host_provider_ad1b414a338c8493a42872bfba946fb66}\index{UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}!GetHost@{GetHost}}
+\index{GetHost@{GetHost}!UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}}
+\doxysubsubsection{\texorpdfstring{GetHost()}{GetHost()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___g_i_s___api_host_provider_ad1b414a338c8493a42872bfba946fb66} 
+bool UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider::\+\+Get\+Host (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}}]{In\+Service\+Type}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a356d2020d7ee12491a237a2afaf32557}{EJWNU\+\_\+\+Host\+Get\+Result}} \&}]{Out\+Host\+Get\+Result}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{Out\+Host}{}\end{DoxyParamCaption}) const}
+
+서비스 타입에 매핑된 호스트를 반환하는 함수. (For Blueprint) 
+\begin{DoxyParams}{Parameters}
+{\em In\+Service\+Type} & 조회할 서비스 타입 \\
+\hline
+{\em Out\+Host\+Get\+Result} & \\
+\hline
+{\em Out\+Host} & API 서버 호스트 주소 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+호스트 URL (매핑이 없으면 빈 문자열) 
+\end{DoxyReturn}
+\Hypertarget{class_u_j_w_n_u___g_i_s___api_host_provider_a9aad515ab6ea0ab78f8d7de32ac91de1}\index{UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}!GetHost@{GetHost}}
+\index{GetHost@{GetHost}!UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}}
+\doxysubsubsection{\texorpdfstring{GetHost()}{GetHost()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___g_i_s___api_host_provider_a9aad515ab6ea0ab78f8d7de32ac91de1} 
+bool UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider::\+\+Get\+Host (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}}]{In\+Service\+Type}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{Out\+Host}{}\end{DoxyParamCaption}) const}
+
+서비스 타입에 매핑된 호스트를 반환하는 함수. (For CPP) 
+\begin{DoxyParams}{Parameters}
+{\em In\+Service\+Type} & 조회할 서비스 타입 \\
+\hline
+{\em Out\+Host} & API 서버 호스트 주소 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+호스트 URL (매핑이 없으면 빈 문자열) 
+\end{DoxyReturn}
+\Hypertarget{class_u_j_w_n_u___g_i_s___api_host_provider_abb1cf50beaa0c39ef9ac717372cb4d9e}\index{UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___g_i_s___api_host_provider_abb1cf50beaa0c39ef9ac717372cb4d9e} 
+void UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider::\+\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_u_j_w_n_u___g_i_s___api_host_provider_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_u_j_w_n_u___g_i_s___api_host_provider_a46d0b76e7bba486a63cd08a234ebe788}\index{UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}!ServiceTypeToHostMap@{ServiceTypeToHostMap}}
+\index{ServiceTypeToHostMap@{ServiceTypeToHostMap}!UJWNU\_GIS\_ApiHostProvider@{UJWNU\_GIS\_ApiHostProvider}}
+\doxysubsubsection{\texorpdfstring{ServiceTypeToHostMap}{ServiceTypeToHostMap}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___g_i_s___api_host_provider_a46d0b76e7bba486a63cd08a234ebe788} 
+TMap$<$\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}$>$ UJWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider::\+\+Service\+Type\+To\+Host\+Map\hspace{0.3cm}{\ttfamily [protected]}}
+
+서비스 타입별 호스트 URL 매핑. 
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+Source/\+\+JWNetwork\+Utility/\+\+Public/\+\doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_host_provider_8h}{JWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider.\+h}}\item 
+Source/\+\+JWNetwork\+Utility/\+\+Private/\+\doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_host_provider_8cpp}{JWNU\+\_\+\+GIS\+\_\+\+Api\+Host\+Provider.\+cpp}}\end{DoxyCompactItemize}

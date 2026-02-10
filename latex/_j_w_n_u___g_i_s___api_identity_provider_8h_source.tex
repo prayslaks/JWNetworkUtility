@@ -1,0 +1,76 @@
+\doxysection{JWNU\+\_\+\+GIS\+\_\+\+Api\+Identity\+Provider.\+h}
+\hypertarget{_j_w_n_u___g_i_s___api_identity_provider_8h_source}{}\label{_j_w_n_u___g_i_s___api_identity_provider_8h_source}\index{Source/JWNetworkUtility/Public/JWNU\_GIS\_ApiIdentityProvider.h@{Source/JWNetworkUtility/Public/JWNU\_GIS\_ApiIdentityProvider.h}}
+\doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_identity_provider_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2026\ Prayslaks.\ All\ rights\ reserved.\ Unauthorized\ copying,\ modification,\ or\ distribution\ of\ this\ file,\ via\ any\ medium\ is\ strictly\ prohibited.\ Proprietary\ and\ confidential.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_types_8h}{JWNetworkUtilityTypes.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}JWNU\_GIS\_ApiIdentityProvider.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00013\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{_j_w_n_u___g_i_s___api_identity_provider_8h_abe240e107945721d3908812536fe08c0}{DECLARE\_LOG\_CATEGORY\_EXTERN}}(LogJWNU\_GIS\_ApiIdentityProvider,\ Log,\ All);}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00020\ UCLASS()}
+\DoxyCodeLine{00021\ class\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider}{UJWNU\_GIS\_ApiIdentityProvider}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{//\ 프로그래밍\ 팁\ :\ meta=(BlueprintOutRef="{}OutRef1,\ OutRef2,\ ..."{})를\ 사용하면\ 블루프린트\ 활용도를\ 높일\ 수\ 있다}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_a8b3fe19e3c3072ccaf1669986389f7e8}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{static}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider}{UJWNU\_GIS\_ApiIdentityProvider}}*\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3ac55582518cba2c464f29f5bae1c68def}{Get}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00048\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category=\textcolor{stringliteral}{"{}JWNetworkUtiltiy|Authorization"{}},\ meta=(BlueprintOutRef=\textcolor{stringliteral}{"{}OutTokenGetResult,\ OutAccessTokenContainer"{}}))}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_acd7dbfdfb4da9b4ef5a0f76e74015196}{GetAccessTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293}{EJWNU\_TokenGetResult}}\&\ OutTokenGetResult,\ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container}{FJWNU\_AccessTokenContainer}}\&\ OutAccessTokenContainer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_acd7dbfdfb4da9b4ef5a0f76e74015196}{GetAccessTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container}{FJWNU\_AccessTokenContainer}}\&\ OutAccessTokenContainer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00066\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category=\textcolor{stringliteral}{"{}JWNetworkUtiltiy|Authorization"{}},\ meta=(BlueprintOutRef=\textcolor{stringliteral}{"{}OutTokenSetResult"{}}))}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_a226b39d8b64b08da3e63dfd318d62aa0}{SetAccessTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a0869207091beab67d34b610dadd8758c}{EJWNU\_TokenSetResult}}\&\ OutTokenSetResult,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container}{FJWNU\_AccessTokenContainer}}\&\ InAccessTokenContainer);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_a226b39d8b64b08da3e63dfd318d62aa0}{SetAccessTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container}{FJWNU\_AccessTokenContainer}}\&\ InTokenContainer);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00084\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category=\textcolor{stringliteral}{"{}JWNetworkUtiltiy|Authorization"{}},\ meta=(BlueprintOutRef=\textcolor{stringliteral}{"{}OutTokenGetResult,\ OutRefreshTokenContainer"{}}))}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_a8a56ecbc6e28e6efc6eda4ef075ea677}{GetRefreshTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293}{EJWNU\_TokenGetResult}}\&\ OutTokenGetResult,\ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\_RefreshTokenContainer}}\&\ OutRefreshTokenContainer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_a8a56ecbc6e28e6efc6eda4ef075ea677}{GetRefreshTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\_RefreshTokenContainer}}\&\ OutRefreshTokenContainer);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00102\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category=\textcolor{stringliteral}{"{}JWNetworkUtiltiy|Authorization"{}},\ meta=(BlueprintOutRef=\textcolor{stringliteral}{"{}OutTokenSetResult"{}}))}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_a5b08c8b3526fc037c8e56f2ae9b04231}{SetRefreshTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a0869207091beab67d34b610dadd8758c}{EJWNU\_TokenSetResult}}\&\ OutTokenSetResult,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\_RefreshTokenContainer}}\&\ InRefreshTokenContainer);}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_a5b08c8b3526fc037c8e56f2ae9b04231}{SetRefreshTokenContainer}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\_RefreshTokenContainer}}\&\ InRefreshTokenContainer);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{//\ ────────\ UserId\ ────────}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00119\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_a2974674cd9881d4843ed6793ef91a046}{GetUserId}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_add86cd9d79c4af1f238eb7617668b4ae}{SetUserId}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InUserId);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{//\ ────────\ 세션\ 정리\ ────────}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___g_i_s___api_identity_provider_aaa1b0e933ab7ef1ece93911a03d37186}{ClearSession}}(\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ SaveRefreshTokenContainer(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\_RefreshTokenContainer}}\&\ InRefreshTokenContainer);}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ LoadRefreshTokenContainer(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\_ServiceType}}\ InServiceType,\ \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\_RefreshTokenContainer}}\&\ OutRefreshTokenContainer);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ EncryptToken(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InToken,\ TArray<uint8>\&\ OutEncryptedData);}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ DecryptToken(\textcolor{keyword}{const}\ TArray<uint8>\&\ InEncryptedData,\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ OutToken);}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00172\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00173\ \ \ \ \ TMap<EJWNU\_ServiceType,\ FJWNU\_AccessTokenContainer>\ ServiceTypeToTokenContainerMap;}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00178\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ UserId;}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \};}
+
+\end{DoxyCode}

@@ -23,3 +23,10 @@ IMPLEMENT_MODULE(FJWNetworkUtilityModule, JWNetworkUtility)
 
 DEFINE_LOG_CATEGORY(JWLog);
 DEFINE_LOG_CATEGORY(JWLogWall);
+
+TAutoConsoleVariable<bool> CVarJWNU_DebugScreen(
+	TEXT("JWNU.DebugScreen"),
+	false,
+	TEXT("Enable/disable JWNU on-screen debug messages for token refresh flow.\nUsage: JWNU.DebugScreen 1 (enable) / JWNU.DebugScreen 0 (disable)"),
+	ECVF_Default
+);

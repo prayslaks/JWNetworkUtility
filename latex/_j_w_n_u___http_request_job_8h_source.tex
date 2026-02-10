@@ -1,0 +1,101 @@
+\doxysection{JWNU\+\_\+\+Http\+Request\+Job.\+h}
+\hypertarget{_j_w_n_u___http_request_job_8h_source}{}\label{_j_w_n_u___http_request_job_8h_source}\index{Source/JWNetworkUtility/Public/JWNU\_HttpRequestJob.h@{Source/JWNetworkUtility/Public/JWNU\_HttpRequestJob.h}}
+\doxymbox{\hyperlink{_j_w_n_u___http_request_job_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2026\ Prayslaks.\ All\ rights\ reserved.\ Unauthorized\ copying,\ modification,\ or\ distribution\ of\ this\ file,\ via\ any\ medium\ is\ strictly\ prohibited.\ Proprietary\ and\ confidential.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_types_8h}{JWNetworkUtilityTypes.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h}{JWNetworkUtilityDelegates.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Interfaces/IHttpRequest.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}JWNU\_HttpRequestJob.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00014\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{_j_w_n_u___http_request_job_8h_a5d0ff556e55eac289fbf1b0b945e991d}{DECLARE\_LOG\_CATEGORY\_EXTERN}}(LogJWNU\_HttpRequestJob,\ Log,\ All);}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00019\ UCLASS()}
+\DoxyCodeLine{00020\ class\ JWNETWORKUTILITY\_API\ \doxymbox{\hyperlink{class_u_j_w_n_u___http_request_job}{UJWNU\_HttpRequestJob}}\ :\ public\ UObject}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#pragma\ region\ Fields\ for\ Configuration\ and\ Callback}}
+\DoxyCodeLine{00027\ \ \ \ \ }
+\DoxyCodeLine{00031\ \ \ \ \ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config}{FJWNU\_RequestConfig}}\ \doxymbox{\hyperlink{class_u_j_w_n_u___http_request_job_ab46291fecca8ef94e374d68ae00cffa5}{Config}};}
+\DoxyCodeLine{00032\ \ \ \ \ }
+\DoxyCodeLine{00036\ \ \ \ \ FOnHttpRequestJobCompletedDelegate\ \doxymbox{\hyperlink{class_u_j_w_n_u___http_request_job_a494f68b892391136d705ac904c2edbff}{OnHttpRequestJobComplete}};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#pragma\ endregion}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#pragma\ region\ Interface\ Methods\ for\ Initialize,\ Execute,\ Cancel\ Job\ Requests}}
+\DoxyCodeLine{00041\ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ UFUNCTION(Category=\textcolor{stringliteral}{"{}Job"{}})}
+\DoxyCodeLine{00051\ \ \ \ \ void\ \doxymbox{\hyperlink{class_u_j_w_n_u___http_request_job_a121448631afc0d71948ec1c52b609223}{Initialize}}(\doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ InMethod,\ const\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InURL,\ const\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InAuthToken,\ const\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ InContentBody,\ const\ \doxymbox{\hyperlink{struct_f_j_w_n_u___request_config}{FJWNU\_RequestConfig}}\&\ InConfig);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00056\ \ \ \ \ UFUNCTION(Category=\textcolor{stringliteral}{"{}Job"{}})}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___http_request_job_a00aab481cb20b8ec0f0a0ad37c9e22df}{Execute}}();}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00062\ \ \ \ \ UFUNCTION(Category=\textcolor{stringliteral}{"{}Job"{}})}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_u_j_w_n_u___http_request_job_aadb514abf6a3963cc9762af907b41a17}{Cancel}}();}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00069\ \ \ \ \ UFUNCTION(Category=\textcolor{stringliteral}{"{}Job|State"{}})}
+\DoxyCodeLine{00070\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___http_request_job_a8a64cf1e3ffa93d6af3ce9065c99a445}{IsRunning}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ bIsRunning;\ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00076\ \ \ \ \ UFUNCTION(Category=\textcolor{stringliteral}{"{}Job|State"{}})}
+\DoxyCodeLine{00077\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_u_j_w_n_u___http_request_job_aeb6653eefd377d83cb31e4dcb56f566c}{IsCancelled}}()\textcolor{keyword}{\ const\ }\{\textcolor{keywordflow}{return}\ bIsCancelled;\ \}}
+\DoxyCodeLine{00078\ \ \ \ \ }
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#pragma\ endregion}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00082\ \ \ \ \ }
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#pragma\ region\ Request\ Info\ Fields\ for\ Retry}}
+\DoxyCodeLine{00084\ \ \ \ \ }
+\DoxyCodeLine{00088\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\_HttpMethod}}\ Method;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00093\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ URL;}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00098\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ AuthToken;}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00103\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\ JsonBody;}
+\DoxyCodeLine{00104\ \ \ \ \ }
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#pragma\ endregion}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#pragma\ region\ State\ Fields\ for\ Timeout-\/Retry-\/Cancel}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00112\ \ \ \ \ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ CurrentAttempt\ =\ 0;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{bool}\ bIsRunning\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{bool}\ bIsCancelled\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00123\ \ \ \ \ }
+\DoxyCodeLine{00127\ \ \ \ \ TSharedPtr<IHttpRequest>\ CurrentRequest;}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00132\ \ \ \ \ FTimerHandle\ RetryTimerHandle;}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00137\ \ \ \ \ FTimerHandle\ TimeoutTimerHandle;}
+\DoxyCodeLine{00138\ \ \ \ \ }
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#pragma\ endregion\ }}
+\DoxyCodeLine{00140\ \ \ \ \ }
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#pragma\ region\ Methods\ for\ Control\ Jobs}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{void}\ SendRequest();}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{void}\ OnResponseReceived(FHttpRequestPtr\ Request,\ FHttpResponsePtr\ Response,\ \textcolor{keywordtype}{bool}\ bNetworkAvailable);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordtype}{void}\ OnTimeout();}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{void}\ ScheduleRetry();}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordtype}{void}\ CompleteJob(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ bNetworkAvailable,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a7da30d69f5c85b98c86c820f52b86e25}{StatusCode}},\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\&\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ae1a8346e1d8ec0e15a969619e62cb842}{ResponseBody}});}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordtype}{bool}\ ShouldRetry(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}}\ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a7da30d69f5c85b98c86c820f52b86e25}{StatusCode}},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ bNetworkAvailable)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{void}\ ClearAllTimers();}
+\DoxyCodeLine{00183\ \ \ \ \ }
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#pragma\ endregion}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \};}
+
+\end{DoxyCode}

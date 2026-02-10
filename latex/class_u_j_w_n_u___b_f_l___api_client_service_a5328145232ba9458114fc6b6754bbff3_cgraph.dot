@@ -1,0 +1,17 @@
+digraph "UJWNU_BFL_ApiClientService::CallApi"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [id="Node000001",label="UJWNU_BFL_ApiClientService\l::CallApi",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [id="edge5_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="UJWNU_GIS_ApiClientService\l::CallApi_NoTemplate",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_u_j_w_n_u___g_i_s___api_client_service.html#ae62a56a30053e373fa75233a16339871",tooltip=" "];
+  Node2 -> Node3 [id="edge6_Node000002_Node000003",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="UJWNU_GIS_ApiClientService::Get",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_u_j_w_n_u___g_i_s___api_client_service.html#a36a562447dbc941c7f2cea794fb77b62",tooltip=" "];
+  Node2 -> Node4 [id="edge7_Node000002_Node000004",color="steelblue1",style="solid",tooltip=" "];
+  Node4 [id="Node000004",label="UJWNU_GIS_ApiHostProvider::Get",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_u_j_w_n_u___g_i_s___api_host_provider.html#ad551b22e5d68599f5a7166fceadd04d3",tooltip=" "];
+  Node2 -> Node5 [id="edge8_Node000002_Node000005",color="steelblue1",style="solid",tooltip=" "];
+  Node5 [id="Node000005",label="UJWNU_GIS_ApiIdentityProvider::Get",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_u_j_w_n_u___g_i_s___api_identity_provider.html#aa8569c574b0b44281cf45c2a542ae602",tooltip=" "];
+}

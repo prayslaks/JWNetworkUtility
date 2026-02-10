@@ -1,0 +1,149 @@
+\doxysection{Source/\+\+JWNetwork\+Utility\+Test/\+\+Public/\+\+JWNU\+\_\+\+BFL\+\_\+\+Auth\+Widget.h File Reference}
+\hypertarget{_j_w_n_u___b_f_l___auth_widget_8h}{}\label{_j_w_n_u___b_f_l___auth_widget_8h}\index{Source/JWNetworkUtilityTest/Public/JWNU\_BFL\_AuthWidget.h@{Source/JWNetworkUtilityTest/Public/JWNU\_BFL\_AuthWidget.h}}
+{\ttfamily \+\#include "{}Core\+Minimal.\+h"{}}\newline
+{\ttfamily \+\#include "{}Kismet/\+\+Blueprint\+Function\+Library.\+h"{}}\newline
+{\ttfamily \+\#include "{}JWNU\+\_\+\+BFL\+\_\+\+Auth\+Widget.\+generated.\+h"{}}\newline
+Include dependency graph for JWNU\+\_\+\+BFL\+\_\+\+Auth\+Widget.\+h:\+
+% FIG 0
+This graph shows which files directly or indirectly include this file:\+
+% FIG 1
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___auth_widget}{UJWNU\+\_\+\+BFL\+\_\+\+Auth\+Widget}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752}{EJWNU\+\_\+\+Register\+Email\+Validation}} :\+ uint8 \{ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a5266371003025f1e0426edea2f3e5aed}{Satisfied}}
+, \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}}
+ \}
+\item 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5}{EJWNU\+\_\+\+Register\+First\+Password\+Validation}} :\+ uint8 \{ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5a392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}}
+, \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5a5266371003025f1e0426edea2f3e5aed}{Satisfied}}
+ \}
+\item 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8}{EJWNU\+\_\+\+Register\+Second\+Password\+Validation}} :\+ uint8 \{ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8ada648f229f644b5a6d8500fcc005cb41}{First\+Password\+Empty}}
+, \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8a392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}}
+, \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8a5266371003025f1e0426edea2f3e5aed}{Satisfied}}
+ \}
+\item 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dd}{EJWNU\+\_\+\+Login\+Email\+Validation}} :\+ uint8 \{ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dda5266371003025f1e0426edea2f3e5aed}{Satisfied}}
+, \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dda392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}}
+ \}
+\item 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8a}{EJWNU\+\_\+\+Login\+Password\+Validation}} :\+ uint8 \{ \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8aa5266371003025f1e0426edea2f3e5aed}{Satisfied}}
+, \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8aa392fa23f540fd1563c75768ecbdd2512}{Unsatisfied}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\label{doc-enum-members}
+\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_doc-enum-members}
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dd}\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!EJWNU\_LoginEmailValidation@{EJWNU\_LoginEmailValidation}}
+\index{EJWNU\_LoginEmailValidation@{EJWNU\_LoginEmailValidation}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\doxysubsubsection{\texorpdfstring{EJWNU\_LoginEmailValidation}{EJWNU\_LoginEmailValidation}}
+{\footnotesize\ttfamily \label{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dd} 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dd}{EJWNU\+\_\+\+Login\+Email\+Validation}} :\+ uint8\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Satisfied@{Satisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Satisfied@{Satisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dda5266371003025f1e0426edea2f3e5aed}\label{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dda5266371003025f1e0426edea2f3e5aed} 
+Satisfied&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Unsatisfied@{Unsatisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Unsatisfied@{Unsatisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dda392fa23f540fd1563c75768ecbdd2512}\label{_j_w_n_u___b_f_l___auth_widget_8h_a559154265f120fb2aad1cd9d960d09dda392fa23f540fd1563c75768ecbdd2512} 
+Unsatisfied&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8a}\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!EJWNU\_LoginPasswordValidation@{EJWNU\_LoginPasswordValidation}}
+\index{EJWNU\_LoginPasswordValidation@{EJWNU\_LoginPasswordValidation}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\doxysubsubsection{\texorpdfstring{EJWNU\_LoginPasswordValidation}{EJWNU\_LoginPasswordValidation}}
+{\footnotesize\ttfamily \label{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8a} 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8a}{EJWNU\+\_\+\+Login\+Password\+Validation}} :\+ uint8\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Satisfied@{Satisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Satisfied@{Satisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8aa5266371003025f1e0426edea2f3e5aed}\label{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8aa5266371003025f1e0426edea2f3e5aed} 
+Satisfied&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Unsatisfied@{Unsatisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Unsatisfied@{Unsatisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8aa392fa23f540fd1563c75768ecbdd2512}\label{_j_w_n_u___b_f_l___auth_widget_8h_afaa7ba8fdd912d57b2473813edc5bb8aa392fa23f540fd1563c75768ecbdd2512} 
+Unsatisfied&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752}\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!EJWNU\_RegisterEmailValidation@{EJWNU\_RegisterEmailValidation}}
+\index{EJWNU\_RegisterEmailValidation@{EJWNU\_RegisterEmailValidation}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\doxysubsubsection{\texorpdfstring{EJWNU\_RegisterEmailValidation}{EJWNU\_RegisterEmailValidation}}
+{\footnotesize\ttfamily \label{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752} 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752}{EJWNU\+\_\+\+Register\+Email\+Validation}} :\+ uint8\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Satisfied@{Satisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Satisfied@{Satisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a5266371003025f1e0426edea2f3e5aed}\label{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a5266371003025f1e0426edea2f3e5aed} 
+Satisfied&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Unsatisfied@{Unsatisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Unsatisfied@{Unsatisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a392fa23f540fd1563c75768ecbdd2512}\label{_j_w_n_u___b_f_l___auth_widget_8h_af7dd1d9a443d7c02d177aeb29be2c752a392fa23f540fd1563c75768ecbdd2512} 
+Unsatisfied&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5}\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!EJWNU\_RegisterFirstPasswordValidation@{EJWNU\_RegisterFirstPasswordValidation}}
+\index{EJWNU\_RegisterFirstPasswordValidation@{EJWNU\_RegisterFirstPasswordValidation}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\doxysubsubsection{\texorpdfstring{EJWNU\_RegisterFirstPasswordValidation}{EJWNU\_RegisterFirstPasswordValidation}}
+{\footnotesize\ttfamily \label{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5} 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5}{EJWNU\+\_\+\+Register\+First\+Password\+Validation}} :\+ uint8\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Unsatisfied@{Unsatisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Unsatisfied@{Unsatisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5a392fa23f540fd1563c75768ecbdd2512}\label{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5a392fa23f540fd1563c75768ecbdd2512} 
+Unsatisfied&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Satisfied@{Satisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Satisfied@{Satisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5a5266371003025f1e0426edea2f3e5aed}\label{_j_w_n_u___b_f_l___auth_widget_8h_a869ec0ed96cf46e8388c415e7d7fddf5a5266371003025f1e0426edea2f3e5aed} 
+Satisfied&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8}\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!EJWNU\_RegisterSecondPasswordValidation@{EJWNU\_RegisterSecondPasswordValidation}}
+\index{EJWNU\_RegisterSecondPasswordValidation@{EJWNU\_RegisterSecondPasswordValidation}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\doxysubsubsection{\texorpdfstring{EJWNU\_RegisterSecondPasswordValidation}{EJWNU\_RegisterSecondPasswordValidation}}
+{\footnotesize\ttfamily \label{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8} 
+enum class \doxymbox{\hyperlink{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8}{EJWNU\+\_\+\+Register\+Second\+Password\+Validation}} :\+ uint8\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FirstPasswordEmpty@{FirstPasswordEmpty}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!FirstPasswordEmpty@{FirstPasswordEmpty}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8ada648f229f644b5a6d8500fcc005cb41}\label{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8ada648f229f644b5a6d8500fcc005cb41} 
+First\+Password\+Empty&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Unsatisfied@{Unsatisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Unsatisfied@{Unsatisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8a392fa23f540fd1563c75768ecbdd2512}\label{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8a392fa23f540fd1563c75768ecbdd2512} 
+Unsatisfied&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Satisfied@{Satisfied}!JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}}
+\index{JWNU\_BFL\_AuthWidget.h@{JWNU\_BFL\_AuthWidget.h}!Satisfied@{Satisfied}}
+}\Hypertarget{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8a5266371003025f1e0426edea2f3e5aed}\label{_j_w_n_u___b_f_l___auth_widget_8h_a05e42089ef5481e5f81cba7f0a12c0f8a5266371003025f1e0426edea2f3e5aed} 
+Satisfied&\\
+\hline
+
+\end{DoxyEnumFields}

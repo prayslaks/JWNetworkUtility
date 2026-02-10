@@ -35,6 +35,32 @@ const FString __FullMessage__ = FString::Printf(TEXT("%s : %s"), *CALL_INFO, *__
 UE_LOG(cat, ver, TEXT("%s"), *__FullMessage__); \
 }
 
+#pragma region ScreenDebugger
+
+/**
+ * 플러그인 내부 온스크린 디버그 메시지 활성화 콘솔 변수.
+ * 콘솔에서 JWNU.DebugScreen 1/0 으로 제어.
+ */
+extern JWNETWORKUTILITY_API TAutoConsoleVariable<bool> CVarJWNU_DebugScreen;
+
+/**
+ * 콘솔 변수로 제어 가능한 온스크린 디버그 메시지 매크로.
+ * @param Key 메시지 키 (-1이면 매번 새 줄)
+ * @param Duration 표시 시간 (초)
+ * @param Color FColor 색상
+ * @param fmt TEXT() 포맷 문자열 + 가변 인자
+ */
+#define JWNU_SCREEN_DEBUG(Key, Duration, Color, fmt, ...) \
+{ \
+	if (CVarJWNU_DebugScreen.GetValueOnGameThread() && GEngine) \
+	{ \
+		const FString __ScreenMsg__ = FString::Printf(fmt, ##__VA_ARGS__); \
+		GEngine->AddOnScreenDebugMessage(Key, Duration, Color, __ScreenMsg__); \
+	} \
+}
+
+#pragma endregion ScreenDebugger
+
 #pragma region NetLogger
 
 // 네트워크 디버깅 로그 카테고리 선언

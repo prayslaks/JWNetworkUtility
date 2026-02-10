@@ -3,31 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "JWNU_GIS_ApiTokenProvider.h"
+#include "JWNetworkUtilityTypes.h"
+#include "JWNetworkUtilityDelegates.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "JWNU_GIS_HttpClientHelper.generated.h"
 
 /**
- * HTTP 메서드 열거형.
- */
-UENUM(BlueprintType)
-enum class EJWNU_HttpMethod : uint8
-{
-	GET,
-	POST,
-	PUT,
-	DELETE,
-};
-
-/**
  * 클래스 전용 로그 카테고리 선언
  */
-DECLARE_LOG_CATEGORY_EXTERN(LogJWNU_GIS_HttpClientHelper, Log, All);
-
-/**
- * HTTP 리스폰스 바디를 패러미터로 받는 델리게이트.
- */
-DECLARE_DELEGATE_OneParam(FOnHttpResponseDelegate, const FString& /*ResponseBody*/);
+JWNETWORKUTILITY_API DECLARE_LOG_CATEGORY_EXTERN(LogJWNU_GIS_HttpClientHelper, Log, All);
 
 /**
  * HTTP 클라이언트 헬퍼 게임인스턴스 서브시스템 클래스.
@@ -66,7 +50,7 @@ public:
 		const FString& InAuthToken, 
 		const FString& InContentBody, 
 		const TMap<FString, FString>& InQueryParams, 
-		const FOnHttpResponseDelegate& InOnHttpResponse);
+		const FOnHttpRequestCompletedDelegate& InOnHttpResponse);
 	
 	/**
 	 * HTTP 리퀘스트를 보내는 함수. 전처리된 Custom Response Body를 콜백으로 반환한다.
@@ -85,7 +69,7 @@ public:
 		const FString& InAuthToken, 
 		const FString& InContentBody, 
 		const TMap<FString, FString>& InQueryParams, 
-		const FOnHttpResponseDelegate& InOnHttpResponse);
+		const FOnHttpRequestCompletedDelegate& InOnHttpResponse);
 	
 private:
 	
@@ -104,7 +88,7 @@ private:
 		const FString& InAuthToken, 
 		const FString& InContentBody, 
 		const TMap<FString, FString>& InQueryParams, 
-		const FOnHttpResponseDelegate& InOnHttpResponse);
+		const FOnHttpRequestCompletedDelegate& InOnHttpResponse);
 	
 	/**
 	 * 동일한 이름의 정적 함수에 의해 호출되어, 실제로 처리하는 비정적 함수.
@@ -121,7 +105,7 @@ private:
 		const FString& InAuthToken, 
 		const FString& InContentBody, 
 		const TMap<FString, FString>& InQueryParams, 
-		const FOnHttpResponseDelegate& InOnHttpResponse);
+		const FOnHttpRequestCompletedDelegate& InOnHttpResponse);
 	
 	/**
 	 * 300번대 이상의 상태 코드를 커스텀 코드로 매핑하는 맵.
@@ -134,4 +118,10 @@ private:
 	 */
 	UPROPERTY()
 	TMap<int32, FString> StatusCodeToCustomMessageMap;
+	
+	/**
+	 * 기본 HTTP 리퀘스트 설정값을 담은 구조체 필드.
+	 */
+	UPROPERTY(Config)
+	FJWNU_RequestConfig DefaultRequestConfig;
 };

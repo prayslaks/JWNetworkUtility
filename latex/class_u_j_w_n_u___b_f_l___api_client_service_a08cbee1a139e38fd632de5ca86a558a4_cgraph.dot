@@ -1,0 +1,11 @@
+digraph "UJWNU_BFL_ApiClientService::ClearSession"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [id="Node000001",label="UJWNU_BFL_ApiClientService\l::ClearSession",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [id="edge2_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="UJWNU_GIS_ApiIdentityProvider::Get",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_u_j_w_n_u___g_i_s___api_identity_provider.html#aa8569c574b0b44281cf45c2a542ae602",tooltip=" "];
+}

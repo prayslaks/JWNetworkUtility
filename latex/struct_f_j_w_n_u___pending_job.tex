@@ -1,0 +1,50 @@
+\doxysection{FJWNU\+\_\+\+Pending\+Job Struct Reference}
+\hypertarget{struct_f_j_w_n_u___pending_job}{}\label{struct_f_j_w_n_u___pending_job}\index{FJWNU\_PendingJob@{FJWNU\_PendingJob}}
+
+
+{\ttfamily \+\#include $<$JWNetwork\+Utility\+Types.\+h$>$}
+
+
+
+Collaboration diagram for FJWNU\+\_\+\+Pending\+Job:\+
+% FIG 0
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request}{FJWNU\+\_\+\+Pending\+Api\+Request}} \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d}{Request\+Info}}
+\item 
+TFunction$<$ void(const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&)$>$ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_ac4ac735c892da6688d268258c022e004}{On\+Token\+Ready}}
+\item 
+TFunction$<$ void(const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&, const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&)$>$ \doxymbox{\hyperlink{struct_f_j_w_n_u___pending_job_a982f5abf4fd1f47274377a8926e633ab}{On\+Token\+Failed}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+토큰 리프레시 대기열에 적재되는 잡 구조체. 리프레시 완료 시 On\+Token\+Ready, 실패 시 On\+Token\+Failed가 호출된다. 
+
+\label{doc-variable-members}
+\Hypertarget{struct_f_j_w_n_u___pending_job_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_f_j_w_n_u___pending_job_a982f5abf4fd1f47274377a8926e633ab}\index{FJWNU\_PendingJob@{FJWNU\_PendingJob}!OnTokenFailed@{OnTokenFailed}}
+\index{OnTokenFailed@{OnTokenFailed}!FJWNU\_PendingJob@{FJWNU\_PendingJob}}
+\doxysubsubsection{\texorpdfstring{OnTokenFailed}{OnTokenFailed}}
+{\footnotesize\ttfamily \label{struct_f_j_w_n_u___pending_job_a982f5abf4fd1f47274377a8926e633ab} 
+TFunction$<$void(const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\& , const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\& )$>$ FJWNU\+\_\+\+Pending\+Job::\+\+On\+Token\+Failed}
+
+\Hypertarget{struct_f_j_w_n_u___pending_job_ac4ac735c892da6688d268258c022e004}\index{FJWNU\_PendingJob@{FJWNU\_PendingJob}!OnTokenReady@{OnTokenReady}}
+\index{OnTokenReady@{OnTokenReady}!FJWNU\_PendingJob@{FJWNU\_PendingJob}}
+\doxysubsubsection{\texorpdfstring{OnTokenReady}{OnTokenReady}}
+{\footnotesize\ttfamily \label{struct_f_j_w_n_u___pending_job_ac4ac735c892da6688d268258c022e004} 
+TFunction$<$void(const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}\& )$>$ FJWNU\+\_\+\+Pending\+Job::\+\+On\+Token\+Ready}
+
+\Hypertarget{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d}\index{FJWNU\_PendingJob@{FJWNU\_PendingJob}!RequestInfo@{RequestInfo}}
+\index{RequestInfo@{RequestInfo}!FJWNU\_PendingJob@{FJWNU\_PendingJob}}
+\doxysubsubsection{\texorpdfstring{RequestInfo}{RequestInfo}}
+{\footnotesize\ttfamily \label{struct_f_j_w_n_u___pending_job_a0397668033f9dcf74d434e0faba30c1d} 
+\doxymbox{\hyperlink{struct_f_j_w_n_u___pending_api_request}{FJWNU\+\_\+\+Pending\+Api\+Request}} FJWNU\+\_\+\+Pending\+Job::\+\+Request\+Info}
+
+
+
+The documentation for this struct was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+Source/\+\+JWNetwork\+Utility/\+\+Public/\+\doxymbox{\hyperlink{_j_w_network_utility_types_8h}{JWNetwork\+Utility\+Types.\+h}}\end{DoxyCompactItemize}
