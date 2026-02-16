@@ -14,7 +14,8 @@ void UJWNU_GIS_HttpRequestJobProcessor::ProcessHttpRequestJob(
 	const FString& InContentBody,
 	const TMap<FString, FString>& InQueryParams,
 	const FJWNU_RequestConfig& InConfig,
-	const FOnHttpRequestJobCompletedDelegate& OnHttpRequestJobCompleted)
+	const FOnHttpRequestJobCompletedDelegate& InOnHttpRequestJobCompleted,
+	const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry)
 {
 	// 리퀘스트 잡 생성
 	UJWNU_HttpRequestJob* RequestJob = NewObject<UJWNU_HttpRequestJob>(this);
@@ -30,7 +31,8 @@ void UJWNU_GIS_HttpRequestJobProcessor::ProcessHttpRequestJob(
 
 	// 리퀘스트 잡 초기화 및 콜백 바인딩
 	RequestJob->Initialize(InMethod, FinalURL, InAuthToken, InContentBody, InConfig);
-	RequestJob->OnHttpRequestJobComplete = OnHttpRequestJobCompleted;
+	RequestJob->OnHttpRequestJobComplete = InOnHttpRequestJobCompleted;
+	RequestJob->OnHttpRequestJobRetry = InOnHttpRequestJobRetry;
 
 	// 리퀘스트 잡 실행 및 확인
 	if (RequestJob->Execute())

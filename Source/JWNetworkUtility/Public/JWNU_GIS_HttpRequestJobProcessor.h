@@ -33,7 +33,8 @@ public:
 	 * @param InContentBody JSON 바디
 	 * @param InQueryParams URL 쿼리 패러미터
 	 * @param InConfig 요청 설정 (재시도, 타임아웃 등)
-	 * @param OnHttpRequestJobCompleted 완료 콜백
+	 * @param InOnHttpRequestJobCompleted 완료 콜백
+	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
 	void ProcessHttpRequestJob(
 		const EJWNU_HttpMethod InMethod,
@@ -42,7 +43,8 @@ public:
 		const FString& InContentBody,
 		const TMap<FString, FString>& InQueryParams,
 		const FJWNU_RequestConfig& InConfig,
-		const FOnHttpRequestJobCompletedDelegate& OnHttpRequestJobCompleted);
+		const FOnHttpRequestJobCompletedDelegate& InOnHttpRequestJobCompleted,
+		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
 
 private:
 	

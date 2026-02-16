@@ -36,9 +36,9 @@ public:
 	 * @return UJW_GIS_HttpClientHelper 게임인스턴스 서브시스템
 	 */
 	static UJWNU_GIS_ApiClientService* Get(const UObject* WorldContextObject);
-
+	
 	/**
-	 * 간편한 API를 호출을 지원해주는 함수. 호스트와 인증 토큰은 Config의 설정값에 따라 자동으로 로드된다. 
+	 * 간편한 API 호출을 지원해주는 함수. 호스트와 인증 토큰은 Config의 설정값에 따라 자동으로 로드된다. 
 	 * 401 상태 코드, 즉 토큰 만료 시 자동으로 리프레시하고 재요청하는 내부 플로우를 지원한다.
 	 * 템플릿 인자로 전달한 구조체로 리스폰스 바디를 파싱하여 콜백으로 전달한다.
 	 * @tparam StructType JSON 리스폰스 바디에서 파싱하길 원하는 언리얼 구조체 타입
@@ -49,6 +49,7 @@ public:
 	 * @param InContentBody JSON 바디
 	 * @param InQueryParams URL 쿼리 패러미터
 	 * @param OnGetCustomStruct 결과 콜백
+	 * @param OnHttpRequestJobRetry 재시도 콜백
 	 * @param bRequiresAuth 인증 토큰 필요 여부 (false 시 토큰 로직 전체 건너뜀)
 	 */
 	template<typename StructType>
@@ -60,10 +61,11 @@ public:
 		const FString& InContentBody,
 		const TMap<FString, FString>& InQueryParams,
 		TFunction<void(const StructType&)> OnGetCustomStruct,
+		const FOnHttpRequestJobRetryDelegate& OnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate(),
 		const bool bRequiresAuth = true);
-
+	
 	/**
-	 * 간편한 API를 호출을 지원해주는 함수. 호스트와 인증 토큰은 Config의 설정값에 따라 자동으로 로드된다. 
+	 * 간편한 API 호출을 지원해주는 함수. 호스트와 인증 토큰은 Config의 설정값에 따라 자동으로 로드된다. 
 	 * 401 상태 코드, 즉 토큰 만료 시 자동으로 리프레시하고 재요청하는 내부 플로우를 지원한다.
 	 * 블루프린트를 위한 비템플릿 버전으로 리스폰스 바디를 그대로 콜백으로 전달한다.
 	 * @param WorldContextObject 월드 컨텍스트 오브젝트
@@ -73,6 +75,7 @@ public:
 	 * @param InContentBody JSON 바디
 	 * @param InQueryParams URL 쿼리 패러미터
 	 * @param OnHttpResponse 결과 콜백
+	 * @param OnHttpRequestJobRetry 재시도 콜백
 	 * @param bRequiresAuth 인증 토큰 필요 여부 (false 시 토큰 로직 전체 건너뜀)
 	 */
 	static void CallApi_NoTemplate(
@@ -83,6 +86,7 @@ public:
 		const FString& InContentBody,
 		const TMap<FString, FString>& InQueryParams,
 		const FOnHttpResponseDelegate& OnHttpResponse,
+		const FOnHttpRequestJobRetryDelegate& OnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate(),
 		const bool bRequiresAuth = true);
 	
 private:
@@ -96,6 +100,7 @@ private:
 	 * @param InContentBody JSON 바디
 	 * @param InQueryParams URL 쿼리 패러미터
 	 * @param OnHttpResponse 리스폰스 바디를 전달받는 콜백
+	 * @param OnHttpRequestJobRetry 재시도 콜백
 	 * @param bTryTokenRefreshing 토큰 리프레시 시도 여부
 	 */
 	void CallApi_NoTemplate_Execution(
@@ -106,7 +111,8 @@ private:
 		const FString& InContentBody,
 		const TMap<FString, FString>& InQueryParams,
 		const FOnHttpResponseDelegate& OnHttpResponse,
-		const bool bTryTokenRefreshing);
+		const FOnHttpRequestJobRetryDelegate& OnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate(),
+		const bool bTryTokenRefreshing = true);
 
 	/**
 	 * 동일한 이름의 정적 템플릿 함수에 의해 호출되어, 실제로 처리하는 비정적 템플릿 함수.
@@ -118,6 +124,7 @@ private:
 	 * @param InContentBody JSON 바디
 	 * @param InQueryParams URL 쿼리 패러미터
 	 * @param OnGetCustomStruct 리스폰스 바디를 파싱한 언리얼 구조체를 전달받는 콜백
+	 * @param OnHttpRequestJobRetry 재시도 콜백
 	 * @param bTryTokenRefreshing 토큰 리프레시 시도 여부
 	 */
 	template<typename StructType>
@@ -129,7 +136,8 @@ private:
 		const FString& InContentBody,
 		const TMap<FString, FString>& InQueryParams,
 		TFunction<void(const StructType&)> OnGetCustomStruct,
-		const bool bTryTokenRefreshing);
+		const FOnHttpRequestJobRetryDelegate& OnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate(),
+		const bool bTryTokenRefreshing = true);
 
 	/**
 	 * 잡을 ServiceType별 대기열에 적재하고, 리프레시가 아직 진행 중이 아니라면 ExecuteTokenRefresh를 시작한다.
@@ -178,13 +186,14 @@ private:
 
 template <typename StructType>
 void UJWNU_GIS_ApiClientService::CallApi_Template(
-	const UObject* WorldContextObject,
+	const UObject* WorldContextObject, 
 	const EJWNU_HttpMethod InMethod,
-	const EJWNU_ServiceType InServiceType,
-	const FString InEndpoint,
+	const EJWNU_ServiceType InServiceType, 
+	const FString InEndpoint, 
 	const FString& InContentBody,
-	const TMap<FString, FString>& InQueryParams,
+	const TMap<FString, FString>& InQueryParams, 
 	TFunction<void(const StructType&)> OnGetCustomStruct,
+	const FOnHttpRequestJobRetryDelegate& OnHttpRequestJobRetry, 
 	const bool bRequiresAuth)
 {
 	// 객체 획득
@@ -215,7 +224,7 @@ void UJWNU_GIS_ApiClientService::CallApi_Template(
 	// 인증이 필요하지 않은 경우, 토큰 로직을 건너뛰고 바로 실행
 	if (bRequiresAuth == false)
 	{
-		Self->CallApi_Template_Execution(InMethod, InServiceType, ConstructedURL, TEXT(""), InContentBody, InQueryParams, OnGetCustomStruct, false);
+		Self->CallApi_Template_Execution(InMethod, InServiceType, ConstructedURL, TEXT(""), InContentBody, InQueryParams, OnGetCustomStruct, OnHttpRequestJobRetry, false);
 		return;
 	}
 
@@ -256,9 +265,9 @@ void UJWNU_GIS_ApiClientService::CallApi_Template(
 		Job.RequestInfo.URL = ConstructedURL;
 		Job.RequestInfo.ContentBody = InContentBody;
 		Job.RequestInfo.QueryParams = InQueryParams;
-		Job.OnTokenReady = [Self, InMethod, InServiceType, ConstructedURL, InContentBody, InQueryParams, OnGetCustomStruct](const FString& NewAccessToken)
+		Job.OnTokenReady = [Self, InMethod, InServiceType, ConstructedURL, InContentBody, InQueryParams, OnGetCustomStruct, OnHttpRequestJobRetry](const FString& NewAccessToken)
 		{
-			Self->CallApi_Template_Execution<StructType>(InMethod, InServiceType, ConstructedURL, NewAccessToken, InContentBody, InQueryParams, OnGetCustomStruct, false);
+			Self->CallApi_Template_Execution<StructType>(InMethod, InServiceType, ConstructedURL, NewAccessToken, InContentBody, InQueryParams, OnGetCustomStruct, OnHttpRequestJobRetry, false);
 		};
 		Job.OnTokenFailed = [OnGetCustomStruct](const FString& ErrorCode, const FString& ErrorMessage)
 		{
@@ -272,18 +281,19 @@ void UJWNU_GIS_ApiClientService::CallApi_Template(
 	}
 
 	// 실제 처리
-	Self->CallApi_Template_Execution(InMethod, InServiceType, ConstructedURL, ProvidedAccessTokenContainer.AccessToken, InContentBody, InQueryParams, OnGetCustomStruct, true);
+	Self->CallApi_Template_Execution(InMethod, InServiceType, ConstructedURL, ProvidedAccessTokenContainer.AccessToken, InContentBody, InQueryParams, OnGetCustomStruct, OnHttpRequestJobRetry, true);
 }
 
 template <typename StructType>
 void UJWNU_GIS_ApiClientService::CallApi_Template_Execution(
 	const EJWNU_HttpMethod InMethod,
-	const EJWNU_ServiceType InServiceType,
-	const FString& InURL,
+	const EJWNU_ServiceType InServiceType, 
+	const FString& InURL, 
 	const FString& InAccessToken,
-	const FString& InContentBody,
+	const FString& InContentBody, 
 	const TMap<FString, FString>& InQueryParams,
-	TFunction<void(const StructType&)> OnGetCustomStruct,
+	TFunction<void(const StructType&)> OnGetCustomStruct, 
+	const FOnHttpRequestJobRetryDelegate& OnHttpRequestJobRetry,
 	const bool bTryTokenRefreshing)
 {
 	if (bTryTokenRefreshing)
@@ -298,7 +308,7 @@ void UJWNU_GIS_ApiClientService::CallApi_Template_Execution(
 	
 		// 401 상태 코드를 처리할 수 있는 콜백
 		const auto CallbackManage401 = FOnHttpRequestCompletedDelegate::CreateWeakLambda(this,
-			[this, PendingRequest, OnGetCustomStruct](const int32 StatusCode, const FString& ResponseBody)
+			[this, PendingRequest, OnGetCustomStruct, OnHttpRequestJobRetry](const int32 StatusCode, const FString& ResponseBody)
 			{
 				if (StatusCode == 401)
 				{
@@ -306,9 +316,9 @@ void UJWNU_GIS_ApiClientService::CallApi_Template_Execution(
 					JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Orange, TEXT("[JWNU] 401 Unauthorized — Triggering token refresh for %s"), *UEnum::GetValueAsString(PendingRequest.ServiceType));
 					FJWNU_PendingJob Job;
 					Job.RequestInfo = PendingRequest;
-					Job.OnTokenReady = [this, PendingRequest, OnGetCustomStruct](const FString& NewAccessToken)
+					Job.OnTokenReady = [this, PendingRequest, OnGetCustomStruct, OnHttpRequestJobRetry](const FString& NewAccessToken)
 					{
-						CallApi_Template_Execution<StructType>(PendingRequest.Method, PendingRequest.ServiceType, PendingRequest.URL, NewAccessToken, PendingRequest.ContentBody, PendingRequest.QueryParams, OnGetCustomStruct, false);
+						CallApi_Template_Execution<StructType>(PendingRequest.Method, PendingRequest.ServiceType, PendingRequest.URL, NewAccessToken, PendingRequest.ContentBody, PendingRequest.QueryParams, OnGetCustomStruct, OnHttpRequestJobRetry, false);
 					};
 					Job.OnTokenFailed = [OnGetCustomStruct](const FString& ErrorCode, const FString& ErrorMessage)
 					{
@@ -336,7 +346,7 @@ void UJWNU_GIS_ApiClientService::CallApi_Template_Execution(
 			});
 	
 		// Http 리퀘스트
-		UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackManage401);
+		UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackManage401, OnHttpRequestJobRetry);
 	}
 	else
 	{
@@ -359,7 +369,6 @@ void UJWNU_GIS_ApiClientService::CallApi_Template_Execution(
 			});
 	
 		// Http 리퀘스트
-		UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackNoManage401);
+		UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackNoManage401, OnHttpRequestJobRetry);
 	}
 }
-

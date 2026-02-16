@@ -42,6 +42,7 @@ public:
 	 * @param InContentBody JSON 등으로 이루어진 콘텐츠 바디
 	 * @param InQueryParams  URL에 부착하는 쿼리 패리미터
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
+	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
 	static void SendReqeust_RawResponse(
 		const UObject* WorldContextObject,
@@ -50,7 +51,8 @@ public:
 		const FString& InAuthToken, 
 		const FString& InContentBody, 
 		const TMap<FString, FString>& InQueryParams, 
-		const FOnHttpRequestCompletedDelegate& InOnHttpResponse);
+		const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
+		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
 	
 	/**
 	 * HTTP 리퀘스트를 보내는 함수. 전처리된 Custom Response Body를 콜백으로 반환한다.
@@ -61,6 +63,7 @@ public:
 	 * @param InContentBody JSON 등으로 이루어진 콘텐츠 바디
 	 * @param InQueryParams  URL에 부착하는 쿼리 패리미터
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
+	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
 	static void SendReqeust_CustomResponse(
 		const UObject* WorldContextObject,
@@ -69,7 +72,8 @@ public:
 		const FString& InAuthToken, 
 		const FString& InContentBody, 
 		const TMap<FString, FString>& InQueryParams, 
-		const FOnHttpRequestCompletedDelegate& InOnHttpResponse);
+		const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
+		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
 	
 private:
 	
@@ -81,6 +85,7 @@ private:
 	 * @param InContentBody JSON 등으로 이루어진 콘텐츠 바디
 	 * @param InQueryParams  URL에 부착하는 쿼리 패리미터
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
+	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
 	void SendReqeust_RawResponse(
 		const EJWNU_HttpMethod InMethod, 
@@ -88,7 +93,8 @@ private:
 		const FString& InAuthToken, 
 		const FString& InContentBody, 
 		const TMap<FString, FString>& InQueryParams, 
-		const FOnHttpRequestCompletedDelegate& InOnHttpResponse);
+		const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
+		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
 	
 	/**
 	 * 동일한 이름의 정적 함수에 의해 호출되어, 실제로 처리하는 비정적 함수.
@@ -98,6 +104,7 @@ private:
 	 * @param InContentBody JSON 등으로 이루어진 콘텐츠 바디
 	 * @param InQueryParams  URL에 부착하는 쿼리 패리미터
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
+	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
 	void SendReqeust_CustomResponse(
 		const EJWNU_HttpMethod InMethod, 
@@ -105,7 +112,8 @@ private:
 		const FString& InAuthToken, 
 		const FString& InContentBody, 
 		const TMap<FString, FString>& InQueryParams, 
-		const FOnHttpRequestCompletedDelegate& InOnHttpResponse);
+		const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
+		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
 	
 	/**
 	 * 300번대 이상의 상태 코드를 커스텀 코드로 매핑하는 맵.

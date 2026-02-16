@@ -144,6 +144,16 @@ Override in host project: add the same section to the project's `DefaultJWNetwor
 
 ## Test Server (FastAPI)
 
+### Quick Start (Pre-built Executable)
+
+Includes build files that can be run immediately without setting up a Python environment.
+
+```bash
+TestServer/dist/main.exe
+```
+
+### From Source
+
 ```bash
 cd TestServer
 cp .env.example .env   # edit as needed
@@ -167,6 +177,7 @@ uvicorn main:app --reload --port 5000
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | GET | `/health` | No | Health check |
+| GET | `/timeout` | No | Timeout simulation (`?second=N`, max 60s) |
 | POST | `/auth/register/send-code` | No | Send email verification code |
 | POST | `/auth/register/verify-code` | No | Verify code |
 | POST | `/auth/register` | No | Complete registration |
@@ -229,7 +240,9 @@ JWNetworkUtility/
 │   ├── main.py
 │   ├── requirements.txt
 │   ├── .env.example
-│   └── openapi.json
+│   ├── openapi.json
+│   └── dist/
+│       └── main.exe
 ├── Doxygen/
 ├── Analysis/                      (gitignored, analysis artifacts)
 ├── JWNetworkUtility.uplugin
@@ -331,6 +344,16 @@ AuthServer="127.0.0.1:5000"
 
 ## 테스트 서버 (FastAPI)
 
+### 빠른 실행 (빌드된 실행 파일)
+
+Python 환경 설정 없이 바로 실행할 수 있는 빌드 파일이 포함되어 있습니다.
+
+```bash
+TestServer/dist/main.exe
+```
+
+### 소스에서 실행
+
 ```bash
 cd TestServer
 cp .env.example .env   # 필요 시 편집
@@ -354,6 +377,7 @@ uvicorn main:app --reload --port 5000
 | 메서드 | 경로 | 인증 | 설명 |
 |---|---|---|---|
 | GET | `/health` | X | 헬스체크 |
+| GET | `/timeout` | X | 타임아웃 시뮬레이션 (`?second=N`, 최대 60초) |
 | POST | `/auth/register/send-code` | X | 이메일 인증코드 발송 |
 | POST | `/auth/register/verify-code` | X | 인증코드 검증 |
 | POST | `/auth/register` | X | 회원가입 완료 |

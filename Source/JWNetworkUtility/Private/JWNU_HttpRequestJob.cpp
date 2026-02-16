@@ -213,7 +213,7 @@ void UJWNU_HttpRequestJob::ScheduleRetry()
 	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("%.1f초 후 재시도 예정 (다음 시도: %d/%d)"), Config.RetryDelaySeconds, CurrentAttempt + 1, Config.MaxRetries);
 
 	// 재시도 이벤트 브로드캐스트
-	//OnRetry.ExecuteIfBound(CurrentAttempt + 1);
+	OnHttpRequestJobRetry.ExecuteIfBound(CurrentAttempt + 1);
 
 	// 딜레이 후 재시도
 	if (const UWorld* World = GetWorld())

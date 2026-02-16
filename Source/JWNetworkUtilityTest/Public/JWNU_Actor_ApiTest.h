@@ -39,4 +39,9 @@ protected:
 	 */
 	UFUNCTION()
 	void TestThree_ApiClientService_NoTemplate() const;
+	
+	/**
+	 * 테스트용 타이머
+	 */
+	FTimerHandle TimerHandle1, TimerHandle2, TimerHandle3;
 };

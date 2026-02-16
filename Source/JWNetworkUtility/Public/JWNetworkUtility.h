@@ -61,30 +61,6 @@ extern JWNETWORKUTILITY_API TAutoConsoleVariable<bool> CVarJWNU_DebugScreen;
 
 #pragma endregion ScreenDebugger
 
-#pragma region NetLogger
-
-// 네트워크 디버깅 로그 카테고리 선언
-DECLARE_LOG_CATEGORY_EXTERN(JWNetLog, Log, All);
-
-// 네트워크 정보를 문자열로
-#define NET_MODE_INFO \
-((GetNetMode() == NM_Client) ? *FString::Printf(TEXT("[CLIENT %d]"), UE::GetPlayInEditorID()) \
-: ((GetNetMode() == ENetMode::NM_Standalone) ? TEXT("[STANDALONE]") : TEXT("[SERVER]")))
-
-// 간단한 디버깅용 호출 위치 로그
-#define PRINT_NET_INFO() UE_LOG(JWNetLog, Display, TEXT("[%s] %s"), NET_MODE_INFO, *CALL_INFO)
-
-// 로그 + 파일 출력
-#define PRINT_NET_LOG(fmt, ...) \
-{ \
-const FString __NetMessage__ = FString(NET_MODE_INFO); \
-const FString __LogMessage__ = FString::Printf(fmt, ##__VA_ARGS__); \
-const FString __FullMessage__ = FString::Printf(TEXT("[%s] %s : %s"), *__NetMessage__, *CALL_INFO, *__LogMessage__); \
-UE_LOG(JWNetLog, Display, TEXT("%s"), *__FullMessage__); \
-}
-
-#pragma endregion NetLogger
-
 #pragma region ScopeWallLogger
 
 // 범위 로그 벽의 총 길이를 설정

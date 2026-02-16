@@ -27,8 +27,9 @@ SMTP 설정 (.env 파일 또는 환경변수):
     7. POST /auth/logout                 - 로그아웃 (토큰 무력화)
     8. POST /auth/reset                  - 전체 데이터 초기화
     9. GET/POST/PUT/DELETE /api/data     - 인증 필요 엔드포인트
-   10. GET  /debug/users/registered       - 가입자 목록
-   11. GET  /debug/users/active           - 활성 세션 유저 목록
+   10. GET  /timeout?second=N              - 타임아웃 시뮬레이션 (인증 불필요)
+   11. GET  /debug/users/registered       - 가입자 목록
+   12. GET  /debug/users/active           - 활성 세션 유저 목록
 """
 
 import asyncio
@@ -362,6 +363,27 @@ def health_check():
         Success=True,
         Code="HEALTH_OK",
         Message="Server is running",
+    )
+
+
+# ──────────────────────────────────────────────
+# 엔드포인트: 타임아웃 시뮬레이션 (인증 불필요)
+# ──────────────────────────────────────────────
+
+@app.get("/timeout")
+async def timeout_simulation(
+    second: float = Query(0, description="응답 지연 시간 (초)"),
+):
+    """인증 불필요. 지정한 초만큼 응답을 지연시켜 타임아웃 시뮬레이션."""
+    if second > 0:
+        clamped = min(second, MAX_SIMULATED_DELAY)
+        print(f"  [TIMEOUT] Sleeping {clamped:.1f}s ...")
+        await asyncio.sleep(clamped)
+
+    return BaseResponse(
+        Success=True,
+        Code="TIMEOUT_OK",
+        Message=f"Responded after {second}s delay",
     )
 
 

@@ -26,9 +26,10 @@ public:
 	 * @param InAuthToken 사용할 인증 엑세스 JWT 토큰 
 	 * @param InContentBody 콘텐츠 바디 
 	 * @param InQueryParams 쿼리 패러미터
-	 * @param InOnHttpResponseBPEvent 리스폰스 바디를 패러미터로 받는 블루프린트 이벤트
+	 * @param InOnHttpResponse 리스폰스 바디를 패러미터로 받는 블루프린트 이벤트
+	 * @param InOnHttpRequestJobRetry 리퀘스트 재시도 때 호출되는 블루프린트 이벤트
 	 */
-	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="InQueryParams"))
+	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="InQueryParams, InOnHttpRequestJobRetry"))
 	static void SendHttpRequest(
 		const UObject* WorldContextObject, 
 		const EJWNU_HttpMethod InMethod, 
@@ -36,7 +37,8 @@ public:
 		const FString& InAuthToken, 
 		const FString& InContentBody, 
 		const TMap<FString, FString>& InQueryParams, 
-		const FOnHttpResponseBPEvent InOnHttpResponseBPEvent);
+		const FOnHttpResponseBPEvent& InOnHttpResponse,
+		const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry);
 
 	/**
 	 * [ Blueprint Function Library ] \n Call API \n API를 호출하는 함수.
@@ -46,10 +48,11 @@ public:
 	 * @param InEndpoint API 엔드포인트
 	 * @param InContentBody 콘텐츠 바디
 	 * @param InQueryParams 쿼리 패러미터
-	 * @param InOnHttpResponseBPEvent 리스폰스 바디를 패러미터로 받는 블루프린트 이벤트
+	 * @param InOnHttpResponse 리스폰스 바디를 패러미터로 받는 블루프린트 이벤트
+	 * @param InOnHttpRequestJobRetry 리퀘스트 재시도 때 호출되는 블루프린트 이벤트
 	 * @param bRequiresAuth 인증 토큰 요구 여부
 	 */
-	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="InQueryParams"))
+	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="InQueryParams, InOnHttpRequestJobRetry"))
 	static void CallApi(
 		const UObject* WorldContextObject,
 		const EJWNU_ServiceType InServiceType,
@@ -57,7 +60,8 @@ public:
 		const FString& InEndpoint,
 		const FString& InContentBody,
 		const TMap<FString, FString>& InQueryParams,
-		const FOnHttpResponseBPEvent InOnHttpResponseBPEvent,
+		const FOnHttpResponseBPEvent& InOnHttpResponse,
+		const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry,
 		const bool bRequiresAuth);
 	
 	/**

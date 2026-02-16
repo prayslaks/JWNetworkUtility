@@ -11,16 +11,23 @@ void UJWNU_BFL_ApiClientService::SendHttpRequest(
 	const FString& InAuthToken, 
 	const FString& InContentBody, 
 	const TMap<FString, FString>& InQueryParams, 
-	const FOnHttpResponseBPEvent InOnHttpResponseBPEvent)
+	const FOnHttpResponseBPEvent& InOnHttpResponse,
+	const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry)
 {
 	// 블루프린트 이벤트를 다시 델리게이트로 감싼다
-	const FOnHttpRequestCompletedDelegate WrappedCallback = FOnHttpRequestCompletedDelegate::CreateLambda([InOnHttpResponseBPEvent](const int32 StatusCode, const FString& ResponseBody)
+	const FOnHttpRequestCompletedDelegate ResponseCallback = FOnHttpRequestCompletedDelegate::CreateLambda([InOnHttpResponse](const int32 StatusCode, const FString& ResponseBody)
 	{
-		InOnHttpResponseBPEvent.ExecuteIfBound(JWNU_IntToHttpStatusCode(StatusCode), ResponseBody);
+		InOnHttpResponse.ExecuteIfBound(JWNU_IntToHttpStatusCode(StatusCode), ResponseBody);
+	});
+	
+	// 블루프린트 이벤트를 다시 델리게이트로 감싼다
+	const FOnHttpRequestJobRetryDelegate RetryCallback = FOnHttpRequestJobRetryDelegate::CreateLambda([InOnHttpRequestJobRetry](const int32 AttemptNumber)
+	{
+		InOnHttpRequestJobRetry.ExecuteIfBound(AttemptNumber);
 	});
 	
 	// HTTP 리퀘스트
-	UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(WorldContextObject, InMethod, InURL, InAuthToken, InContentBody, InQueryParams, WrappedCallback);
+	UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(WorldContextObject, InMethod, InURL, InAuthToken, InContentBody, InQueryParams, ResponseCallback, RetryCallback);
 }
 
 void UJWNU_BFL_ApiClientService::CallApi(
@@ -29,18 +36,25 @@ void UJWNU_BFL_ApiClientService::CallApi(
 	const EJWNU_HttpMethod InMethod, 
 	const FString& InEndpoint, 
 	const FString& InContentBody,
-	const TMap<FString, FString>& InQueryParams, 
-	const FOnHttpResponseBPEvent InOnHttpResponseBPEvent,
+	const TMap<FString, FString>& InQueryParams,
+	const FOnHttpResponseBPEvent& InOnHttpResponse,
+	const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry,
 	const bool bRequiresAuth)
 {
 	// 블루프린트 이벤트를 다시 델리게이트로 감싼다
-	const FOnHttpResponseDelegate WrappedCallback = FOnHttpResponseDelegate::CreateLambda([InOnHttpResponseBPEvent](const EJWNU_HttpStatusCode StatusCode, const FString& ResponseBody)
+	const FOnHttpResponseDelegate ResponseCallback = FOnHttpResponseDelegate::CreateLambda([InOnHttpResponse](const EJWNU_HttpStatusCode StatusCode, const FString& ResponseBody)
 	{
-		InOnHttpResponseBPEvent.ExecuteIfBound(StatusCode, ResponseBody);
+		InOnHttpResponse.ExecuteIfBound(StatusCode, ResponseBody);
+	});
+	
+	// 블루프린트 이벤트를 다시 델리게이트로 감싼다
+	const FOnHttpRequestJobRetryDelegate RetryCallback = FOnHttpRequestJobRetryDelegate::CreateLambda([InOnHttpRequestJobRetry](const int32 AttemptNumber)
+	{
+		InOnHttpRequestJobRetry.ExecuteIfBound(AttemptNumber);
 	});
 	
 	// HTTP 리퀘스트
-	UJWNU_GIS_ApiClientService::CallApi_NoTemplate(WorldContextObject, InMethod, InServiceType, InEndpoint, InContentBody, InQueryParams, WrappedCallback, bRequiresAuth);
+	UJWNU_GIS_ApiClientService::CallApi_NoTemplate(WorldContextObject, InMethod, InServiceType, InEndpoint, InContentBody, InQueryParams, ResponseCallback, RetryCallback, bRequiresAuth);
 }
 
 void UJWNU_BFL_ApiClientService::LoadRefreshTokenContainer(

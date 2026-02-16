@@ -29,6 +29,11 @@ public:
 	 * 동작 설정 필드. 
 	 */
 	FJWNU_RequestConfig Config;
+
+	/**
+	 * (시도 횟수)를 외부에 전달해주기 위한 델리게이트 필드.
+	 */
+	FOnHttpRequestJobRetryDelegate OnHttpRequestJobRetry;
 	
 	/** 
 	 * (상태 코드, 네트워크 상태, 리스폰스 바디)를 외부에 전달해주기 위한 델리게이트 필드.
