@@ -24,8 +24,11 @@ SMTP 설정 (.env 파일 또는 환경변수):
     4. POST /auth/register               - 회원가입 완료
     5. POST /auth/login                  - 로그인 (JWT 발급)
     6. POST /auth/refresh                - 토큰 리프레시
-    7. POST /auth/reset                  - 전체 데이터 초기화
-    8. GET/POST/PUT/DELETE /api/data     - 인증 필요 엔드포인트
+    7. POST /auth/logout                 - 로그아웃 (토큰 무력화)
+    8. POST /auth/reset                  - 전체 데이터 초기화
+    9. GET/POST/PUT/DELETE /api/data     - 인증 필요 엔드포인트
+   10. GET  /debug/users/registered       - 가입자 목록
+   11. GET  /debug/users/active           - 활성 세션 유저 목록
 """
 
 import asyncio
@@ -129,6 +132,12 @@ verification_store: dict[str, dict] = {}
 # 리프레시 토큰 저장소: { token_string: { "user_id": str, "target_server": str, ... } }
 refresh_token_store: dict[str, dict] = {}
 
+# 엑세스 토큰 블랙리스트 (로그아웃 시 무력화)
+access_token_blacklist: set[str] = set()
+
+# 유저별 데이터 저장소: { user_id: str }
+user_data_store: dict[str, str] = {}
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     smtp_status = f"{SMTP_HOST}:{SMTP_PORT}" if SMTP_HOST else log("smtp_status_not_configured")
@@ -145,7 +154,6 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="JWNetworkUtility Test Server", lifespan=lifespan)
-
 
 # ──────────────────────────────────────────────
 # 응답 모델 (UPROPERTY 이름과 일치)
@@ -235,16 +243,27 @@ def send_verification_email(to_email: str, code: str) -> bool:
         msg = MIMEMultipart()
         msg["From"] = SMTP_FROM
         msg["To"] = to_email
-        msg["Subject"] = "[JWNetworkUtility] 이메일 인증 코드"
+        msg["Subject"] = "[JWNetworkUtility] Email Verification Code"
 
-        body = (
-            f"안녕하세요,\n\n"
-            f"요청하신 이메일 인증 코드입니다:\n\n"
-            f"    {code}\n\n"
-            f"이 코드는 {VERIFICATION_CODE_EXPIRE_SECONDS // 60}분간 유효합니다.\n\n"
-            f"본인이 요청하지 않았다면 이 이메일을 무시하세요."
+        expire_min = VERIFICATION_CODE_EXPIRE_SECONDS // 60
+        html_body = (
+            f'<div style="font-family:Segoe UI,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px">'
+            f'  <h2 style="color:#1a1a2e;margin-bottom:8px">Email Verification</h2>'
+            f'  <p style="color:#555;font-size:14px;line-height:1.6">'
+            f'    Please use the verification code below to complete your request.'
+            f'  </p>'
+            f'  <div style="margin:24px 0;padding:20px;background:#f4f6fb;border-radius:8px;text-align:center">'
+            f'    <span style="font-size:32px;font-weight:700;letter-spacing:8px;color:#1a1a2e">{code}</span>'
+            f'  </div>'
+            f'  <p style="color:#888;font-size:12px;line-height:1.5">'
+            f'    This code is valid for {expire_min} minute{"s" if expire_min != 1 else ""}.<br>'
+            f'    If you did not request this, you can safely ignore this email.'
+            f'  </p>'
+            f'  <hr style="border:none;border-top:1px solid #eee;margin:24px 0">'
+            f'  <p style="color:#aaa;font-size:11px">JWNetworkUtility Test Server</p>'
+            f'</div>'
         )
-        msg.attach(MIMEText(body, "plain", "utf-8"))
+        msg.attach(MIMEText(html_body, "html", "utf-8"))
 
         if SMTP_PORT == 465:
             server = smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT)     
@@ -297,6 +316,9 @@ def verify_access_token(authorization: Optional[str]) -> dict | None:
 
     token = authorization.removeprefix("Bearer ").strip()
     if not token:
+        return None
+
+    if token in access_token_blacklist:
         return None
 
     try:
@@ -356,7 +378,7 @@ def register_send_code(req: SendCodeRequest):
         return BaseResponse(
             Success=False,
             Code="INVALID_EMAIL",
-            Message="유효한 이메일 주소를 입력하세요.",
+            Message="Please enter a valid email address.",
         )
 
     # 이메일 중복 확인
@@ -364,7 +386,7 @@ def register_send_code(req: SendCodeRequest):
         return BaseResponse(
             Success=False,
             Code="EMAIL_ALREADY_EXISTS",
-            Message="이미 가입된 이메일입니다.",
+            Message="Email already registered.",
         )
 
     # 인증코드 재발송 쿨다운 (60초)
@@ -374,7 +396,7 @@ def register_send_code(req: SendCodeRequest):
         return BaseResponse(
             Success=False,
             Code="CODE_COOLDOWN",
-            Message=f"인증코드를 이미 발송했습니다. {remaining}초 후에 다시 시도하세요.",
+            Message=f"Verification code already sent. Please try again in {remaining} seconds.",
         )
 
     # 인증코드 생성 및 저장
@@ -390,13 +412,13 @@ def register_send_code(req: SendCodeRequest):
         return BaseResponse(
             Success=False,
             Code="EMAIL_SEND_FAILED",
-            Message="인증코드 이메일 발송에 실패했습니다. 잠시 후 다시 시도하세요.",
+            Message="Failed to send verification email. Please try again later.",
         )
 
     return BaseResponse(
         Success=True,
         Code="CODE_SENT",
-        Message="인증코드가 이메일로 발송되었습니다.",
+        Message="Verification code has been sent to your email.",
     )
 
 
@@ -411,7 +433,7 @@ def register_verify_code(req: VerifyCodeRequest):
         return BaseResponse(
             Success=False,
             Code="CODE_NOT_FOUND",
-            Message="인증코드를 먼저 요청하세요.",
+            Message="Please request a verification code first.",
         )
 
     # 만료 확인
@@ -420,7 +442,7 @@ def register_verify_code(req: VerifyCodeRequest):
         return BaseResponse(
             Success=False,
             Code="CODE_EXPIRED",
-            Message="인증코드가 만료되었습니다. 다시 요청하세요.",
+            Message="Verification code has expired. Please request a new one.",
         )
 
     # 코드 일치 확인
@@ -428,7 +450,7 @@ def register_verify_code(req: VerifyCodeRequest):
         return BaseResponse(
             Success=False,
             Code="CODE_MISMATCH",
-            Message="인증코드가 일치하지 않습니다.",
+            Message="Verification code does not match.",
         )
 
     # 검증 완료 마킹
@@ -436,7 +458,7 @@ def register_verify_code(req: VerifyCodeRequest):
     return BaseResponse(
         Success=True,
         Code="CODE_VERIFIED",
-        Message="이메일 인증이 완료되었습니다.",
+        Message="Email verification completed.",
     )
 
 
@@ -451,14 +473,14 @@ def register(req: RegisterRequest):
         return BaseResponse(
             Success=False,
             Code="INVALID_EMAIL",
-            Message="유효한 이메일 주소를 입력하세요.",
+            Message="Please enter a valid email address.",
         )
 
     if not password or len(password) < 4:
         return BaseResponse(
             Success=False,
             Code="INVALID_PASSWORD",
-            Message="비밀번호는 4자 이상이어야 합니다.",
+            Message="Password must be at least 4 characters.",
         )
 
     # 이메일 중복 재확인
@@ -466,7 +488,7 @@ def register(req: RegisterRequest):
         return BaseResponse(
             Success=False,
             Code="EMAIL_ALREADY_EXISTS",
-            Message="이미 가입된 이메일입니다.",
+            Message="Email already registered.",
         )
 
     # 인증코드 검증 상태 확인
@@ -475,21 +497,21 @@ def register(req: RegisterRequest):
         return BaseResponse(
             Success=False,
             Code="CODE_NOT_FOUND",
-            Message="인증코드를 먼저 요청하세요.",
+            Message="Please request a verification code first.",
         )
 
     if not stored["verified"]:
         return BaseResponse(
             Success=False,
             Code="CODE_NOT_VERIFIED",
-            Message="이메일 인증을 먼저 완료하세요.",
+            Message="Please complete email verification first.",
         )
 
     if stored["code"] != code:
         return BaseResponse(
             Success=False,
             Code="CODE_MISMATCH",
-            Message="인증코드가 일치하지 않습니다.",
+            Message="Verification code does not match.",
         )
 
     # 만료 확인
@@ -498,11 +520,13 @@ def register(req: RegisterRequest):
         return BaseResponse(
             Success=False,
             Code="CODE_EXPIRED",
-            Message="인증코드가 만료되었습니다. 다시 요청하세요.",
+            Message="Verification code has expired. Please request a new one.",
         )
 
     # 유저 생성
+    user_id = str(uuid.uuid4())
     user_store[email] = {
+        "user_id": user_id,
         "password_hash": hash_password(password),
         "created_at": time.time(),
     }
@@ -515,7 +539,7 @@ def register(req: RegisterRequest):
     return BaseResponse(
         Success=True,
         Code="REGISTER_SUCCESS",
-        Message="회원가입이 완료되었습니다.",
+        Message="Registration completed successfully.",
     )
 
 
@@ -532,7 +556,7 @@ def login(req: LoginRequest):
         return AuthResponse(
             Success=False,
             Code="INVALID_CREDENTIALS",
-            Message="이메일과 비밀번호를 입력하세요.",
+            Message="Please enter email and password.",
         )
 
     # 유저 존재 확인
@@ -541,7 +565,7 @@ def login(req: LoginRequest):
         return AuthResponse(
             Success=False,
             Code="USER_NOT_FOUND",
-            Message="등록되지 않은 이메일입니다.",
+            Message="Email not registered.",
         )
 
     # 비밀번호 확인
@@ -549,21 +573,31 @@ def login(req: LoginRequest):
         return AuthResponse(
             Success=False,
             Code="WRONG_PASSWORD",
-            Message="비밀번호가 일치하지 않습니다.",
+            Message="Incorrect password.",
         )
 
-    access_token, expires_at = create_access_token(email)
-    refresh_token, refresh_expires_at = create_refresh_token(email, "GameServer")
+    user_id = user["user_id"]
+
+    # 기존 세션 무효화: 해당 유저의 리프레시 토큰 모두 삭제
+    tokens_to_remove = [
+        rt for rt, info in refresh_token_store.items()
+        if info["user_id"] == user_id
+    ]
+    for rt in tokens_to_remove:
+        del refresh_token_store[rt]
+
+    access_token, expires_at = create_access_token(user_id)
+    refresh_token, refresh_expires_at = create_refresh_token(user_id, "GameServer")
 
     return AuthResponse(
         Success=True,
         Code="LOGIN_SUCCESS",
-        Message=f"{email} 로그인 성공",
+        Message=f"Login successful: {email}",
         AccessToken=access_token,
         ExpiresAt=expires_at,
         RefreshToken=refresh_token,
         RefreshTokenExpiresAt=refresh_expires_at,
-        UserId=email,
+        UserId=user_id,
     )
 
 
@@ -602,6 +636,54 @@ def refresh(req: RefreshRequest):
         RefreshToken=new_refresh_token,
         RefreshTokenExpiresAt=refresh_expires_at,
         UserId=user_id,
+    )
+
+
+@app.post("/auth/logout")
+def logout(authorization: Optional[str] = Header(None)):
+    """로그아웃. Access token을 블랙리스트에 추가하고 해당 유저의 refresh token을 삭제."""
+    if not authorization:
+        return BaseResponse(
+            Success=False,
+            Code="MISSING_TOKEN",
+            Message="Authorization header is required.",
+        )
+
+    token = authorization.removeprefix("Bearer ").strip()
+    if not token:
+        return BaseResponse(
+            Success=False,
+            Code="MISSING_TOKEN",
+            Message="Bearer token is required.",
+        )
+
+    # 토큰 디코드하여 user_id 추출 (만료 토큰도 디코드 허용)
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"], options={"verify_exp": False})
+    except jwt.InvalidTokenError:
+        return BaseResponse(
+            Success=False,
+            Code="INVALID_TOKEN",
+            Message="Invalid token.",
+        )
+
+    user_id = payload.get("sub", "")
+
+    # Access token 블랙리스트 추가
+    access_token_blacklist.add(token)
+
+    # 해당 유저의 refresh token 삭제
+    tokens_to_remove = [
+        rt for rt, info in refresh_token_store.items()
+        if info["user_id"] == user_id
+    ]
+    for rt in tokens_to_remove:
+        del refresh_token_store[rt]
+
+    return BaseResponse(
+        Success=True,
+        Code="LOGOUT_SUCCESS",
+        Message=f"Logged out. {len(tokens_to_remove)} refresh token(s) revoked.",
     )
 
 
@@ -654,17 +736,19 @@ async def get_data(
         return err
 
     user_id = request.state.user["sub"]
+    data = user_data_store.get(user_id, "")
     return DataResponse(
         Success=True,
         Code="SUCCESS",
         Message="Data retrieved",
-        Data=f"Hello, {user_id}!",
+        Data=data,
     )
 
 
 @app.post("/api/data")
 async def post_data(
     request: Request,
+    req: DataRequest,
     delay: float | None = Query(None, description="응답 딜레이 (초)"),
     status: int | None = Query(None, description="시뮬레이션할 HTTP 상태코드"),
 ):
@@ -672,19 +756,20 @@ async def post_data(
     if err:
         return err
 
-    body = await request.json()
-    data = body.get("data", "")
+    user_id = request.state.user["sub"]
+    user_data_store[user_id] = req.data
     return DataResponse(
         Success=True,
         Code="SUCCESS",
-        Message="Data created",
-        Data=data,
+        Message="Data updated",
+        Data=req.data,
     )
 
 
 @app.put("/api/data")
 async def put_data(
     request: Request,
+    req: DataRequest,
     delay: float | None = Query(None, description="응답 딜레이 (초)"),
     status: int | None = Query(None, description="시뮬레이션할 HTTP 상태코드"),
 ):
@@ -692,13 +777,13 @@ async def put_data(
     if err:
         return err
 
-    body = await request.json()
-    data = body.get("data", "")
+    user_id = request.state.user["sub"]
+    user_data_store[user_id] = req.data
     return DataResponse(
         Success=True,
         Code="SUCCESS",
         Message="Data updated",
-        Data=data,
+        Data=req.data,
     )
 
 
@@ -712,10 +797,13 @@ async def delete_data(
     if err:
         return err
 
-    return BaseResponse(
+    user_id = request.state.user["sub"]
+    user_data_store.pop(user_id, None)
+    return DataResponse(
         Success=True,
         Code="SUCCESS",
         Message="Data deleted",
+        Data="",
     )
 
 
@@ -729,29 +817,59 @@ def auth_reset():
     user_count = len(user_store)
     verification_count = len(verification_store)
     refresh_count = len(refresh_token_store)
+    blacklist_count = len(access_token_blacklist)
+    data_count = len(user_data_store)
 
     user_store.clear()
     verification_store.clear()
     refresh_token_store.clear()
+    access_token_blacklist.clear()
+    user_data_store.clear()
 
     return BaseResponse(
         Success=True,
         Code="RESET_SUCCESS",
-        Message=f"Cleared {user_count} users, {verification_count} verifications, {refresh_count} refresh tokens",
+        Message=f"Cleared {user_count} users, {verification_count} verifications, {refresh_count} refresh tokens, {blacklist_count} blacklisted tokens, {data_count} user data entries",
     )
 
 
-@app.get("/debug/users")
-def debug_users():
-    """등록된 유저 목록 (비밀번호 해시 제외)."""
+@app.get("/debug/users/registered")
+def debug_users_registered():
+    """등록된 가입자 목록 (비밀번호 해시 제외)."""
     users = [
-        {"email": email, "created_at": info["created_at"]}
+        {"user_id": info["user_id"], "email": email, "created_at": info["created_at"]}
         for email, info in user_store.items()
     ]
     return {
         "Success": True,
         "Code": "DEBUG",
-        "Message": f"총 {len(users)}명",
+        "Message": f"{len(users)} registered user(s)",
+        "Data": users,
+    }
+
+
+@app.get("/debug/users/active")
+def debug_users_active():
+    """현재 활성 세션(만료되지 않은 리프레시 토큰) 유저 목록."""
+    now = time.time()
+    active_sessions: dict[str, list[float]] = {}
+    for token_info in refresh_token_store.values():
+        if token_info["expires_at"] > now:
+            user_id = token_info["user_id"]
+            active_sessions.setdefault(user_id, []).append(token_info["expires_at"])
+
+    users = [
+        {
+            "user_id": user_id,
+            "active_sessions": len(expires_list),
+            "earliest_expiry": min(expires_list),
+        }
+        for user_id, expires_list in active_sessions.items()
+    ]
+    return {
+        "Success": True,
+        "Code": "DEBUG",
+        "Message": f"{len(users)} active user(s))",
         "Data": users,
     }
 
@@ -771,7 +889,7 @@ def debug_verifications():
     return {
         "Success": True,
         "Code": "DEBUG",
-        "Message": f"총 {len(codes)}건",
+        "Message": f"{len(codes)} verification code(s)",
         "Data": codes,
     }
 
@@ -786,9 +904,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="JWNetworkUtility Test Server")
     parser.add_argument("--host", default="0.0.0.0", help="바인드 호스트 (기본: 0.0.0.0)")
     parser.add_argument("--port", type=int, default=5000, help="바인드 포트 (기본: 5000)")
-    parser.add_argument("--token-expire", type=int, default=60, help="엑세스 토큰 만료 시간(초) (기본: 60)")
+    parser.add_argument("--access-token-expire", type=int, default=60, help="엑세스 토큰 만료 시간(초) (기본: 60)")
+    parser.add_argument("--refresh-token-expire", type=int, default=360, help="리프레시 토큰 만료 시간(초) (기본: 360)")
     args = parser.parse_args()
 
-    ACCESS_TOKEN_EXPIRE_SECONDS = args.token_expire
+    ACCESS_TOKEN_EXPIRE_SECONDS = args.access_token_expire
+    REFRESH_TOKEN_EXPIRE_SECONDS = args.refresh_token_expire
 
     uvicorn.run(app, host=args.host, port=args.port)

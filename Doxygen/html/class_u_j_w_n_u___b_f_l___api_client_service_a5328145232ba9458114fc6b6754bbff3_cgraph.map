@@ -1,0 +1,11 @@
+<map id="UJWNU_BFL_ApiClientService::CallApi" name="UJWNU_BFL_ApiClientService::CallApi">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,48,212,91"/>
+<area shape="rect" id="Node000002" href="$class_u_j_w_n_u___g_i_s___api_client_service.html#ae62a56a30053e373fa75233a16339871" title=" " alt="" coords="260,48,465,91"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,67,247,69,242,70,212,72"/>
+<area shape="rect" id="Node000003" href="$class_u_j_w_n_u___g_i_s___api_client_service.html#a36a562447dbc941c7f2cea794fb77b62" title=" " alt="" coords="520,5,754,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="465,48,543,36,548,35,466,53"/>
+<area shape="rect" id="Node000004" href="$class_u_j_w_n_u___g_i_s___api_host_provider.html#ad551b22e5d68599f5a7166fceadd04d3" title=" " alt="" coords="520,56,753,83"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="465,67,508,69,502,70,466,72"/>
+<area shape="rect" id="Node000005" href="$class_u_j_w_n_u___g_i_s___api_identity_provider.html#aa8569c574b0b44281cf45c2a542ae602" title=" " alt="" coords="513,107,760,133"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="466,86,548,103,543,103,465,91"/>
+</map>

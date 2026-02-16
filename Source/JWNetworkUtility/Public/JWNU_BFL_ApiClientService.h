@@ -135,7 +135,7 @@ public:
 	 * @param WorldContextObject 월드 컨텍스트 오브젝트
 	 * @return UserId 문자열
 	 */
-	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject"))
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject"))
 	static FString GetUserId(const UObject* WorldContextObject);
 
 	/**
@@ -213,7 +213,4 @@ public:
 		// 변환 결과(Success/Fail)를 블루프린트 리턴값으로 전달
 		*static_cast<bool*>(RESULT_PARAM) = Generic_ConvertStructToJsonString(StructProperty, StructPtr, *OutConvertResultPtr, OutJsonString);
 	}
-	
-	UFUNCTION(BlueprintCallable, Category = "JSON|Format")
-	static FString FormatJsonWithTemplate(const FString Template, FString JsonData);
 };

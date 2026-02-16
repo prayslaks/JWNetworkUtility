@@ -1,0 +1,17 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,157,188,184"/>
+<area shape="rect" id="Node000001" href="$class_u_j_w_n_u___g_i_s___api_client_service.html" title=" " alt="" coords="245,5,450,32"/>
+<area shape="poly" id="edge10_Node000000_Node000001" title=" " alt="" coords="116,143,166,91,199,64,234,42,266,31,261,34,237,46,202,69,170,95,120,147"/>
+<area shape="rect" id="Node000002" href="$class_u_j_w_n_u___g_i_s___api_host_provider.html" title=" " alt="" coords="246,56,449,83"/>
+<area shape="poly" id="edge11_Node000000_Node000002" title=" " alt="" coords="129,147,178,118,235,92,274,82,270,85,237,97,181,123,133,151"/>
+<area shape="rect" id="Node000003" href="$class_u_j_w_n_u___g_i_s___api_identity_provider.html" title=" " alt="" coords="238,107,456,133"/>
+<area shape="poly" id="edge12_Node000000_Node000003" title=" " alt="" coords="180,151,280,132,276,136,182,156"/>
+<area shape="rect" id="Node000004" href="$class_u_j_w_n_u___g_i_s___custom_code_helper.html" title=" " alt="" coords="236,157,459,184"/>
+<area shape="poly" id="edge13_Node000000_Node000004" title=" " alt="" coords="203,168,237,170,233,172,204,173"/>
+<area shape="rect" id="Node000005" href="$class_u_j_w_n_u___g_i_s___http_client_helper.html" title=" " alt="" coords="245,208,450,235"/>
+<area shape="poly" id="edge14_Node000000_Node000005" title=" " alt="" coords="181,185,280,206,275,209,182,190"/>
+<area shape="rect" id="Node000006" href="$class_u_j_w_n_u___g_i_s___http_request_job_processor.html" title=" " alt="" coords="246,259,449,301"/>
+<area shape="poly" id="edge15_Node000000_Node000006" title=" " alt="" coords="133,190,182,218,237,244,269,258,264,258,235,249,179,222,133,195"/>
+<area shape="rect" id="Node000007" href="$class_u_j_w_n_u___g_i_s___steam_works.html" title=" " alt="" coords="256,325,439,352"/>
+<area shape="poly" id="edge16_Node000000_Node000007" title=" " alt="" coords="117,195,167,255,200,285,237,311,265,325,259,325,234,316,197,289,163,258,115,200"/>
+</map>

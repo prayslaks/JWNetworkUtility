@@ -1,0 +1,11 @@
+<map id="AJWNU_Actor_ApiTest::TestThree_ApiClientService_NoTemplate" name="AJWNU_Actor_ApiTest::TestThree_ApiClientService_NoTemplate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,40,197,99"/>
+<area shape="rect" id="Node000002" href="$class_u_j_w_n_u___g_i_s___api_client_service.html#ae62a56a30053e373fa75233a16339871" title=" " alt="" coords="245,48,450,91"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,67,232,69,226,70,198,72"/>
+<area shape="rect" id="Node000003" href="$class_u_j_w_n_u___g_i_s___api_client_service.html#a36a562447dbc941c7f2cea794fb77b62" title=" " alt="" coords="504,5,739,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="450,48,528,36,533,35,451,53"/>
+<area shape="rect" id="Node000004" href="$class_u_j_w_n_u___g_i_s___api_host_provider.html#ad551b22e5d68599f5a7166fceadd04d3" title=" " alt="" coords="506,56,738,83"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="450,67,493,69,487,70,451,72"/>
+<area shape="rect" id="Node000005" href="$class_u_j_w_n_u___g_i_s___api_identity_provider.html#aa8569c574b0b44281cf45c2a542ae602" title=" " alt="" coords="498,107,745,133"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="451,86,533,103,528,103,450,91"/>
+</map>

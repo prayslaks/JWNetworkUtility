@@ -1,0 +1,9 @@
+<map id="UJWNU_GIS_ApiClientService::CallApi_NoTemplate" name="UJWNU_GIS_ApiClientService::CallApi_NoTemplate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,48,211,91"/>
+<area shape="rect" id="Node000002" href="$class_u_j_w_n_u___g_i_s___api_client_service.html#a36a562447dbc941c7f2cea794fb77b62" title=" " alt="" coords="265,5,500,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,48,294,35,289,36,212,53"/>
+<area shape="rect" id="Node000003" href="$class_u_j_w_n_u___g_i_s___api_host_provider.html#ad551b22e5d68599f5a7166fceadd04d3" title=" " alt="" coords="266,56,498,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="211,67,253,69,248,70,212,72"/>
+<area shape="rect" id="Node000004" href="$class_u_j_w_n_u___g_i_s___api_identity_provider.html#aa8569c574b0b44281cf45c2a542ae602" title=" " alt="" coords="259,107,506,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="211,86,294,103,289,104,211,91"/>
+</map>

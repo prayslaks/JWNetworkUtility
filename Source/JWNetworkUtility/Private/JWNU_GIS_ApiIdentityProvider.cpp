@@ -18,9 +18,6 @@ void UJWNU_GIS_ApiIdentityProvider::Initialize(FSubsystemCollectionBase& Collect
 
 	ServiceTypeToTokenContainerMap.Emplace(EJWNU_ServiceType::GameServer, {});
 	ServiceTypeToTokenContainerMap.Emplace(EJWNU_ServiceType::AuthServer, {});
-	ServiceTypeToTokenContainerMap.Emplace(EJWNU_ServiceType::Platform, {});
-	ServiceTypeToTokenContainerMap.Emplace(EJWNU_ServiceType::External, {});
-
 }
 
 UJWNU_GIS_ApiIdentityProvider* UJWNU_GIS_ApiIdentityProvider::Get(const UObject* WorldContextObject)
@@ -202,7 +199,23 @@ bool UJWNU_GIS_ApiIdentityProvider::SaveRefreshTokenContainer(const EJWNU_Servic
 
 	// 서비스에 따른 파일 경로
 	const FString ServiceTypeString = UEnum::GetDisplayValueAsText(InServiceType).ToString();
-	const FString Path = FString::Printf(TEXT("Saved/Config/auth_%s.bin"), *ServiceTypeString);
+	const FString DirectoryPath = FPaths::ProjectSavedDir() + TEXT("Config/JWNetworkUtility/");
+	const FString Path = DirectoryPath + FString::Printf(TEXT("auth_%s.bin"), *ServiceTypeString);
+	
+	// 폴더가 존재하는지 확인하고 없으면 생성
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	if (PlatformFile.DirectoryExists(*DirectoryPath) == false)
+	{
+		// CreateDirectoryTree는 하위 폴더까지 한 번에 생성한다.
+		if (PlatformFile.CreateDirectoryTree(*DirectoryPath))
+		{
+			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("디렉토리 생성 성공: %s"), *DirectoryPath);
+		}
+		else
+		{
+			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Error, TEXT("디렉토리 생성 실패!"));
+		}
+	}
 
 	// 파일 저장
 	if (FFileHelper::SaveArrayToFile(OutEncryptedData, *Path) == false)
@@ -219,11 +232,12 @@ bool UJWNU_GIS_ApiIdentityProvider::LoadRefreshTokenContainer(const EJWNU_Servic
 {
 	// 서비스에 따른 파일 경로
 	const FString ServiceTypeString = UEnum::GetDisplayValueAsText(InServiceType).ToString();
-	const FString Path = FString::Printf(TEXT("Saved/Config/auth_%s.bin"), *ServiceTypeString);
-
+	const FString DirectoryPath = FPaths::ProjectSavedDir() + TEXT("Config/JWNetworkUtility/");
+	const FString FullPath = DirectoryPath + FString::Printf(TEXT("auth_%s.bin"), *ServiceTypeString);
+	
 	// 파일 로드
 	TArray<uint8> Result;
-	if (FFileHelper::LoadFileToArray(Result, *Path) == false)
+	if (FFileHelper::LoadFileToArray(Result, *FullPath) == false)
 	{
 		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("암호화된 파일 로드 실패!"));
 		return false;

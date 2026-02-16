@@ -1,0 +1,10 @@
+<map id="UJWNU_BFL_ApiClientService::SendHttpRequest" name="UJWNU_BFL_ApiClientService::SendHttpRequest">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,39,212,81"/>
+<area shape="rect" id="Node000002" href="$_j_w_network_utility_types_8h.html#a100f0dce75ba168bfd2973aa8d8f91aa" title=" " alt="" coords="267,5,458,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,41,264,34,259,36,213,46"/>
+<area shape="rect" id="Node000003" href="$class_u_j_w_n_u___g_i_s___http_client_helper.html#ab1edbe508f94041bdeb6bbf933e7b9af" title=" " alt="" coords="260,80,465,123"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="212,74,247,82,242,82,212,79"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="315,78,313,70,321,61,337,55,362,53,389,56,407,65,402,64,388,61,362,59,338,61,323,65,318,71,319,81"/>
+<area shape="rect" id="Node000004" href="$class_u_j_w_n_u___g_i_s___http_client_helper.html#a82e2ce384e779079d2220262b5ba1976" title=" " alt="" coords="513,88,747,115"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="465,99,500,101,495,101,465,104"/>
+</map>

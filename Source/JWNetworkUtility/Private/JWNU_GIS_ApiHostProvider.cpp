@@ -32,8 +32,6 @@ void UJWNU_GIS_ApiHostProvider::Initialize(FSubsystemCollectionBase& Collection)
 
 	TryLoad(EJWNU_ServiceType::GameServer, TEXT("GameServer"));
 	TryLoad(EJWNU_ServiceType::AuthServer, TEXT("AuthServer"));
-	TryLoad(EJWNU_ServiceType::Platform,   TEXT("Platform"));
-	TryLoad(EJWNU_ServiceType::External,   TEXT("External"));
 }
 
 UJWNU_GIS_ApiHostProvider* UJWNU_GIS_ApiHostProvider::Get(const UObject* WorldContextObject)

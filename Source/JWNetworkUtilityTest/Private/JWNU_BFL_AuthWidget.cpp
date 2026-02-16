@@ -2,6 +2,8 @@
 
 #include "JWNU_BFL_AuthWidget.h"
 
+#include "Styling/SlateColor.h"
+
 void UJWNU_BFL_AuthWidget::OnRegisterEmailTextBoxChanged(const FText& Input, FText& OutProcessed, EJWNU_RegisterEmailValidation& OutResult)
 {
 	const FString Trimmed = Input.ToString().TrimStartAndEnd();
@@ -30,7 +32,7 @@ void UJWNU_BFL_AuthWidget::OnRegisterCodeTextBoxChanged(const FText& Input, FTex
 	FString DigitsOnly;
 	for (const TCHAR Ch : Raw)
 	{
-		if (DigitsOnly.Len() >= MaxLen)
+		if (DigitsOnly.Len() > MaxLen)
 		{
 			break;
 		}
@@ -95,6 +97,13 @@ void UJWNU_BFL_AuthWidget::OnLoginPasswordTextBoxChanged(const FText& Input, EJW
 	OutResult = (Password.Len() >= 10)
 		? EJWNU_LoginPasswordValidation::Satisfied
 		: EJWNU_LoginPasswordValidation::Unsatisfied;
+}
+
+FSlateColor UJWNU_BFL_AuthWidget::GetColorBySuccess(const bool bSuccess)
+{
+	const FSlateColor SuccessColor = { FLinearColor(0.0f, 1.0f, 0.0f, 1.0f) };
+	const FSlateColor FailureColor = { FLinearColor(1.0f, 0.0f, 0.0f, 1.0f) };
+	return bSuccess ? SuccessColor : FailureColor;
 }
 
 bool UJWNU_BFL_AuthWidget::IsPasswordFormatValid(const FString& Password)

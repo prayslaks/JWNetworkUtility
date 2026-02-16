@@ -1,0 +1,475 @@
+\doxysection{UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service Class Reference}
+\hypertarget{class_u_j_w_n_u___b_f_l___api_client_service}{}\label{class_u_j_w_n_u___b_f_l___api_client_service}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+
+
+{\ttfamily \+\#include $<$JWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service.\+h$>$}
+
+
+
+Inheritance diagram for UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{class_u_j_w_n_u___b_f_l___api_client_service__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{class_u_j_w_n_u___b_f_l___api_client_service__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_ad673251bd144f6c651a34170277979db}{DECLARE\+\_\+\+FUNCTION}} (exec\+Convert\+Json\+String\+To\+Struct)
+\item 
+\doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_abe106509eaaa8672c54a9dd8c1b62383}{DECLARE\+\_\+\+FUNCTION}} (exec\+Convert\+Struct\+To\+Json\+String)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_a8f15aae28559840d3cc4708f04051474}{Send\+Http\+Request}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\+\_\+\+Http\+Method}} In\+Method, const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&In\+URL, const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&In\+Auth\+Token, const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&In\+Content\+Body, const TMap$<$ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} $>$ \&In\+Query\+Params, const FOn\+Http\+Response\+BPEvent In\+On\+Http\+Response\+BPEvent)
+\item 
+static void \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_a5328145232ba9458114fc6b6754bbff3}{Call\+Api}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}} In\+Service\+Type, const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\+\_\+\+Http\+Method}} In\+Method, const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&In\+Endpoint, const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&In\+Content\+Body, const TMap$<$ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} $>$ \&In\+Query\+Params, const FOn\+Http\+Response\+BPEvent In\+On\+Http\+Response\+BPEvent, const bool b\+Requires\+Auth)
+\item 
+static void \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_acc442f432d47db11ae73a28974fc9b94}{Load\+Refresh\+Token\+Container}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}} In\+Service\+Type, \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293}{EJWNU\+\_\+\+Token\+Get\+Result}} \&Out\+Token\+Get\+Result, \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\+\_\+\+Refresh\+Token\+Container}} \&Out\+Refresh\+Token\+Container)
+\item 
+static void \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_ae03f90aacdb9ebdff3cdbc7d11052a5f}{Save\+Refresh\+Token\+Container}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}} In\+Service\+Type, \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a0869207091beab67d34b610dadd8758c}{EJWNU\+\_\+\+Token\+Set\+Result}} \&Out\+Token\+Set\+Result, const \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\+\_\+\+Refresh\+Token\+Container}} \&In\+Refresh\+Token\+Container)
+\item 
+static void \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_a79726d6bc38d3104604e8ffac1cfe7e0}{Get\+Access\+Token\+Container}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}} In\+Service\+Type, \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293}{EJWNU\+\_\+\+Token\+Get\+Result}} \&Out\+Token\+Get\+Result, \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container}{FJWNU\+\_\+\+Access\+Token\+Container}} \&Out\+Access\+Token\+Container)
+\item 
+static void \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_af06d585bb24000a592a9cbbf351f5489}{Set\+Access\+Token\+Container}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}} In\+Service\+Type, \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a0869207091beab67d34b610dadd8758c}{EJWNU\+\_\+\+Token\+Set\+Result}} \&Out\+Token\+Set\+Result, const \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container}{FJWNU\+\_\+\+Access\+Token\+Container}} \&In\+Access\+Token\+Container)
+\item 
+static bool \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_a041fa80806c8e885f99be115938cfe7c}{Get\+Host}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}} In\+Service\+Type, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&Out\+Host)
+\item 
+static \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_a41c4b46d61a47e6dbb5ae8aa72ba3f41}{Get\+User\+Id}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+static void \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_af99c2d564624d28307bb01e4d954ee9d}{Set\+User\+Id}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&In\+User\+Id)
+\item 
+static void \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_a08cbee1a139e38fd632de5ca86a558a4}{Clear\+Session}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}} In\+Service\+Type)
+\item 
+static bool \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_a3aa2a6a916025546cc4d600c13c61443}{Convert\+Json\+String\+To\+Struct}} (const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&Json\+String, \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a58ffe65028c682b6dbdf45320526270f}{EJWNU\+\_\+\+Convert\+Json\+To\+Struct\+Result}} \&Out\+Convert\+Result, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}} \&Out\+Struct)
+\item 
+static bool \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_a1ea50fc0e59bff7d692c7aa36a21a3ab}{Generic\+\_\+\+Convert\+Json\+String\+To\+Struct}} (const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&Json\+String, \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a58ffe65028c682b6dbdf45320526270f}{EJWNU\+\_\+\+Convert\+Json\+To\+Struct\+Result}} \&Out\+Convert\+Result, const FProperty \texorpdfstring{$\ast$}{*}Struct\+Property, void \texorpdfstring{$\ast$}{*}Struct\+Ptr)
+\item 
+static bool \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_a127d6977093a90da5c75f1f6de27b00c}{Convert\+Struct\+To\+Json\+String}} (const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}} \&In\+Struct, \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a76c12a528e508c2e3cf77330be9ff437}{EJWNU\+\_\+\+Convert\+Struct\+To\+Json\+Result}} \&Out\+Convert\+Result, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&Out\+Json\+String)
+\item 
+static bool \doxymbox{\hyperlink{class_u_j_w_n_u___b_f_l___api_client_service_afe8b2690db6e550fdc2509b8084b83de}{Generic\+\_\+\+Convert\+Struct\+To\+Json\+String}} (const FProperty \texorpdfstring{$\ast$}{*}Struct\+Property, const void \texorpdfstring{$\ast$}{*}Struct\+Ptr, \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a76c12a528e508c2e3cf77330be9ff437}{EJWNU\+\_\+\+Convert\+Struct\+To\+Json\+Result}} \&Out\+Convert\+Result, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&Out\+Json\+String)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+JWNetwork\+Utility의 각종 기능을 지원하는 블루프린트 함수 라이브러리. 
+
+\label{doc-func-members}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_a5328145232ba9458114fc6b6754bbff3}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!CallApi@{CallApi}}
+\index{CallApi@{CallApi}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{CallApi()}{CallApi()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_a5328145232ba9458114fc6b6754bbff3} 
+void UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Call\+Api (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}}]{In\+Service\+Type}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\+\_\+\+Http\+Method}}}]{In\+Method}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{In\+Endpoint}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{In\+Content\+Body}{, }\item[{const TMap$<$ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} $>$ \&}]{In\+Query\+Params}{, }\item[{const FOn\+Http\+Response\+BPEvent}]{In\+On\+Http\+Response\+BPEvent}{, }\item[{const bool}]{b\+Requires\+Auth}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Call API ~\newline
+ API를 호출하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+{\em In\+Service\+Type} & 사용할 서비스 타입 \\
+\hline
+{\em In\+Method} & 사용할 HTTP 메서드 \\
+\hline
+{\em In\+Endpoint} & API 엔드포인트 \\
+\hline
+{\em In\+Content\+Body} & 콘텐츠 바디 \\
+\hline
+{\em In\+Query\+Params} & 쿼리 패러미터 \\
+\hline
+{\em In\+On\+Http\+Response\+BPEvent} & 리스폰스 바디를 패러미터로 받는 블루프린트 이벤트 \\
+\hline
+{\em b\+Requires\+Auth} & 인증 토큰 요구 여부 \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_a5328145232ba9458114fc6b6754bbff3_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_a08cbee1a139e38fd632de5ca86a558a4}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!ClearSession@{ClearSession}}
+\index{ClearSession@{ClearSession}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{ClearSession()}{ClearSession()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_a08cbee1a139e38fd632de5ca86a558a4} 
+void UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Clear\+Session (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}}]{In\+Service\+Type}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Clear Session ~\newline
+ 특정 서비스 타입의 인증 정보를 정리하는 함수. (Access\+Token 초기화, User\+Id 유지) 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+{\em In\+Service\+Type} & 정리할 서비스 타입 \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_a08cbee1a139e38fd632de5ca86a558a4_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_a3aa2a6a916025546cc4d600c13c61443}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!ConvertJsonStringToStruct@{ConvertJsonStringToStruct}}
+\index{ConvertJsonStringToStruct@{ConvertJsonStringToStruct}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{ConvertJsonStringToStruct()}{ConvertJsonStringToStruct()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_a3aa2a6a916025546cc4d600c13c61443} 
+bool UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Convert\+Json\+String\+To\+Struct (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{Json\+String}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a58ffe65028c682b6dbdf45320526270f}{EJWNU\+\_\+\+Convert\+Json\+To\+Struct\+Result}} \&}]{Out\+Convert\+Result}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}} \&}]{Out\+Struct}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Convert JSON Object String to Unreal Struct ~\newline
+ 입력한 JSON 바디 문자열을 와일드카드로 지정한 언리얼 구조체로 파싱을 시도하는 노드 정의. 
+\begin{DoxyParams}{Parameters}
+{\em Json\+String} & 파싱하길 원하는 JSON 바디 문자열 \\
+\hline
+{\em Out\+Convert\+Result} & 파싱 결과를 나타내는 열거형 \\
+\hline
+{\em Out\+Struct} & 파싱하길 원하는 언리얼 구조체 와일드 카드 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+파싱 성공 여부 
+\end{DoxyReturn}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_a127d6977093a90da5c75f1f6de27b00c}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!ConvertStructToJsonString@{ConvertStructToJsonString}}
+\index{ConvertStructToJsonString@{ConvertStructToJsonString}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{ConvertStructToJsonString()}{ConvertStructToJsonString()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_a127d6977093a90da5c75f1f6de27b00c} 
+bool UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Convert\+Struct\+To\+Json\+String (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_a380bace6b01dacf11bb575fcdcc3d6a8}{int32}} \&}]{In\+Struct}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a76c12a528e508c2e3cf77330be9ff437}{EJWNU\+\_\+\+Convert\+Struct\+To\+Json\+Result}} \&}]{Out\+Convert\+Result}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{Out\+Json\+String}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Convert Unreal Struct to JSON Object String ~\newline
+ 와일드카드로 지정한 언리얼 구조체를 JSON 문자열로 변환을 시도하는 노드 정의. 
+\begin{DoxyParams}{Parameters}
+{\em In\+Struct} & 변환하길 원하는 언리얼 구조체 와일드 카드 \\
+\hline
+{\em Out\+Convert\+Result} & 변환 결과를 나타내는 열거형 \\
+\hline
+{\em Out\+Json\+String} & 변환된 JSON 문자열 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+변환 성공 여부 
+\end{DoxyReturn}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_ad673251bd144f6c651a34170277979db}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!DECLARE\_FUNCTION@{DECLARE\_FUNCTION}}
+\index{DECLARE\_FUNCTION@{DECLARE\_FUNCTION}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_FUNCTION()}{DECLARE\_FUNCTION()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_ad673251bd144f6c651a34170277979db} 
+UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+DECLARE\+\_\+\+FUNCTION (\begin{DoxyParamCaption}\item[{exec\+Convert\+Json\+String\+To\+Struct}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_ad673251bd144f6c651a34170277979db_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_ad673251bd144f6c651a34170277979db_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_abe106509eaaa8672c54a9dd8c1b62383}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!DECLARE\_FUNCTION@{DECLARE\_FUNCTION}}
+\index{DECLARE\_FUNCTION@{DECLARE\_FUNCTION}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_FUNCTION()}{DECLARE\_FUNCTION()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_abe106509eaaa8672c54a9dd8c1b62383} 
+UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+DECLARE\+\_\+\+FUNCTION (\begin{DoxyParamCaption}\item[{exec\+Convert\+Struct\+To\+Json\+String}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_abe106509eaaa8672c54a9dd8c1b62383_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_a1ea50fc0e59bff7d692c7aa36a21a3ab}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!Generic\_ConvertJsonStringToStruct@{Generic\_ConvertJsonStringToStruct}}
+\index{Generic\_ConvertJsonStringToStruct@{Generic\_ConvertJsonStringToStruct}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{Generic\_ConvertJsonStringToStruct()}{Generic\_ConvertJsonStringToStruct()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_a1ea50fc0e59bff7d692c7aa36a21a3ab} 
+bool UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Generic\+\_\+\+Convert\+Json\+String\+To\+Struct (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{Json\+String}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a58ffe65028c682b6dbdf45320526270f}{EJWNU\+\_\+\+Convert\+Json\+To\+Struct\+Result}} \&}]{Out\+Convert\+Result}{, }\item[{const FProperty \texorpdfstring{$\ast$}{*}}]{Struct\+Property}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{Struct\+Ptr}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the caller graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_a1ea50fc0e59bff7d692c7aa36a21a3ab_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_afe8b2690db6e550fdc2509b8084b83de}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!Generic\_ConvertStructToJsonString@{Generic\_ConvertStructToJsonString}}
+\index{Generic\_ConvertStructToJsonString@{Generic\_ConvertStructToJsonString}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{Generic\_ConvertStructToJsonString()}{Generic\_ConvertStructToJsonString()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_afe8b2690db6e550fdc2509b8084b83de} 
+bool UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Generic\+\_\+\+Convert\+Struct\+To\+Json\+String (\begin{DoxyParamCaption}\item[{const FProperty \texorpdfstring{$\ast$}{*}}]{Struct\+Property}{, }\item[{const void \texorpdfstring{$\ast$}{*}}]{Struct\+Ptr}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a76c12a528e508c2e3cf77330be9ff437}{EJWNU\+\_\+\+Convert\+Struct\+To\+Json\+Result}} \&}]{Out\+Convert\+Result}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{Out\+Json\+String}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the caller graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_afe8b2690db6e550fdc2509b8084b83de_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_a79726d6bc38d3104604e8ffac1cfe7e0}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!GetAccessTokenContainer@{GetAccessTokenContainer}}
+\index{GetAccessTokenContainer@{GetAccessTokenContainer}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{GetAccessTokenContainer()}{GetAccessTokenContainer()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_a79726d6bc38d3104604e8ffac1cfe7e0} 
+void UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Get\+Access\+Token\+Container (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}}]{In\+Service\+Type}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293}{EJWNU\+\_\+\+Token\+Get\+Result}} \&}]{Out\+Token\+Get\+Result}{, }\item[{\doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container}{FJWNU\+\_\+\+Access\+Token\+Container}} \&}]{Out\+Access\+Token\+Container}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Get Access Token Container ~\newline
+ JWT 인증 엑세스 토큰 컨테이너를 획득하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+{\em In\+Service\+Type} & Targeting Service Type ~\newline
+ 특정 서비스 타입 \\
+\hline
+{\em Out\+Token\+Get\+Result} & Directing Get Result ~\newline
+ 획득 결과를 나타내는 열거형 \\
+\hline
+{\em Out\+Access\+Token\+Container} & Extracted Access Token Container ~\newline
+ 특정 서비스 타입과 매핑되는 JWT 인증 엑세스 토큰 컨테이너 \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_a79726d6bc38d3104604e8ffac1cfe7e0_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_a041fa80806c8e885f99be115938cfe7c}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!GetHost@{GetHost}}
+\index{GetHost@{GetHost}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{GetHost()}{GetHost()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_a041fa80806c8e885f99be115938cfe7c} 
+bool UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Get\+Host (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}}]{In\+Service\+Type}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{Out\+Host}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Get Host ~\newline
+ 목표 호스트 주소를 획득하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+{\em In\+Service\+Type} & Targeting Service Type ~\newline
+ 특정 서비스 타입 \\
+\hline
+{\em Out\+Host} & Host Address ~\newline
+ 호스트 주소 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Success or Fail ~\newline
+ 성공 여부 
+\end{DoxyReturn}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_a041fa80806c8e885f99be115938cfe7c_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_a41c4b46d61a47e6dbb5ae8aa72ba3f41}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!GetUserId@{GetUserId}}
+\index{GetUserId@{GetUserId}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{GetUserId()}{GetUserId()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_a41c4b46d61a47e6dbb5ae8aa72ba3f41} 
+\doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Get\+User\+Id (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Get User Id ~\newline
+ 현재 로그인된 사용자 ID를 획득하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+User\+Id 문자열 
+\end{DoxyReturn}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_a41c4b46d61a47e6dbb5ae8aa72ba3f41_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_acc442f432d47db11ae73a28974fc9b94}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!LoadRefreshTokenContainer@{LoadRefreshTokenContainer}}
+\index{LoadRefreshTokenContainer@{LoadRefreshTokenContainer}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{LoadRefreshTokenContainer()}{LoadRefreshTokenContainer()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_acc442f432d47db11ae73a28974fc9b94} 
+void UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Load\+Refresh\+Token\+Container (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}}]{In\+Service\+Type}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a4be92fb08202e078bb4d20971f09f293}{EJWNU\+\_\+\+Token\+Get\+Result}} \&}]{Out\+Token\+Get\+Result}{, }\item[{\doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\+\_\+\+Refresh\+Token\+Container}} \&}]{Out\+Refresh\+Token\+Container}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Load Refresh Token Container from WINDOWS ~\newline
+ 윈도우에 암호화되어 저장된 JWT 인증 리프레시 토큰 컨테이너를 로드하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+{\em In\+Service\+Type} & Target Service Type ~\newline
+ 특정 서비스 타입 \\
+\hline
+{\em Out\+Token\+Get\+Result} & Directing Load Result ~\newline
+ 토큰 로드 결과를 나타내는 열거형 \\
+\hline
+{\em Out\+Refresh\+Token\+Container} & Loaded Refresh Token Container ~\newline
+ 로드한 리프레시 토큰 컨테이너 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Success or Fail ~\newline
+ 성공 여부 
+\end{DoxyReturn}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_acc442f432d47db11ae73a28974fc9b94_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_ae03f90aacdb9ebdff3cdbc7d11052a5f}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!SaveRefreshTokenContainer@{SaveRefreshTokenContainer}}
+\index{SaveRefreshTokenContainer@{SaveRefreshTokenContainer}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{SaveRefreshTokenContainer()}{SaveRefreshTokenContainer()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_ae03f90aacdb9ebdff3cdbc7d11052a5f} 
+void UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Save\+Refresh\+Token\+Container (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}}]{In\+Service\+Type}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a0869207091beab67d34b610dadd8758c}{EJWNU\+\_\+\+Token\+Set\+Result}} \&}]{Out\+Token\+Set\+Result}{, }\item[{const \doxymbox{\hyperlink{struct_f_j_w_n_u___refresh_token_container}{FJWNU\+\_\+\+Refresh\+Token\+Container}} \&}]{In\+Refresh\+Token\+Container}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Save Refresh Token Container to WINDOWS ~\newline
+ JWT 인증 리프레시 토큰 컨테이너를 윈도우에 암호화하여 저장하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+{\em In\+Service\+Type} & Targeting Service Type ~\newline
+ 특정 서비스 타입 \\
+\hline
+{\em Out\+Token\+Set\+Result} & Directing Save Result ~\newline
+ 토큰 저장 결과를 나타내는 열거형 \\
+\hline
+{\em In\+Refresh\+Token\+Container} & Targeting Refresh Token Container ~\newline
+ 저장할 리프레시 토큰 컨테이너 \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_ae03f90aacdb9ebdff3cdbc7d11052a5f_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_a8f15aae28559840d3cc4708f04051474}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!SendHttpRequest@{SendHttpRequest}}
+\index{SendHttpRequest@{SendHttpRequest}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{SendHttpRequest()}{SendHttpRequest()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_a8f15aae28559840d3cc4708f04051474} 
+void UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Send\+Http\+Request (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_ab32ab04657ea4ad187275983cb16ebf3}{EJWNU\+\_\+\+Http\+Method}}}]{In\+Method}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{In\+URL}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{In\+Auth\+Token}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{In\+Content\+Body}{, }\item[{const TMap$<$ \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}}, \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} $>$ \&}]{In\+Query\+Params}{, }\item[{const FOn\+Http\+Response\+BPEvent}]{In\+On\+Http\+Response\+BPEvent}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Send HTTP Request ~\newline
+ HTTP 리퀘스트를 전송하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+{\em In\+Method} & 사용할 HTTP 메서드 \\
+\hline
+{\em In\+URL} & 호출할 API 엔드포인트 ~\newline
+ \\
+\hline
+{\em In\+Auth\+Token} & 사용할 인증 엑세스 JWT 토큰 \\
+\hline
+{\em In\+Content\+Body} & 콘텐츠 바디 \\
+\hline
+{\em In\+Query\+Params} & 쿼리 패러미터 \\
+\hline
+{\em In\+On\+Http\+Response\+BPEvent} & 리스폰스 바디를 패러미터로 받는 블루프린트 이벤트 \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_a8f15aae28559840d3cc4708f04051474_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_af06d585bb24000a592a9cbbf351f5489}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!SetAccessTokenContainer@{SetAccessTokenContainer}}
+\index{SetAccessTokenContainer@{SetAccessTokenContainer}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{SetAccessTokenContainer()}{SetAccessTokenContainer()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_af06d585bb24000a592a9cbbf351f5489} 
+void UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Set\+Access\+Token\+Container (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_types_8h_a938ad6d59e6c82cd75e8741d8fc61e28}{EJWNU\+\_\+\+Service\+Type}}}]{In\+Service\+Type}{, }\item[{\doxymbox{\hyperlink{_j_w_network_utility_types_8h_a0869207091beab67d34b610dadd8758c}{EJWNU\+\_\+\+Token\+Set\+Result}} \&}]{Out\+Token\+Set\+Result}{, }\item[{const \doxymbox{\hyperlink{struct_f_j_w_n_u___access_token_container}{FJWNU\+\_\+\+Access\+Token\+Container}} \&}]{In\+Access\+Token\+Container}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Set Access Token Container ~\newline
+ JWT 인증 엑세스 토큰 컨테이너를 설정하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+{\em In\+Service\+Type} & Targeting Service Type ~\newline
+ 특정 서비스 타입 \\
+\hline
+{\em Out\+Token\+Set\+Result} & 설정 결과를 나타내는 열거형 \\
+\hline
+{\em In\+Access\+Token\+Container} & New Access Token Container ~\newline
+ 새로운 JWT 인증 토큰 컨테이너 \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_af06d585bb24000a592a9cbbf351f5489_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_u_j_w_n_u___b_f_l___api_client_service_af99c2d564624d28307bb01e4d954ee9d}\index{UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}!SetUserId@{SetUserId}}
+\index{SetUserId@{SetUserId}!UJWNU\_BFL\_ApiClientService@{UJWNU\_BFL\_ApiClientService}}
+\doxysubsubsection{\texorpdfstring{SetUserId()}{SetUserId()}}
+{\footnotesize\ttfamily \label{class_u_j_w_n_u___b_f_l___api_client_service_af99c2d564624d28307bb01e4d954ee9d} 
+void UJWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service::\+\+Set\+User\+Id (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const \doxymbox{\hyperlink{_j_w_network_utility_delegates_8h_ac22077b570a744b38b1dd565c111ba21}{FString}} \&}]{In\+User\+Id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\+[ Blueprint Function Library ]\+ ~\newline
+ Set User Id ~\newline
+ 사용자 ID를 설정하는 함수. 
+\begin{DoxyParams}{Parameters}
+{\em World\+Context\+Object} & 월드 컨텍스트 오브젝트 \\
+\hline
+{\em In\+User\+Id} & 설정할 User\+Id \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_u_j_w_n_u___b_f_l___api_client_service_af99c2d564624d28307bb01e4d954ee9d_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+Source/\+\+JWNetwork\+Utility/\+\+Public/\+\doxymbox{\hyperlink{_j_w_n_u___b_f_l___api_client_service_8h}{JWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service.\+h}}\item 
+Source/\+\+JWNetwork\+Utility/\+\+Private/\+\doxymbox{\hyperlink{_j_w_n_u___b_f_l___api_client_service_8cpp}{JWNU\+\_\+\+BFL\+\_\+\+Api\+Client\+Service.\+cpp}}\end{DoxyCompactItemize}

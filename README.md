@@ -8,11 +8,14 @@ A standalone Unreal Engine 5.6 plugin providing a layered HTTP API client system
 
 - JWT Access/Refresh Token management (Windows DPAPI encryption)
 - Automatic token refresh and request retry queue on 401 responses
-- Per-ServiceType host URL/token separation (`GameServer`, `AuthServer`, `Platform`, `External`)
+- Per-ServiceType host URL/token separation (`GameServer`, `AuthServer`)
 - HTTP response normalization (non-2xx → consistent JSON structure)
 - Request retry (5xx, timeout, network errors)
+- Blueprint `EJWNU_HttpStatusCode` enum for type-safe HTTP status handling
 - C++ template API (`CallApi_Template<T>`) and Blueprint support
-- Blueprint wildcard struct parsing (`CustomThunk`)
+- Blueprint wildcard struct parsing (`CustomThunk`): JSON ↔ USTRUCT conversion
+- Session management: `GetUserId`, `SetUserId`, `ClearSession`
+- Pre-built request/response structs (`FJWNU_REQ_*`, `FJWNU_RES_*`) matching test server API
 
 ## Module Structure
 
@@ -27,8 +30,10 @@ A standalone Unreal Engine 5.6 plugin providing a layered HTTP API client system
 ┌─────────────────────────────────────────────────────┐
 │  Blueprint Layer                                     │
 │  UJWNU_BFL_ApiClientService (BlueprintFunctionLib)   │
-│    - CallApi, SendHttpRequest, ConvertJsonStringTo   │
-│      Struct (CustomThunk wildcard)                   │
+│    - CallApi, SendHttpRequest                        │
+│    - ConvertJsonStringToStruct / ConvertStructTo     │
+│      JsonString (CustomThunk wildcard)               │
+│    - GetUserId, SetUserId, ClearSession              │
 ├─────────────────────────────────────────────────────┤
 │  Service Layer                                       │
 │  UJWNU_GIS_ApiClientService (GameInstanceSubsystem)  │
@@ -116,8 +121,8 @@ Server-side response format:
 ### Token Security
 
 - **Access Token**: Stored in-memory in `FJWNU_AccessTokenContainer` (per-ServiceType, with `ExpiresAt`)
-- **Refresh Token**: Stored in `FJWNU_RefreshTokenContainer`, encrypted via Windows DPAPI (`CryptProtectData`/`CryptUnprotectData`), saved to `Saved/Config/auth_{ServiceType}.bin`
-- **UserId**: Memory-only FString (set from login/refresh response)
+- **Refresh Token**: Stored in `FJWNU_RefreshTokenContainer`, encrypted via Windows DPAPI (`CryptProtectData`/`CryptUnprotectData`) with Device ID entropy salt, saved to `Saved/Config/JWNetworkUtility/auth_{ServiceType}.bin`
+- **UserId**: Memory-only FString (set from login/refresh response, managed via `GetUserId`/`SetUserId`)
 
 ## Configuration
 
@@ -166,10 +171,12 @@ uvicorn main:app --reload --port 5000
 | POST | `/auth/register/verify-code` | No | Verify code |
 | POST | `/auth/register` | No | Complete registration |
 | POST | `/auth/login` | No | Login (JWT issued) |
-| POST | `/auth/refresh` | No | Token refresh |
+| POST | `/auth/refresh` | No | Token refresh (single-use refresh token) |
+| POST | `/auth/logout` | Yes | Logout (blacklist access token, revoke refresh tokens) |
 | POST | `/auth/reset` | No | Clear all users, verifications, tokens |
-| GET/POST/PUT/DELETE | `/api/data` | Yes | CRUD test |
-| GET | `/debug/users` | No | List registered users (dev) |
+| GET/POST/PUT/DELETE | `/api/data` | Yes | CRUD test (supports `?delay=N&status=CODE` simulation) |
+| GET | `/debug/users/registered` | No | List registered users (dev) |
+| GET | `/debug/users/active` | No | Active sessions (dev) |
 | GET | `/debug/verifications` | No | Verification code status (dev) |
 
 ## File Structure
@@ -223,6 +230,8 @@ JWNetworkUtility/
 │   ├── requirements.txt
 │   ├── .env.example
 │   └── openapi.json
+├── Doxygen/
+├── Analysis/                      (gitignored, analysis artifacts)
 ├── JWNetworkUtility.uplugin
 ├── CLAUDE.md
 ├── LICENSE
@@ -244,11 +253,14 @@ JWT 인증, 자동 토큰 리프레시, 재시도/타임아웃, Blueprint 지원
 
 - JWT Access/Refresh Token 관리 (Windows DPAPI 암호화)
 - 401 응답 시 자동 토큰 리프레시 및 요청 재시도 큐
-- ServiceType별 호스트 URL/토큰 분리 (`GameServer`, `AuthServer`, `Platform`, `External`)
+- ServiceType별 호스트 URL/토큰 분리 (`GameServer`, `AuthServer`)
 - HTTP 응답 정규화 (non-2xx → 일관된 JSON 구조)
 - 요청 재시도 (5xx, 타임아웃, 네트워크 에러)
+- Blueprint `EJWNU_HttpStatusCode` 열거형으로 타입 세이프 HTTP 상태 처리
 - C++ 템플릿 API (`CallApi_Template<T>`) 및 Blueprint 지원
-- Blueprint Wildcard Struct 파싱 (`CustomThunk`)
+- Blueprint Wildcard Struct 파싱 (`CustomThunk`): JSON ↔ USTRUCT 변환
+- 세션 관리: `GetUserId`, `SetUserId`, `ClearSession`
+- 테스트 서버 API 대응 요청/응답 구조체 (`FJWNU_REQ_*`, `FJWNU_RES_*`)
 
 ## 모듈 구조
 
@@ -296,8 +308,8 @@ UJWNU_GIS_ApiClientService::CallApi_Template<FMyStruct>(
 ### 토큰 보안
 
 - **Access Token**: `FJWNU_AccessTokenContainer`에 메모리 저장 (ServiceType별, `ExpiresAt` 포함)
-- **Refresh Token**: `FJWNU_RefreshTokenContainer`에 저장, Windows DPAPI(`CryptProtectData`/`CryptUnprotectData`)로 암호화 후 `Saved/Config/auth_{ServiceType}.bin`에 파일 저장
-- **UserId**: 메모리 전용 FString (로그인/리프레시 응답에서 설정)
+- **Refresh Token**: `FJWNU_RefreshTokenContainer`에 저장, Windows DPAPI(`CryptProtectData`/`CryptUnprotectData`) + Device ID 엔트로피 솔트로 암호화 후 `Saved/Config/JWNetworkUtility/auth_{ServiceType}.bin`에 파일 저장
+- **UserId**: 메모리 전용 FString (로그인/리프레시 응답에서 설정, `GetUserId`/`SetUserId`로 관리)
 
 ## 설정
 
@@ -346,8 +358,10 @@ uvicorn main:app --reload --port 5000
 | POST | `/auth/register/verify-code` | X | 인증코드 검증 |
 | POST | `/auth/register` | X | 회원가입 완료 |
 | POST | `/auth/login` | X | 로그인 (JWT 발급) |
-| POST | `/auth/refresh` | X | 토큰 리프레시 |
+| POST | `/auth/refresh` | X | 토큰 리프레시 (일회용 리프레시 토큰) |
+| POST | `/auth/logout` | O | 로그아웃 (엑세스 토큰 블랙리스트, 리프레시 토큰 폐기) |
 | POST | `/auth/reset` | X | 전체 데이터 초기화 (유저, 인증코드, 토큰) |
-| GET/POST/PUT/DELETE | `/api/data` | O | CRUD 테스트 |
-| GET | `/debug/users` | X | 등록 유저 조회 (개발용) |
+| GET/POST/PUT/DELETE | `/api/data` | O | CRUD 테스트 (`?delay=N&status=CODE` 시뮬레이션 지원) |
+| GET | `/debug/users/registered` | X | 가입 유저 조회 (개발용) |
+| GET | `/debug/users/active` | X | 활성 세션 조회 (개발용) |
 | GET | `/debug/verifications` | X | 인증코드 상태 조회 (개발용) |

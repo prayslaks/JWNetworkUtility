@@ -182,8 +182,6 @@ enum class EJWNU_ServiceType : uint8
 {
 	GameServer,
 	AuthServer,
-	Platform,
-	External,
 };
 
 /**
@@ -353,7 +351,7 @@ enum class EJWNU_ConvertStructToJsonResult : uint8
 	NoMatch = 2,
 };
 
-// ==================== API Request & Response ====================x
+// ==================== JW Test Server API Request & Response ====================
 
 /**
  * JW 커스텀 스타일 서버의 이메일 인증 API 요청 구조체.
@@ -416,6 +414,54 @@ struct JWNETWORKUTILITY_API FJWNU_REQ_AuthLogin
 };
 
 /**
+ * JW 커스텀 스타일 서버의 로그아웃 API 요청 구조체.
+ */
+USTRUCT(BLueprintType)
+struct JWNETWORKUTILITY_API FJWNU_REQ_AuthLogout
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	FString UserId;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString TargetServer;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString RefreshToken;
+};
+
+/**
+ * JW 커스텀 스타일 서버의 리프레시 API 요청 구조체
+ */
+USTRUCT(BlueprintType)
+struct JWNETWORKUTILITY_API FJWNU_REQ_AuthRefresh
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString UserId;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString TargetServer;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString RefreshToken;
+};
+
+/**
+ * JW 커스텀 스타일 서버의 데이터 API 요청 구조체.
+ */
+USTRUCT(BlueprintType)
+struct JWNETWORKUTILITY_API FJWNU_REQ_Data
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Data;
+};
+
+/**
  * JW 커스텀 스타일 서버의 기본 API 응답 구조체.
  */
 USTRUCT(BlueprintType)
@@ -426,19 +472,19 @@ struct JWNETWORKUTILITY_API FJWNU_RES_Base
 	/**
 	 * 비즈니스 로직의 성공 여부를 나타내는 불 필드. 
 	 */
-	UPROPERTY(BlueprintReadOnly, Category="API Response")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Success;
 
 	/**
 	 * 네트워크, 파싱, 비즈니스 상태를 나타내는 커스텀 코드 문자열 필드.
 	 */
-	UPROPERTY(BlueprintReadOnly, Category="API Response")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Code;
 
 	/**
 	 * 네트워크, 파싱, 비즈니스 결과를 나타내는 메시지 문자열 필드.
 	 */
-	UPROPERTY(BlueprintReadOnly, Category="API Response")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Message;
 
 	/**
@@ -463,31 +509,31 @@ struct JWNETWORKUTILITY_API FJWNU_RES_AuthRefresh : public FJWNU_RES_Base
 	/**
 	 * 새로 발급된 엑세스 토큰.
 	 */
-	UPROPERTY(BlueprintReadOnly, Category="API Response")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString AccessToken;
 
 	/**
 	 * 새로 발급된 엑세스 토큰의 만료 시한을 나타내는 유닉스 타임스탬프.
 	 */
-	UPROPERTY(BlueprintReadOnly, Category="API Response")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int64 ExpiresAt;
 	
 	/**
 	 * 새로 발급된 리프레시 토큰.
 	 */
-	UPROPERTY(BlueprintReadOnly, Category="API Response")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString RefreshToken;
 
 	/**
 	 * 새로 발급된 리프레시 토큰의 만료 시한을 나타내는 유닉스 타임스탬프.
 	 */
-	UPROPERTY(BlueprintReadOnly, Category="API Response")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int64 RefreshTokenExpiresAt;
 
 	/**
 	 * 서버가 반환한 사용자 ID.
 	 */
-	UPROPERTY(BlueprintReadOnly, Category="API Response")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString UserId;
 
 	/**
@@ -503,3 +549,14 @@ struct JWNETWORKUTILITY_API FJWNU_RES_AuthRefresh : public FJWNU_RES_Base
 	}
 };
 
+/**
+ * JW 커스텀 스타일 서버의 데이터 API 응답 구조체.
+ */
+USTRUCT(BlueprintType)
+struct JWNETWORKUTILITY_API FJWNU_RES_Data : public FJWNU_RES_Base
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Data;
+};

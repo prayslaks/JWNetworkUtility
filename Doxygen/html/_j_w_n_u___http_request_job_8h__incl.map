@@ -1,0 +1,20 @@
+<map id="Source/JWNetworkUtility/Public/JWNU_HttpRequestJob.h" name="Source/JWNetworkUtility/Public/JWNU_HttpRequestJob.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="249,5,467,48"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,245,111,272"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="247,43,180,64,147,79,116,98,96,114,84,129,66,171,60,201,59,231,53,229,54,201,61,170,79,127,92,110,112,94,144,75,178,59,251,40"/>
+<area shape="rect" id="Node000003" href="$_j_w_network_utility_types_8h.html" title=" " alt="" coords="376,171,546,197"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="361,46,369,84,386,121,404,143,427,163,422,162,401,146,381,124,364,85,358,51"/>
+<area shape="rect" id="Node000005" href="$_j_w_network_utility_delegates_8h.html" title=" " alt="" coords="126,96,320,123"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="321,50,259,90,256,85,326,47"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="396,96,568,123"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="390,46,453,87,447,88,390,51"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="592,96,828,123"/>
+<area shape="poly" id="edge10_Node000001_Node000008" title=" " alt="" coords="449,46,642,91,637,93,449,51"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="390,201,127,248,126,243,390,195"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="345,245,576,272"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="463,196,463,231,459,228,459,200"/>
+<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="163,125,123,144,103,157,85,172,70,200,62,231,58,229,65,198,81,169,99,152,120,139,167,122"/>
+<area shape="poly" id="edge7_Node000005_Node000003" title=" " alt="" coords="265,121,407,165,402,167,264,126"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="96,171,351,197"/>
+<area shape="poly" id="edge8_Node000005_Node000006" title=" " alt="" coords="225,121,226,156,221,154,222,125"/>
+</map>

@@ -1,0 +1,14 @@
+<map id="Source/JWNetworkUtility/Public/JWNU_GIS_ApiHostProvider.h" name="Source/JWNetworkUtility/Public/JWNU_GIS_ApiHostProvider.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="176,5,425,48"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,171,111,197"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,47,127,67,105,81,85,98,69,125,62,156,57,154,64,123,81,94,102,77,125,62,178,43"/>
+<area shape="rect" id="Node000003" href="$_j_w_network_utility_types_8h.html" title=" " alt="" coords="96,96,266,123"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="272,47,214,89,211,85,267,50"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="290,96,551,123"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="332,46,392,87,387,87,331,51"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="575,96,840,123"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="406,46,631,92,626,93,405,51"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="162,123,94,165,91,160,157,124"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="134,171,366,197"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="194,121,230,159,225,159,192,126"/>
+</map>

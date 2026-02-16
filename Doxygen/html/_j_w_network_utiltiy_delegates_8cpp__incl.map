@@ -1,0 +1,14 @@
+<map id="Source/JWNetworkUtility/Private/JWNetworkUtiltiyDelegates.cpp" name="Source/JWNetworkUtility/Private/JWNetworkUtiltiyDelegates.cpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="52,5,309,48"/>
+<area shape="rect" id="Node000002" href="$_j_w_network_utility_delegates_8h.html" title=" " alt="" coords="84,96,278,123"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,46,183,81,178,79,180,51"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,245,111,272"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="146,125,116,145,85,172,71,201,63,231,58,229,66,199,81,169,112,140,150,121"/>
+<area shape="rect" id="Node000004" href="$_j_w_network_utility_types_8h.html" title=" " alt="" coords="96,171,266,197"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="182,121,183,156,178,154,179,125"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="290,171,546,197"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="222,121,364,164,359,167,222,126"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="162,197,94,239,91,235,157,198"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="134,245,366,272"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="194,195,230,234,225,234,192,200"/>
+</map>

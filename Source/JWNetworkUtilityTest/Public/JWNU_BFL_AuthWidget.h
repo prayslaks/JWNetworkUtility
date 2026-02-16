@@ -6,6 +6,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "JWNU_BFL_AuthWidget.generated.h"
 
+struct FSlateColor;
+
 UENUM(BlueprintType)
 enum class EJWNU_RegisterEmailValidation : uint8
 {
@@ -70,6 +72,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "JWNU|AuthWidget|Login")
 	static void OnLoginPasswordTextBoxChanged(const FText& Input, EJWNU_LoginPasswordValidation& OutResult);
+	
+	// --- Feedback ---
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "JWNU|AuthWidget|Feedback")
+	static FSlateColor GetColorBySuccess(const bool bSuccess);
 
 private:
 	
