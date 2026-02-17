@@ -481,12 +481,12 @@ struct JWNETWORKUTILITY_API FJWNU_REQ_AuthLogin
 /**
  * JW 커스텀 스타일 서버의 로그아웃 API 요청 구조체.
  */
-USTRUCT(BLueprintType)
+USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_REQ_AuthLogout
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString UserId;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

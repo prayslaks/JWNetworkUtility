@@ -44,7 +44,7 @@ public:
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
 	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
-	static void SendReqeust_RawResponse(
+	static void SendRequest_RawResponse(
 		const UObject* WorldContextObject,
 		const EJWNU_HttpMethod InMethod, 
 		const FString& InURL, 
@@ -65,7 +65,7 @@ public:
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
 	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
-	static void SendReqeust_CustomResponse(
+	static void SendRequest_CustomResponse(
 		const UObject* WorldContextObject,
 		const EJWNU_HttpMethod InMethod, 
 		const FString& InURL, 
@@ -87,7 +87,7 @@ private:
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
 	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
-	void SendReqeust_RawResponse(
+	void SendRequest_RawResponse(
 		const EJWNU_HttpMethod InMethod, 
 		const FString& InURL, 
 		const FString& InAuthToken, 
@@ -106,7 +106,7 @@ private:
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
 	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
-	void SendReqeust_CustomResponse(
+	void SendRequest_CustomResponse(
 		const EJWNU_HttpMethod InMethod, 
 		const FString& InURL, 
 		const FString& InAuthToken, 

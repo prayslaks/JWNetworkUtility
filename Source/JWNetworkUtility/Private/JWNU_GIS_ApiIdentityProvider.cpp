@@ -4,11 +4,13 @@
 #include "JWNetworkUtility.h"
 #include "JsonObjectConverter.h"
 
+#if PLATFORM_WINDOWS
 #include "Windows/AllowWindowsPlatformTypes.h"
 #include <windows.h>
 #include <dpapi.h>
-
 #pragma comment(lib, "crypt32.lib")
+#include "Windows/HideWindowsPlatformTypes.h"
+#endif
 
 DEFINE_LOG_CATEGORY(LogJWNU_GIS_ApiIdentityProvider);
 
@@ -264,20 +266,35 @@ bool UJWNU_GIS_ApiIdentityProvider::LoadRefreshTokenContainer(const EJWNU_Servic
 
 bool UJWNU_GIS_ApiIdentityProvider::EncryptToken(const FString& InToken, TArray<uint8>& OutEncryptedData)
 {
-	DATA_BLOB DataIn;
-	DATA_BLOB DataOut;
-	DATA_BLOB DataEntropy;
-
-	// FString을 바이트 배열로 변환
-	const FTCHARToUTF8 Converter(*InToken);
-	DataIn.pbData = (BYTE*)Converter.Get();
-	DataIn.cbData = Converter.Length();
+#if PLATFORM_WINDOWS
+	// FString을 바이트 배열로 복사 (임시 객체 수명 문제 방지)
+	const TArray<uint8> TokenBytes = [&]()
+	{
+		const FTCHARToUTF8 Converter(*InToken);
+		TArray<uint8> Bytes;
+		Bytes.Append((const uint8*)Converter.Get(), Converter.Length());
+		return Bytes;
+	}();
 
 	// 기기 ID를 솔트로 사용하기 위해 변환
-	const FString DeviceID = FPlatformMisc::GetDeviceId() + TEXT("JWNetworkUtility");
-	const FTCHARToUTF8 EntropyConverter(*DeviceID);
-	DataEntropy.pbData = (BYTE*)EntropyConverter.Get();
-	DataEntropy.cbData = EntropyConverter.Length();
+	const TArray<uint8> EntropyBytes = [&]()
+	{
+		const FString DeviceID = FPlatformMisc::GetDeviceId() + TEXT("JWNetworkUtility");
+		const FTCHARToUTF8 EntropyConverter(*DeviceID);
+		TArray<uint8> Bytes;
+		Bytes.Append((const uint8*)EntropyConverter.Get(), EntropyConverter.Length());
+		return Bytes;
+	}();
+
+	DATA_BLOB DataIn;
+	DataIn.pbData = (BYTE*)TokenBytes.GetData();
+	DataIn.cbData = TokenBytes.Num();
+
+	DATA_BLOB DataEntropy;
+	DataEntropy.pbData = (BYTE*)EntropyBytes.GetData();
+	DataEntropy.cbData = EntropyBytes.Num();
+
+	DATA_BLOB DataOut;
 
 	// 윈도우 DPAPI 호출 (현재 로그인된 사용자 계정으로 암호화)
 	if (CryptProtectData(&DataIn, nullptr, &DataEntropy, nullptr, nullptr, 0, &DataOut))
@@ -290,22 +307,34 @@ bool UJWNU_GIS_ApiIdentityProvider::EncryptToken(const FString& InToken, TArray<
 		return true;
 	}
 	return false;
+#else
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Error, TEXT("토큰 암호화는 현재 Windows 플랫폼에서만 지원됩니다."));
+	return false;
+#endif
 }
 
 bool UJWNU_GIS_ApiIdentityProvider::DecryptToken(const TArray<uint8>& InEncryptedData, FString& OutToken)
 {
+#if PLATFORM_WINDOWS
 	DATA_BLOB DataIn;
-	DATA_BLOB DataOut;
-	DATA_BLOB DataEntropy;
-
 	DataIn.pbData = (BYTE*)InEncryptedData.GetData();
 	DataIn.cbData = InEncryptedData.Num();
 
 	// 기기 ID를 솔트로 사용하기 위해 변환
-	const FString DeviceID = FPlatformMisc::GetDeviceId() + TEXT("JWNetworkUtility");
-	const FTCHARToUTF8 EntropyConverter(*DeviceID);
-	DataEntropy.pbData = (BYTE*)EntropyConverter.Get();
-	DataEntropy.cbData = EntropyConverter.Length();
+	const TArray<uint8> EntropyBytes = [&]()
+	{
+		const FString DeviceID = FPlatformMisc::GetDeviceId() + TEXT("JWNetworkUtility");
+		const FTCHARToUTF8 EntropyConverter(*DeviceID);
+		TArray<uint8> Bytes;
+		Bytes.Append((const uint8*)EntropyConverter.Get(), EntropyConverter.Length());
+		return Bytes;
+	}();
+
+	DATA_BLOB DataEntropy;
+	DataEntropy.pbData = (BYTE*)EntropyBytes.GetData();
+	DataEntropy.cbData = EntropyBytes.Num();
+
+	DATA_BLOB DataOut;
 
 	// 윈도우 DPAPI 호출 (현재 로그인된 사용자 계정으로 복호화)
 	if (CryptUnprotectData(&DataIn, nullptr, &DataEntropy, nullptr, nullptr, 0, &DataOut))
@@ -322,4 +351,8 @@ bool UJWNU_GIS_ApiIdentityProvider::DecryptToken(const TArray<uint8>& InEncrypte
 		return true;
 	}
 	return false;
+#else
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Error, TEXT("토큰 복호화는 현재 Windows 플랫폼에서만 지원됩니다."));
+	return false;
+#endif
 }

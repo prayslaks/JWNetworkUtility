@@ -73,7 +73,7 @@ UJWNU_GIS_HttpClientHelper* UJWNU_GIS_HttpClientHelper::Get(const UObject* World
 	return GameInstance->GetSubsystem<UJWNU_GIS_HttpClientHelper>();
 }
 
-void UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
+void UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
 	const UObject* WorldContextObject,
 	const EJWNU_HttpMethod InMethod, 
 	const FString& InURL, 
@@ -91,10 +91,10 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
 	}
 	
 	// 실제 처리
-	Self->SendReqeust_RawResponse(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, InOnHttpResponse, InOnHttpRequestJobRetry);
+	Self->SendRequest_RawResponse(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, InOnHttpResponse, InOnHttpRequestJobRetry);
 }
 
-void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
+void UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(
 	const UObject* WorldContextObject,
 	const EJWNU_HttpMethod InMethod, 
 	const FString& InURL, 
@@ -111,10 +111,10 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
 		return;
 	}
 	
-	Self->SendReqeust_CustomResponse(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, InOnHttpResponse, InOnHttpRequestJobRetry);
+	Self->SendRequest_CustomResponse(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, InOnHttpResponse, InOnHttpRequestJobRetry);
 }
 
-void UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
+void UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
 	const EJWNU_HttpMethod InMethod, 
 	const FString& InURL,
 	const FString& InAuthToken, 
@@ -143,7 +143,7 @@ void UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
 	Subsystem->ProcessHttpRequestJob(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, DefaultRequestConfig, Callback, InOnHttpRequestJobRetry);
 }
 
-void UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(
+void UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(
 	const EJWNU_HttpMethod InMethod, 
 	const FString& InURL,
 	const FString& InAuthToken, 

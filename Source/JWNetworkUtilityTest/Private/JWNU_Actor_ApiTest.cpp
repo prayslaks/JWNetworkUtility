@@ -57,9 +57,10 @@ void AJWNU_Actor_ApiTest::TestOne_HttpClientHelper() const
 		
 	// 호스트 획득
 	FString ProvidedHost;
-	if (UJWNU_GIS_ApiHostProvider::Get(GetWorld())->GetHost(EJWNU_ServiceType::AuthServer, ProvidedHost))
+	if (UJWNU_GIS_ApiHostProvider::Get(GetWorld())->GetHost(EJWNU_ServiceType::AuthServer, ProvidedHost) == false)
 	{
-		return;	
+		PRINT_LOG(LogJWNU_Actor_ApiTest, Warning, TEXT("호스트 획득 실패!"));
+		return;
 	}
 	
 	// 호스트와 엔드포인트를 결합한 URL
@@ -75,7 +76,7 @@ void AJWNU_Actor_ApiTest::TestOne_HttpClientHelper() const
 	const TMap<FString, FString> QueryParams = {};
 	
 	// HTTP 리퀘스트
-	UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(GetWorld(), EJWNU_HttpMethod::Get, URL, AuthToken, ContentBody, QueryParams, Callback);
+	UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(GetWorld(), EJWNU_HttpMethod::Get, URL, AuthToken, ContentBody, QueryParams, Callback);
 }
 
 void AJWNU_Actor_ApiTest::TestTwo_ApiClientService_Template() const

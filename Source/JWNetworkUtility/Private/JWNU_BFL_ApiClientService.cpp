@@ -27,7 +27,7 @@ void UJWNU_BFL_ApiClientService::SendHttpRequest(
 	});
 	
 	// HTTP 리퀘스트
-	UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(WorldContextObject, InMethod, InURL, InAuthToken, InContentBody, InQueryParams, ResponseCallback, RetryCallback);
+	UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(WorldContextObject, InMethod, InURL, InAuthToken, InContentBody, InQueryParams, ResponseCallback, RetryCallback);
 }
 
 void UJWNU_BFL_ApiClientService::CallApi(

@@ -13,7 +13,13 @@ void UJWNU_GIS_ApiHostProvider::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 	
 	const FString Section = TEXT("/Script/JWNetworkUtility.JWNU_GIS_ApiHostProvider");
-	FString PluginDir = IPluginManager::Get().FindPlugin(TEXT("JWNetworkUtility"))->GetBaseDir();
+	const auto Plugin = IPluginManager::Get().FindPlugin(TEXT("JWNetworkUtility"));
+	if (!Plugin.IsValid())
+	{
+		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Error, TEXT("JWNetworkUtility 플러그인을 찾을 수 없습니다!"));
+		return;
+	}
+	FString PluginDir = Plugin->GetBaseDir();
 	const FString ConfigPath = FPaths::Combine(PluginDir, TEXT("Config"), TEXT("DefaultJWNetworkUtility.ini"));
 	PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("호스트 주소 로드 시도 : %s"), *ConfigPath);
 	
@@ -70,7 +76,7 @@ bool UJWNU_GIS_ApiHostProvider::GetHost(const EJWNU_ServiceType InServiceType, F
 		OutHost = ServiceTypeToHostMap[InServiceType];
 		if (OutHost.IsEmpty())
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty! - 엑세스 토큰 추출에 성공했지만 내용물이 비어있습니다!"));
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of Host is Successful, but it's Empty! - 호스트 추출에 성공했지만 내용물이 비어있습니다!"));
 			return true;
 		}
 		
@@ -90,7 +96,7 @@ bool UJWNU_GIS_ApiHostProvider::GetHost(const EJWNU_ServiceType InServiceType, E
 		OutHost = ServiceTypeToHostMap[InServiceType];
 		if (OutHost.IsEmpty())
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty! - 엑세스 토큰 추출에 성공했지만 내용물이 비어있습니다!"));
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of Host is Successful, but it's Empty! - 호스트 추출에 성공했지만 내용물이 비어있습니다!"));
 			OutHostGetResult = EJWNU_HostGetResult::Empty;
 			return true;
 		}

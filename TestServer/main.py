@@ -891,7 +891,7 @@ def debug_users_active():
     return {
         "Success": True,
         "Code": "DEBUG",
-        "Message": f"{len(users)} active user(s))",
+        "Message": f"{len(users)} active user(s)",
         "Data": users,
     }
 

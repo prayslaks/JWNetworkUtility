@@ -318,7 +318,7 @@ JWNetworkUtility/
 │   ├── main.py
 │   ├── requirements.txt
 │   ├── .env.example
-│   └── openapi.json
+│   └── openapi.json               (runtime-generated via /docs)
 ├── Doxygen/                       (gitignored, generated docs)
 ├── Analysis/                      (gitignored, analysis artifacts)
 ├── JWNetworkUtility.uplugin

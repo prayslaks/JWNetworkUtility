@@ -34,7 +34,7 @@ If this project helped you, please consider buying me a coffee to support furthe
 ## 🚀 Quick Start & Testing
 
 This plugin includes everything you need for immediate testing:
-* **Test Server:** A Python 3.14.3 based server (`main.py`) is included.
+* **Test Server:** A Python 3.x based server (`main.py`) is included.
 * **Pre-built Executable:** A ready-to-run `.exe` is provided for quick verification.
 * **In-Engine Assets:** The plugin content folder contains a dedicated **Test Level** and **UMG** to help you get started right away.
 
@@ -96,7 +96,7 @@ const FString AuthToken = {};
 const FString ContentBody = {};
 const TMap<FString, FString> QueryParams = {};
 
-UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
+UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
     GetWorld(), 
     EJWNU_HttpMethod::Get, 
     URL, 
@@ -149,7 +149,8 @@ UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 ```
 
 ### Blueprint
-  
+
+Please Open Test Level and WBPs in (`Plugins/JWNetworkUtility/Content`) with Unreal Editor.
 ![img.png](./Resources/BlueprintExample_0.png)
 ![img.png](./Resources/BlueprintExample_1.png)
 ![img.png](./Resources/BlueprintExample_2.png)

@@ -96,7 +96,7 @@ const FString AuthToken = {};
 const FString ContentBody = {};
 const TMap<FString, FString> QueryParams = {};
 
-UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
+UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
     GetWorld(),
     EJWNU_HttpMethod::Get,
     URL,
@@ -150,6 +150,7 @@ UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 
 ### Blueprint
 
+언리얼 에디터로 (`Plugins/JWNetworkUtility/Content`) 내 테스트 레벨과 위젯 블루프린트를 확인해주세요.
 ![img.png](./Resources/BlueprintExample_0.png)
 ![img.png](./Resources/BlueprintExample_1.png)
 ![img.png](./Resources/BlueprintExample_2.png)

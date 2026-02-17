@@ -171,7 +171,7 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate_Execution(
 			});
 		
 		// Http 리퀘스트
-		UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackManage401, OnHttpRequestJobRetry);
+		UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackManage401, OnHttpRequestJobRetry);
 	}
 	else
 	{
@@ -183,7 +183,7 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate_Execution(
 			});
 	
 		// Http 리퀘스트
-		UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackNoManage401, OnHttpRequestJobRetry);
+		UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackNoManage401, OnHttpRequestJobRetry);
 	}	
 }
 
@@ -276,7 +276,7 @@ void UJWNU_GIS_ApiClientService::ExecuteTokenRefresh(EJWNU_ServiceType InService
 		TEXT("{\"userId\": \"%s\", \"targetServer\": \"%s\", \"refreshToken\": \"%s\"}"),
 		*CurrentUserId, *TargetServer, *RefreshTokenContainer.RefreshToken);
 	JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Cyan, TEXT("[JWNU] Calling Refresh API → %s"), *RefreshURL);
-	UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(GetWorld(), EJWNU_HttpMethod::Post, RefreshURL, TEXT(""), RefreshBody, {}, RefreshCallback);
+	UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), EJWNU_HttpMethod::Post, RefreshURL, TEXT(""), RefreshBody, {}, RefreshCallback);
 }
 
 void UJWNU_GIS_ApiClientService::DrainPendingJobs_Success(const EJWNU_ServiceType InServiceType, const FString& NewAccessToken)
@@ -327,12 +327,19 @@ void UJWNU_GIS_ApiClientService::DrainPendingJobs_Failure(const EJWNU_ServiceTyp
 
 FString UJWNU_GIS_ApiClientService::BuildRefreshTokenURL() const
 {
-	FString Host;
-	if (UJWNU_GIS_ApiHostProvider::Get(GetWorld())->GetHost(EJWNU_ServiceType::AuthServer, Host))
+	if (const auto HostProvider = UJWNU_GIS_ApiHostProvider::Get(GetWorld()))
 	{
-		return FString::Printf(TEXT("%s/auth/refresh"), *Host);
+		FString Host;
+		if (HostProvider->GetHost(EJWNU_ServiceType::AuthServer, Host))
+		{
+			return FString::Printf(TEXT("%s/auth/refresh"), *Host);
+		}
 	}
 
-	PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("ApiHostProvider 획득 실패, 기본 URL 반환"));
+	PRINT_LOG(LogJWNU_GIS_ApiClientService, Error, TEXT("AuthServer 호스트 획득 실패! INI 설정을 확인하세요."));
+#if !UE_BUILD_SHIPPING
 	return TEXT("http://localhost:5000/auth/refresh");
+#else
+	return TEXT("");
+#endif
 }

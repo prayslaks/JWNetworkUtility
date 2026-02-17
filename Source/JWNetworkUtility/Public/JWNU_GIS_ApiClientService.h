@@ -346,7 +346,7 @@ void UJWNU_GIS_ApiClientService::CallApi_Template_Execution(
 			});
 	
 		// Http 리퀘스트
-		UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackManage401, OnHttpRequestJobRetry);
+		UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackManage401, OnHttpRequestJobRetry);
 	}
 	else
 	{
@@ -369,6 +369,6 @@ void UJWNU_GIS_ApiClientService::CallApi_Template_Execution(
 			});
 	
 		// Http 리퀘스트
-		UJWNU_GIS_HttpClientHelper::SendReqeust_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackNoManage401, OnHttpRequestJobRetry);
+		UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackNoManage401, OnHttpRequestJobRetry);
 	}
 }
