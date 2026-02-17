@@ -4,48 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "JWNU_BFL_AuthWidget.generated.h"
+#include "JWNU_BFL_AuthWidgetHelper.generated.h"
 
 struct FSlateColor;
 
-UENUM(BlueprintType)
-enum class EJWNU_RegisterEmailValidation : uint8
-{
-	Satisfied,
-	Unsatisfied
-};
-
-UENUM(BlueprintType)
-enum class EJWNU_RegisterFirstPasswordValidation : uint8
-{
-	Unsatisfied,
-	Satisfied,
-};
-
-UENUM(BlueprintType)
-enum class EJWNU_RegisterSecondPasswordValidation : uint8
-{
-	FirstPasswordEmpty,
-	Unsatisfied,
-	Satisfied,
-};
-
-UENUM(BlueprintType)
-enum class EJWNU_LoginEmailValidation : uint8
-{
-	Satisfied,
-	Unsatisfied
-};
-
-UENUM(BlueprintType)
-enum class EJWNU_LoginPasswordValidation : uint8
-{
-	Satisfied,
-	Unsatisfied
-};
-
 UCLASS(Config=JWNetworkUtility)
-class JWNETWORKUTILITYTEST_API UJWNU_BFL_AuthWidget : public UBlueprintFunctionLibrary
+class JWNETWORKUTILITY_API UJWNU_BFL_AuthWidgetHelper : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -60,10 +24,10 @@ public:
 	static void OnRegisterCodeTextBoxChanged(const FText& Input, FText& OutProcessed, EJWNU_RegisterEmailValidation& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "JWNU|AuthWidget|Register")
-	static void OnRegisterPasswordFirstTextBoxChanged(const FText& Input, EJWNU_RegisterFirstPasswordValidation& OutResult);
+	static void OnRegisterPrimaryPasswordTextBoxChanged(const FText& Input, EJWNU_RegisterPrimaryPasswordValidation& OutResult);
 
 	UFUNCTION(BlueprintCallable, Category = "JWNU|AuthWidget|Register")
-	static void OnRegisterPasswordSecondTextBoxChanged(const FText& Input, const FText& FirstPassword, EJWNU_RegisterSecondPasswordValidation& OutResult);
+	static void OnRegisterSecondaryPasswordTextBoxChanged(const FText& Input, const FText& FirstPassword, EJWNU_RegisterSecondaryPasswordValidation& OutResult);
 
 	// --- Login ---
 

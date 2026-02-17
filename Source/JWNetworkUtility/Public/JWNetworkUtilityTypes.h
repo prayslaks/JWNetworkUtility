@@ -5,6 +5,10 @@
 #include "CoreMinimal.h"
 #include "JWNetworkUtilityTypes.generated.h"
 
+
+// ==================== JWNU HTTP Client Helpers & Jobs ====================
+
+
 /**
  * HTTP 상태코드 열거형.
  * int32 HTTP 상태코드를 Blueprint에서 Switch/비교할 수 있도록 매핑한다.
@@ -175,6 +179,39 @@ struct JWNETWORKUTILITY_API FJWNU_RequestConfig
 };
 
 /**
+ * 401 발생 시 원래 요청을 재시도하기 위한 정보를 담는 구조체.
+ */
+USTRUCT(BlueprintType)
+struct JWNETWORKUTILITY_API FJWNU_PendingApiRequest
+{
+	GENERATED_BODY()
+
+	EJWNU_ServiceType ServiceType;
+	EJWNU_HttpMethod Method;
+	FString URL;
+	FString ContentBody;
+	TMap<FString, FString> QueryParams;
+};
+
+/**
+ * 토큰 리프레시 대기열에 적재되는 잡 구조체.
+ * 리프레시 완료 시 OnTokenReady, 실패 시 OnTokenFailed가 호출된다.
+ */
+USTRUCT(BlueprintType)
+struct JWNETWORKUTILITY_API FJWNU_PendingJob
+{
+	GENERATED_BODY()
+	
+	FJWNU_PendingApiRequest RequestInfo;
+	TFunction<void(const FString& /*NewAccessToken*/)> OnTokenReady;
+	TFunction<void(const FString& /*ErrorCode*/, const FString& /*ErrorMessage*/)> OnTokenFailed;
+};
+
+
+// ==================== JWNU API Client Services ====================
+
+
+/**
  * API 호출 시 서비스 타입 지정에 사용되는 열거형.
  */
 UENUM(BlueprintType)
@@ -182,27 +219,6 @@ enum class EJWNU_ServiceType : uint8
 {
 	GameServer,
 	AuthServer,
-};
-
-/**
- * 토큰 로드 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다.
- */
-UENUM(BlueprintType)
-enum class EJWNU_TokenGetResult : uint8
-{
-	Success = 0,
-	Fail = 1,
-	Empty = 2,	
-};
-
-/**
- * 토큰 저장 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다.
- */
-UENUM(BlueprintType)
-enum class EJWNU_TokenSetResult : uint8
-{
-	Success = 0,
-	Fail = 1,
 };
 
 /**
@@ -289,6 +305,27 @@ struct JWNETWORKUTILITY_API FJWNU_RefreshTokenContainer
 };
 
 /**
+ * 토큰 로드 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다.
+ */
+UENUM(BlueprintType)
+enum class EJWNU_TokenGetResult : uint8
+{
+	Success = 0,
+	Fail = 1,
+	Empty = 2,	
+};
+
+/**
+ * 토큰 저장 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다.
+ */
+UENUM(BlueprintType)
+enum class EJWNU_TokenSetResult : uint8
+{
+	Success = 0,
+	Fail = 1,
+};
+
+/**
  * 호스트 획득 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다.
  */
 UENUM(BlueprintType)
@@ -297,35 +334,6 @@ enum class EJWNU_HostGetResult : uint8
 	Fail = 0,
 	Success = 1,
 	Empty = 2,	
-};
-
-/**
- * 401 발생 시 원래 요청을 재시도하기 위한 정보를 담는 구조체.
- */
-USTRUCT(BlueprintType)
-struct JWNETWORKUTILITY_API FJWNU_PendingApiRequest
-{
-	GENERATED_BODY()
-
-	EJWNU_ServiceType ServiceType;
-	EJWNU_HttpMethod Method;
-	FString URL;
-	FString ContentBody;
-	TMap<FString, FString> QueryParams;
-};
-
-/**
- * 토큰 리프레시 대기열에 적재되는 잡 구조체.
- * 리프레시 완료 시 OnTokenReady, 실패 시 OnTokenFailed가 호출된다.
- */
-USTRUCT(BlueprintType)
-struct JWNETWORKUTILITY_API FJWNU_PendingJob
-{
-	GENERATED_BODY()
-	
-	FJWNU_PendingApiRequest RequestInfo;
-	TFunction<void(const FString& /*NewAccessToken*/)> OnTokenReady;
-	TFunction<void(const FString& /*ErrorCode*/, const FString& /*ErrorMessage*/)> OnTokenFailed;
 };
 
 /**
@@ -351,7 +359,64 @@ enum class EJWNU_ConvertStructToJsonResult : uint8
 	NoMatch = 2,
 };
 
+
+// ==================== JWNU Auth Widget Helper ====================
+
+
+/**
+ * 회원가입용 이메일 검증 열거형.
+ */
+UENUM(BlueprintType)
+enum class EJWNU_RegisterEmailValidation : uint8
+{
+	Satisfied,
+	Unsatisfied
+};
+
+/**
+ * 회원가입용 1차 비밀번호 검증 열거형.
+ */
+UENUM(BlueprintType)
+enum class EJWNU_RegisterPrimaryPasswordValidation : uint8
+{
+	Unsatisfied,
+	Satisfied,
+};
+
+/**
+ * 회원가입용 2차 비밀번호 검증 열거형.
+ */
+UENUM(BlueprintType)
+enum class EJWNU_RegisterSecondaryPasswordValidation : uint8
+{
+	FirstPasswordEmpty,
+	Unsatisfied,
+	Satisfied,
+};
+
+/**
+ * 로그인용 이메일 검증 열거형.
+ */
+UENUM(BlueprintType)
+enum class EJWNU_LoginEmailValidation : uint8
+{
+	Satisfied,
+	Unsatisfied
+};
+
+/**
+ * 로그인용 비밀번호 검증 열거형.
+ */
+UENUM(BlueprintType)
+enum class EJWNU_LoginPasswordValidation : uint8
+{
+	Satisfied,
+	Unsatisfied
+};
+
+
 // ==================== JW Test Server API Request & Response ====================
+
 
 /**
  * JW 커스텀 스타일 서버의 이메일 인증 API 요청 구조체.

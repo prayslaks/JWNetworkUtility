@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
 
-#include "JWNU_BFL_AuthWidget.h"
+#include "JWNU_BFL_AuthWidgetHelper.h"
 
 #include "Styling/SlateColor.h"
 
-void UJWNU_BFL_AuthWidget::OnRegisterEmailTextBoxChanged(const FText& Input, FText& OutProcessed, EJWNU_RegisterEmailValidation& OutResult)
+void UJWNU_BFL_AuthWidgetHelper::OnRegisterEmailTextBoxChanged(const FText& Input, FText& OutProcessed, EJWNU_RegisterEmailValidation& OutResult)
 {
 	const FString Trimmed = Input.ToString().TrimStartAndEnd();
 	OutProcessed = FText::FromString(Trimmed);
@@ -23,7 +23,7 @@ void UJWNU_BFL_AuthWidget::OnRegisterEmailTextBoxChanged(const FText& Input, FTe
 	OutResult = EJWNU_RegisterEmailValidation::Unsatisfied;
 }
 
-void UJWNU_BFL_AuthWidget::OnRegisterCodeTextBoxChanged(const FText& Input, FText& OutProcessed, EJWNU_RegisterEmailValidation& OutResult)
+void UJWNU_BFL_AuthWidgetHelper::OnRegisterCodeTextBoxChanged(const FText& Input, FText& OutProcessed, EJWNU_RegisterEmailValidation& OutResult)
 {
 	const FString Raw = Input.ToString();
 
@@ -49,30 +49,30 @@ void UJWNU_BFL_AuthWidget::OnRegisterCodeTextBoxChanged(const FText& Input, FTex
 		: EJWNU_RegisterEmailValidation::Unsatisfied;
 }
 
-void UJWNU_BFL_AuthWidget::OnRegisterPasswordFirstTextBoxChanged(const FText& Input, EJWNU_RegisterFirstPasswordValidation& OutResult)
+void UJWNU_BFL_AuthWidgetHelper::OnRegisterPrimaryPasswordTextBoxChanged(const FText& Input, EJWNU_RegisterPrimaryPasswordValidation& OutResult)
 {
 	const FString Password = Input.ToString();
 	OutResult = IsPasswordFormatValid(Password)
-		? EJWNU_RegisterFirstPasswordValidation::Satisfied
-		: EJWNU_RegisterFirstPasswordValidation::Unsatisfied;
+		? EJWNU_RegisterPrimaryPasswordValidation::Satisfied
+		: EJWNU_RegisterPrimaryPasswordValidation::Unsatisfied;
 }
 
-void UJWNU_BFL_AuthWidget::OnRegisterPasswordSecondTextBoxChanged(const FText& Input, const FText& FirstPassword, EJWNU_RegisterSecondPasswordValidation& OutResult)
+void UJWNU_BFL_AuthWidgetHelper::OnRegisterSecondaryPasswordTextBoxChanged(const FText& Input, const FText& FirstPassword, EJWNU_RegisterSecondaryPasswordValidation& OutResult)
 {
 	const FString First = FirstPassword.ToString();
 	if (First.IsEmpty())
 	{
-		OutResult = EJWNU_RegisterSecondPasswordValidation::FirstPasswordEmpty;
+		OutResult = EJWNU_RegisterSecondaryPasswordValidation::FirstPasswordEmpty;
 		return;
 	}
 	
 	const FString Second = Input.ToString();
 	OutResult = (Second == First)
-		? EJWNU_RegisterSecondPasswordValidation::Satisfied
-		: EJWNU_RegisterSecondPasswordValidation::Unsatisfied;
+		? EJWNU_RegisterSecondaryPasswordValidation::Satisfied
+		: EJWNU_RegisterSecondaryPasswordValidation::Unsatisfied;
 }
 
-void UJWNU_BFL_AuthWidget::OnLoginEmailTextBoxChanged(const FText& Input, FText& OutProcessed, EJWNU_LoginEmailValidation& OutResult)
+void UJWNU_BFL_AuthWidgetHelper::OnLoginEmailTextBoxChanged(const FText& Input, FText& OutProcessed, EJWNU_LoginEmailValidation& OutResult)
 {
 	const FString Trimmed = Input.ToString().TrimStartAndEnd();
 	OutProcessed = FText::FromString(Trimmed);
@@ -91,7 +91,7 @@ void UJWNU_BFL_AuthWidget::OnLoginEmailTextBoxChanged(const FText& Input, FText&
 	OutResult = EJWNU_LoginEmailValidation::Unsatisfied;
 }
 
-void UJWNU_BFL_AuthWidget::OnLoginPasswordTextBoxChanged(const FText& Input, EJWNU_LoginPasswordValidation& OutResult)
+void UJWNU_BFL_AuthWidgetHelper::OnLoginPasswordTextBoxChanged(const FText& Input, EJWNU_LoginPasswordValidation& OutResult)
 {
 	const FString Password = Input.ToString();
 	OutResult = (Password.Len() >= 10)
@@ -99,14 +99,14 @@ void UJWNU_BFL_AuthWidget::OnLoginPasswordTextBoxChanged(const FText& Input, EJW
 		: EJWNU_LoginPasswordValidation::Unsatisfied;
 }
 
-FSlateColor UJWNU_BFL_AuthWidget::GetColorBySuccess(const bool bSuccess)
+FSlateColor UJWNU_BFL_AuthWidgetHelper::GetColorBySuccess(const bool bSuccess)
 {
 	const FSlateColor SuccessColor = { FLinearColor(0.0f, 1.0f, 0.0f, 1.0f) };
 	const FSlateColor FailureColor = { FLinearColor(1.0f, 0.0f, 0.0f, 1.0f) };
 	return bSuccess ? SuccessColor : FailureColor;
 }
 
-bool UJWNU_BFL_AuthWidget::IsPasswordFormatValid(const FString& Password)
+bool UJWNU_BFL_AuthWidgetHelper::IsPasswordFormatValid(const FString& Password)
 {
 	if (Password.Len() < 10)
 	{

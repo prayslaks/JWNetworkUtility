@@ -4,110 +4,196 @@ A standalone Unreal Engine 5.6 plugin providing a layered HTTP API client system
 
 **Engine:** Unreal Engine 5.6 | **Author:** prayslaks | **Status:** Beta
 
+**한국어 문서는 [README_ko.md](./README_ko.md)를 참고하세요.**
+
+## ☕ Support
+If this project helped you, please consider buying me a coffee to support further development!
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support%20Me-orange?style=flat-square&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/prayslaks)
+
+## Table of Contents
+
+- [Quick Start \& Testing](#-quick-start--testing)
+- [Features](#features)
+- [Module Structure](#module-structure)
+- [Architecture](#architecture)
+- [Core Class List](#core-class-list)
+- [Usage](#usage)
+  - [C++](#c)
+- [HTTP Response Modes](#http-response-modes)
+  - [Raw Response](#raw-response-sendrequest_rawresponse)
+  - [Custom Response](#custom-response-sendrequest_customresponse)
+  - [401 Auto-Refresh Flow](#401-auto-refresh-flow)
+  - [Token Security](#token-security)
+- [Scalable Host Configuration](#scalable-host-configuration)
+- [Console Variables](#console-variables)
+- [Test Server (FastAPI)](#test-server-fastapi)
+- [File Structure](#file-structure)
+- [License](#license)
+
+## 🚀 Quick Start & Testing
+
+This plugin includes everything you need for immediate testing:
+* **Test Server:** A Python 3.14.3 based server (`main.py`) is included.
+* **Pre-built Executable:** A ready-to-run `.exe` is provided for quick verification.
+* **In-Engine Assets:** The plugin content folder contains a dedicated **Test Level** and **UMG** to help you get started right away.
+
 ## Features
 
 - JWT Access/Refresh Token management (Windows DPAPI encryption)
+- Automatic HTTP Request Retry with HTTP Request Job (5xx, timeout, network errors)
 - Automatic token refresh and request retry queue on 401 responses
-- Per-ServiceType host URL/token separation (`GameServer`, `AuthServer`)
-- HTTP response normalization (non-2xx → consistent JSON structure)
-- Request retry (5xx, timeout, network errors)
-- Blueprint `EJWNU_HttpStatusCode` enum for type-safe HTTP status handling
-- C++ template API (`CallApi_Template<T>`) and Blueprint support
-- Blueprint wildcard struct parsing (`CustomThunk`): JSON ↔ USTRUCT conversion
-- Session management: `GetUserId`, `SetUserId`, `ClearSession`
+- Per-ServiceType host URL/token separation and Host Configuration Scalability (`GameServer`, `AuthServer`, `etc`)
+- Raw HTTP Response Support
+- Custom HTTP Response Normalization Support (non-2xx → consistent JSON structure)
+- C++ template API (`CallApi_Template<T>`) and Blueprint Support
+- Blueprint wildcard struct parsing (`CustomThunk`): JSON ↔ USTRUCT Conversion
 - Pre-built request/response structs (`FJWNU_REQ_*`, `FJWNU_RES_*`) matching test server API
 
 ## Module Structure
 
-| Module | Type | Description |
-|---|---|---|
-| `JWNetworkUtility` | Runtime | Core plugin — HTTP client, token management, Blueprint API |
-| `JWNetworkUtilityTest` | Runtime | Test/demo module — API test actor, auth widget helpers |
+| Module | Type | Description                                                            |
+|---|---|------------------------------------------------------------------------|
+| `JWNetworkUtility` | Runtime | Core plugin — HTTP Job, HTTP Client, API Client, Token Provider, Host Provider |
+| `JWNetworkUtilityTest` | Runtime | Test/demo module — API test actor                                      |
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────┐
-│  Blueprint Layer                                     │
-│  UJWNU_BFL_ApiClientService (BlueprintFunctionLib)   │
-│    - CallApi, SendHttpRequest                        │
-│    - ConvertJsonStringToStruct / ConvertStructTo     │
-│      JsonString (CustomThunk wildcard)               │
-│    - GetUserId, SetUserId, ClearSession              │
-├─────────────────────────────────────────────────────┤
-│  Service Layer                                       │
-│  UJWNU_GIS_ApiClientService (GameInstanceSubsystem)  │
-│    - CallApi_Template<T>() / CallApi_NoTemplate()    │
-│    - 401 auto-refresh with per-ServiceType queue     │
-│    - Host & token resolution from providers          │
-├─────────────────────────────────────────────────────┤
-│  Provider Layer                                      │
-│  UJWNU_GIS_ApiIdentityProvider                       │
-│    — AccessTokenContainer + RefreshTokenContainer    │
-│    — UserId/SessionId, DPAPI encryption              │
-│  UJWNU_GIS_ApiHostProvider   — Host URL config (INI) │
-├─────────────────────────────────────────────────────┤
-│  Transport Layer                                     │
-│  UJWNU_GIS_HttpClientHelper (GameInstanceSubsystem)  │
-│    - Response normalization (non-2xx → custom JSON)  │
-│  UJWNU_GIS_HttpRequestJobProcessor                   │
-│    - Creates UJWNU_HttpRequestJob                    │
-│  UJWNU_HttpRequestJob (UObject)                      │
-│    - Retry, timeout, cancellation                    │
-├─────────────────────────────────────────────────────┤
-│  Utility                                             │
-│  UJWNU_GIS_CustomCodeHelper  — Error code → FText    │
-│  UJWNU_GIS_SteamWorks        — Steam auth tickets    │
-└─────────────────────────────────────────────────────┘
-```
+![img.png](./Resources/Architecture.png)
 
-### Class List
+## Core Class List
 
-| Class | Base | Role |
-|---|---|---|
-| `UJWNU_GIS_ApiClientService` | GameInstanceSubsystem | High-level API: template parsing, 401 refresh queue |
-| `UJWNU_GIS_HttpClientHelper` | GameInstanceSubsystem | Low-level HTTP: raw/normalized responses |
+| Class                               | Base | Role |
+|-------------------------------------|---|---|
+| `UJWNU_GIS_ApiClientService`        | GameInstanceSubsystem | High-level API: template parsing, 401 refresh queue |
+| `UJWNU_GIS_HttpClientHelper`        | GameInstanceSubsystem | Low-level HTTP: raw/normalized responses |
 | `UJWNU_GIS_HttpRequestJobProcessor` | GameInstanceSubsystem | Job creation, query param encoding |
-| `UJWNU_GIS_ApiIdentityProvider` | GameInstanceSubsystem | Token + UserId/SessionId storage, DPAPI encryption |
-| `UJWNU_GIS_ApiHostProvider` | GameInstanceSubsystem | Host URLs from INI config |
-| `UJWNU_GIS_CustomCodeHelper` | GameInstanceSubsystem | HTTP status → localized FText |
-| `UJWNU_GIS_SteamWorks` | GameInstanceSubsystem | Steam auth ticket |
-| `UJWNU_HttpRequestJob` | UObject | Single request lifecycle: retry, timeout, cancel |
-| `UJWNU_BFL_ApiClientService` | BlueprintFunctionLibrary | Blueprint-exposed API |
-
-### Test Module Classes (JWNetworkUtilityTest)
-
-| Class | Base | Role |
-|---|---|---|
-| `AJWNU_Actor_ApiTest` | AActor | API test/demo actor |
-| `UJWNU_BFL_AuthWidget` | BlueprintFunctionLibrary | Auth widget validation helpers (email, password) |
+| `UJWNU_GIS_ApiIdentityProvider`     | GameInstanceSubsystem | Token + UserId/SessionId storage, DPAPI encryption |
+| `UJWNU_GIS_ApiHostProvider`         | GameInstanceSubsystem | Host URLs from INI config |
+| `UJWNU_HttpRequestJob`              | UObject | Single request lifecycle: retry, timeout, cancel |
+| `UJWNU_BFL_ApiClientService`        | BlueprintFunctionLibrary | Blueprint-exposed API |
+| `UJWNU_BFL_AuthWidgetHelper`        | BlueprintFunctionLibrary | Auth widget validation helpers (email, password) |
 
 ## Usage
 
-### C++ Template API Call
+### C++
 
 ```cpp
-UJWNU_GIS_ApiClientService::CallApi_Template<FMyStruct>(
-    WorldContext, EJWNU_HttpMethod::Get, EJWNU_ServiceType::GameServer,
-    TEXT("/api/data"), TEXT(""), TMap<FString,FString>(),
-    [](const FMyStruct& Response) { /* typed result */ }
-);
+const auto Callback = 
+    FOnHttpRequestCompletedDelegate::CreateLambda([](const int32 StatusCode, const FString& ResponseBody)
+    {
+        PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("Raw Response From Server : %s"), *ResponseBody);
+    });
+    
+FString ProvidedHost;
+if (UJWNU_GIS_ApiHostProvider::Get(GetWorld())->GetHost(EJWNU_ServiceType::AuthServer, ProvidedHost))
+{
+    return;	
+}
+
+const FString URL = ProvidedHost + TEXT("/health");
+const FString AuthToken = {};
+const FString ContentBody = {};
+const TMap<FString, FString> QueryParams = {};
+
+UJWNU_GIS_HttpClientHelper::SendReqeust_RawResponse(
+    GetWorld(), 
+    EJWNU_HttpMethod::Get, 
+    URL, 
+    AuthToken, 
+    ContentBody, 
+    QueryParams, 
+    Callback);
 ```
 
-### Response Normalization
+```cpp
+const auto Callback = 
+    [](const FJWNU_RES_Base& Response)
+    {
+        PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("Custom Reseponse From Server : %s %s"), *Response.Code, *Response.Message);
+    };
+    
+const FString Endpoint = TEXT("/health");
+const FString ContentBody = {};
+const TMap<FString, FString> QueryParams = {};
 
-All HTTP responses are normalized to a consistent JSON structure.
+UJWNU_GIS_ApiClientService::CallApi_Template<FJWNU_RES_Base>(
+    GetWorld(), 
+    EJWNU_HttpMethod::Get, 
+    EJWNU_ServiceType::AuthServer, 
+    Endpoint, 
+    ContentBody, 
+    QueryParams, 
+    Callback);
+```
 
-- **2xx responses**: Original JSON from server passed through
-- **non-2xx responses**: Converted to:
-  ```json
-  {"success": false, "code": "<HTTP_STATUS>", "message": "<STATUS_TEXT>"}
-  ```
+```cpp
+const auto Callback = 
+    FOnHttpResponseDelegate::CreateLambda([](const EJWNU_HttpStatusCode StatusCode, const FString& ResponseBody)
+    {
+        PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("Raw Response From Server : %s"), *ResponseBody);
+    });
+    
+const FString Endpoint = TEXT("/health");
+const FString ContentBody = {};
+const TMap<FString, FString> QueryParams = {};
 
-Server-side response format:
+UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
+    GetWorld(), 
+    EJWNU_HttpMethod::Get, 
+    EJWNU_ServiceType::AuthServer, 
+    Endpoint, 
+    ContentBody, 
+    QueryParams, 
+    Callback);
+```
+
+### Blueprint
+  
+![img.png](./Resources/BlueprintExample_0.png)
+![img.png](./Resources/BlueprintExample_1.png)
+![img.png](./Resources/BlueprintExample_2.png)
+
+## HTTP Response Modes
+
+`UJWNU_GIS_HttpClientHelper` provides two response modes. Choose the one that fits your server architecture.
+
+### Raw Response (`SendRequest_RawResponse`)
+
+A fully general-purpose mode. The server's HTTP response body is passed through to the callback **as-is**, with no transformation. Use this when:
+- Your server already returns a well-defined JSON structure you want to handle directly.
+- You need full control over response parsing (e.g., binary data, non-JSON formats, third-party APIs).
+
+```
+Server Response (any format) ──► Callback receives the body unchanged
+```
+
+### Custom Response (`SendRequest_CustomResponse`)
+
+A normalization mode that converts **every** response into a consistent `{success, code, message}` JSON structure. This is useful when your server follows a convention like:
+
 ```json
 {"Success": true, "Code": "CODE", "Message": "message"}
 ```
+
+**How it works:**
+
+| Condition | Callback receives |
+|---|---|
+| **2xx** | Original JSON from server (passed through) |
+| **non-2xx** | `{"success": false, "code": "<CUSTOM_CODE>", "message": "<CUSTOM_MESSAGE>"}` |
+| **Network error** | `{"success": false, "code": "NETWORK_ERROR", "message": "Failed to Send HTTP Request"}` |
+
+**Why use this?**
+
+- **Separation of concerns:** Network-level failures (timeout, DNS, connectivity) are clearly distinguished from service-level failures (400, 403, 500). Your game logic only needs to check `success` and `code` without inspecting raw HTTP status codes.
+- **Custom code mapping:** The `StatusCodeToCustomCodeMap` / `StatusCodeToCustomMessageMap` inside `UJWNU_GIS_HttpClientHelper` translate HTTP status codes into application-specific codes (e.g., `401 → "UNAUTHORIZED"`, `503 → "SERVICE_UNAVAILABLE"`). You can modify these maps to define your own codes and route different error codes to different UI flows or retry strategies.
+- **Uniform parsing:** Every response—success or failure—shares the same JSON shape, so a single USTRUCT (like `FJWNU_RES_Base`) can deserialize any outcome.
+
+**Trade-offs:**
+
+- The original HTTP response body is **discarded** for non-2xx responses. If your server embeds meaningful error details in non-2xx bodies, Raw Response mode is more appropriate.
+- The normalization logic is opinionated. If your server uses a different envelope structure, you will need to modify `SendRequest_CustomResponse` in `JWNU_GIS_HttpClientHelper.cpp` to match your server's convention.
 
 ### 401 Auto-Refresh Flow
 
@@ -124,7 +210,7 @@ Server-side response format:
 - **Refresh Token**: Stored in `FJWNU_RefreshTokenContainer`, encrypted via Windows DPAPI (`CryptProtectData`/`CryptUnprotectData`) with Device ID entropy salt, saved to `Saved/Config/JWNetworkUtility/auth_{ServiceType}.bin`
 - **UserId**: Memory-only FString (set from login/refresh response, managed via `GetUserId`/`SetUserId`)
 
-## Configuration
+## Scalable Host Configuration
 
 ### Host URL (`Config/DefaultJWNetworkUtility.ini`)
 
@@ -136,7 +222,48 @@ AuthServer="127.0.0.1:5000"
 
 Override in host project: add the same section to the project's `DefaultJWNetworkUtility.ini`.
 
-### Console Variables
+### UENUM EJWNU_ServiceType (`Source/JWNetworkUtility/Public/JWNetworkUtilityTypes.h`)
+
+```cpp
+UENUM(BlueprintType)
+enum class EJWNU_ServiceType : uint8
+{
+    GameServer,
+    AuthServer,
+};
+```
+
+### UJWNU_GIS_ApiHostProvider::Initialize (`Source/JWNetworkUtility/Private/JWNU_GIS_ApiHostProvider`)
+
+```cpp
+void UJWNU_GIS_ApiHostProvider::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+	
+	const FString Section = TEXT("/Script/JWNetworkUtility.JWNU_GIS_ApiHostProvider");
+	FString PluginDir = IPluginManager::Get().FindPlugin(TEXT("JWNetworkUtility"))->GetBaseDir();
+	const FString ConfigPath = FPaths::Combine(PluginDir, TEXT("Config"), TEXT("DefaultJWNetworkUtility.ini"));
+	PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("호스트 주소 로드 시도 : %s"), *ConfigPath);
+	
+	auto TryLoad = [&](const EJWNU_ServiceType Type, const TCHAR* Key)
+	{
+		if (FString Value; GConfig->GetString(*Section, Key, Value, ConfigPath))
+		{
+			ServiceTypeToHostMap.Add(Type, Value);
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("호스트 주소 로드 완료 — %s : %s"), Key, *Value);
+		}
+		else
+		{
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("호스트 주소 로드 실패 - %s : ???"), Key);
+		}
+	};
+
+	TryLoad(EJWNU_ServiceType::GameServer, TEXT("GameServer"));
+	TryLoad(EJWNU_ServiceType::AuthServer, TEXT("AuthServer"));
+}
+```
+
+## Console Variables
 
 | CVar | Default | Description |
 |---|---|---|
@@ -212,7 +339,8 @@ JWNetworkUtility/
 │   │   │   ├── JWNU_GIS_CustomCodeHelper.h
 │   │   │   ├── JWNU_GIS_SteamWorks.h
 │   │   │   ├── JWNU_HttpRequestJob.h
-│   │   │   └── JWNU_BFL_ApiClientService.h
+│   │   │   ├── JWNU_BFL_ApiClientService.h
+│   │   │   └── JWNU_BFL_AuthWidgetHelper.h
 │   │   └── Private/
 │   │       ├── JWNetworkUtility.cpp
 │   │       ├── JWNetworkUtilityTypes.cpp
@@ -225,17 +353,16 @@ JWNetworkUtility/
 │   │       ├── JWNU_GIS_CustomCodeHelper.cpp
 │   │       ├── JWNU_GIS_SteamWorks.cpp
 │   │       ├── JWNU_HttpRequestJob.cpp
-│   │       └── JWNU_BFL_ApiClientService.cpp
+│   │       ├── JWNU_BFL_ApiClientService.cpp
+│   │       └── JWNU_BFL_AuthWidgetHelper.cpp
 │   └── JWNetworkUtilityTest/          (Runtime, depends on JWNetworkUtility)
 │       ├── JWNetworkUtilityTest.Build.cs
 │       ├── Public/
 │       │   ├── JWNetworkUtilityTest.h
-│       │   ├── JWNU_Actor_ApiTest.h
-│       │   └── JWNU_BFL_AuthWidget.h
+│       │   └── JWNU_Actor_ApiTest.h
 │       └── Private/
 │           ├── JWNetworkUtilityTest.cpp
-│           ├── JWNU_Actor_ApiTest.cpp
-│           └── JWNU_BFL_AuthWidget.cpp
+│           └── JWNU_Actor_ApiTest.cpp
 ├── TestServer/
 │   ├── main.py
 │   ├── requirements.txt
@@ -248,144 +375,10 @@ JWNetworkUtility/
 ├── JWNetworkUtility.uplugin
 ├── CLAUDE.md
 ├── LICENSE
+├── README_ko.md
 └── README.md
 ```
 
 ## License
 
 See `LICENSE` file.
-
----
-
-# JWNetworkUtility 플러그인 (한국어)
-
-Unreal Engine 5.6용 HTTP API 클라이언트 플러그인입니다.
-JWT 인증, 자동 토큰 리프레시, 재시도/타임아웃, Blueprint 지원을 제공합니다.
-
-## 주요 기능
-
-- JWT Access/Refresh Token 관리 (Windows DPAPI 암호화)
-- 401 응답 시 자동 토큰 리프레시 및 요청 재시도 큐
-- ServiceType별 호스트 URL/토큰 분리 (`GameServer`, `AuthServer`)
-- HTTP 응답 정규화 (non-2xx → 일관된 JSON 구조)
-- 요청 재시도 (5xx, 타임아웃, 네트워크 에러)
-- Blueprint `EJWNU_HttpStatusCode` 열거형으로 타입 세이프 HTTP 상태 처리
-- C++ 템플릿 API (`CallApi_Template<T>`) 및 Blueprint 지원
-- Blueprint Wildcard Struct 파싱 (`CustomThunk`): JSON ↔ USTRUCT 변환
-- 세션 관리: `GetUserId`, `SetUserId`, `ClearSession`
-- 테스트 서버 API 대응 요청/응답 구조체 (`FJWNU_REQ_*`, `FJWNU_RES_*`)
-
-## 모듈 구조
-
-| 모듈 | 타입 | 설명 |
-|---|---|---|
-| `JWNetworkUtility` | Runtime | 핵심 플러그인 — HTTP 클라이언트, 토큰 관리, Blueprint API |
-| `JWNetworkUtilityTest` | Runtime | 테스트/데모 모듈 — API 테스트 액터, 인증 위젯 헬퍼 |
-
-## 사용법
-
-### C++ 템플릿 API 호출
-
-```cpp
-UJWNU_GIS_ApiClientService::CallApi_Template<FMyStruct>(
-    WorldContext, EJWNU_HttpMethod::Get, EJWNU_ServiceType::GameServer,
-    TEXT("/api/data"), TEXT(""), TMap<FString,FString>(),
-    [](const FMyStruct& Response) { /* 타입 지정된 결과 */ }
-);
-```
-
-### 응답 정규화
-
-모든 HTTP 응답은 일관된 JSON 구조로 정규화됩니다.
-
-- **2xx 응답**: 서버가 반환한 원본 JSON을 그대로 전달
-- **non-2xx 응답**: 아래 형식의 JSON으로 변환하여 전달
-  ```json
-  {"success": false, "code": "<HTTP_STATUS>", "message": "<STATUS_TEXT>"}
-  ```
-
-서버 측 응답 형식:
-```json
-{"Success": true, "Code": "CODE", "Message": "message"}
-```
-
-### 401 자동 리프레시 흐름
-
-1. API 호출 → 401 응답 수신
-2. 요청을 `PendingJobQueues[ServiceType]`에 큐잉
-3. ServiceType당 단일 리프레시 요청 발생 (`RefreshInProgressFlags`)
-4. `/auth/refresh` 엔드포인트 호출
-5. 성공 시: 토큰 갱신 → 큐의 모든 대기 요청 재전송
-6. 실패 시: 큐의 모든 요청에 에러 전달
-
-### 토큰 보안
-
-- **Access Token**: `FJWNU_AccessTokenContainer`에 메모리 저장 (ServiceType별, `ExpiresAt` 포함)
-- **Refresh Token**: `FJWNU_RefreshTokenContainer`에 저장, Windows DPAPI(`CryptProtectData`/`CryptUnprotectData`) + Device ID 엔트로피 솔트로 암호화 후 `Saved/Config/JWNetworkUtility/auth_{ServiceType}.bin`에 파일 저장
-- **UserId**: 메모리 전용 FString (로그인/리프레시 응답에서 설정, `GetUserId`/`SetUserId`로 관리)
-
-## 설정
-
-### Host URL (`Config/DefaultJWNetworkUtility.ini`)
-
-```ini
-[/Script/JWNetworkUtility.JWNU_GIS_ApiHostProvider]
-GameServer="127.0.0.1:5000"
-AuthServer="127.0.0.1:5000"
-```
-
-호스트 프로젝트에서 오버라이드: 프로젝트의 `DefaultJWNetworkUtility.ini`에 동일 섹션 추가.
-
-### 콘솔 변수
-
-| CVar | 기본값 | 설명 |
-|---|---|---|
-| `JWNU.DebugScreen` | `false` | 토큰 리프레시 흐름의 온스크린 디버그 메시지 토글 |
-
-## 테스트 서버 (FastAPI)
-
-### 빠른 실행 (빌드된 실행 파일)
-
-Python 환경 설정 없이 바로 실행할 수 있는 빌드 파일이 포함되어 있습니다.
-
-```bash
-TestServer/dist/main.exe
-```
-
-### 소스에서 실행
-
-```bash
-cd TestServer
-cp .env.example .env   # 필요 시 편집
-pip install -r requirements.txt
-uvicorn main:app --reload --port 5000
-```
-
-### 환경 변수 (`.env`)
-
-| 변수 | 기본값 | 설명 |
-|---|---|---|
-| `LOG_LANG` | `ko` | 서버 로그 언어 (`ko` / `en`) |
-| `SMTP_HOST` | *(빈값)* | SMTP 호스트 (미설정 시 인증코드 콘솔 출력) |
-| `SMTP_PORT` | `587` | SMTP 포트 |
-| `SMTP_USER` | *(빈값)* | SMTP 계정 |
-| `SMTP_PASSWORD` | *(빈값)* | SMTP 비밀번호 |
-| `SMTP_FROM` | `SMTP_USER` | 발신 이메일 주소 |
-
-### 엔드포인트
-
-| 메서드 | 경로 | 인증 | 설명 |
-|---|---|---|---|
-| GET | `/health` | X | 헬스체크 |
-| GET | `/timeout` | X | 타임아웃 시뮬레이션 (`?second=N`, 최대 60초) |
-| POST | `/auth/register/send-code` | X | 이메일 인증코드 발송 |
-| POST | `/auth/register/verify-code` | X | 인증코드 검증 |
-| POST | `/auth/register` | X | 회원가입 완료 |
-| POST | `/auth/login` | X | 로그인 (JWT 발급) |
-| POST | `/auth/refresh` | X | 토큰 리프레시 (일회용 리프레시 토큰) |
-| POST | `/auth/logout` | O | 로그아웃 (엑세스 토큰 블랙리스트, 리프레시 토큰 폐기) |
-| POST | `/auth/reset` | X | 전체 데이터 초기화 (유저, 인증코드, 토큰) |
-| GET/POST/PUT/DELETE | `/api/data` | O | CRUD 테스트 (`?delay=N&status=CODE` 시뮬레이션 지원) |
-| GET | `/debug/users/registered` | X | 가입 유저 조회 (개발용) |
-| GET | `/debug/users/active` | X | 활성 세션 조회 (개발용) |
-| GET | `/debug/verifications` | X | 인증코드 상태 조회 (개발용) |
