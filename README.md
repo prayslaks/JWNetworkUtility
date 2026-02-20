@@ -6,11 +6,6 @@ A standalone Unreal Engine 5.6 plugin providing a layered HTTP API client system
 
 **한국어 문서는 [README_ko.md](./README_ko.md)를 참고하세요.**
 
-## ☕ Support
-If this project helped you, please consider buying me a coffee to support further development!
-
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support%20Me-orange?style=flat-square&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/prayslaks)
-
 ## Table of Contents
 
 - [Quick Start \& Testing](#-quick-start--testing)
@@ -30,6 +25,11 @@ If this project helped you, please consider buying me a coffee to support furthe
 - [Test Server (FastAPI)](#test-server-fastapi)
 - [File Structure](#file-structure)
 - [License](#license)
+
+## ☕ Support
+If this project helped you, please consider buying me a coffee to support further development!
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support%20Me-orange?style=flat-square&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/prayslaks)
 
 ## 🚀 Quick Start & Testing
 
