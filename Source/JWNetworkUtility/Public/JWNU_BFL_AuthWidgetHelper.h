@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "JWNU_BFL_AuthWidgetHelper.generated.h"
 
+class UTextBlock;
 struct FSlateColor;
 
 UCLASS(Config=JWNetworkUtility)
@@ -40,9 +41,12 @@ public:
 	// --- Feedback ---
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "JWNU|AuthWidget|Feedback")
-	static FSlateColor GetColorBySuccess(const bool bSuccess);
+	static FSlateColor GetColorBySuccess(const bool bInSuccess);
+	
+	UFUNCTION(BlueprintCallable, Category = "JWNU|AuthWidget|Feedback", meta=(AutoCreateRefTerm="InCover"))
+	static void ShowProcessingMessage(UTextBlock* InTextBlock, const FText& InCover);
 
 private:
 	
-	static bool IsPasswordFormatValid(const FString& Password);
+	static bool IsPasswordFormatValid(const FString& InPassword);
 };

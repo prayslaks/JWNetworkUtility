@@ -27,6 +27,7 @@ public class JWNetworkUtility : ModuleRules
 				"HTTP",							// FHttpModule, IHttpRequest, IHttpResponse
 				"Json",							// FJsonObject, FJsonValue
 				"JsonUtilities",				// FJsonObjectConverter, FJsonSerializer
+				"UMG",							// Widget Blueprint
 				"OnlineSubsystem",
 				"OnlineSubsystemSteam",
 				"OnlineSubsystemUtils"

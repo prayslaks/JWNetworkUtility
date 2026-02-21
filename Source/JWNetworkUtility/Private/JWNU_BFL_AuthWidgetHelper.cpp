@@ -2,8 +2,10 @@
 
 #include "JWNU_BFL_AuthWidgetHelper.h"
 #include "JWNetworkUtilityTypes.h"
-
+#include "Components/TextBlock.h"
 #include "Styling/SlateColor.h"
+
+#define LOCTEXT_NAMESPACE "JWNU_AuthWidgetHelper"
 
 void UJWNU_BFL_AuthWidgetHelper::OnRegisterEmailTextBoxChanged(const FText& Input, FText& OutProcessed, EJWNU_RegisterEmailValidation& OutResult)
 {
@@ -100,16 +102,35 @@ void UJWNU_BFL_AuthWidgetHelper::OnLoginPasswordTextBoxChanged(const FText& Inpu
 		: EJWNU_LoginPasswordValidation::Unsatisfied;
 }
 
-FSlateColor UJWNU_BFL_AuthWidgetHelper::GetColorBySuccess(const bool bSuccess)
+FSlateColor UJWNU_BFL_AuthWidgetHelper::GetColorBySuccess(const bool bInSuccess)
 {
 	const FSlateColor SuccessColor = { FLinearColor(0.0f, 1.0f, 0.0f, 1.0f) };
 	const FSlateColor FailureColor = { FLinearColor(1.0f, 0.0f, 0.0f, 1.0f) };
-	return bSuccess ? SuccessColor : FailureColor;
+	return bInSuccess ? SuccessColor : FailureColor;
 }
 
-bool UJWNU_BFL_AuthWidgetHelper::IsPasswordFormatValid(const FString& Password)
+void UJWNU_BFL_AuthWidgetHelper::ShowProcessingMessage(UTextBlock* InTextBlock, const FText& InCover)
 {
-	if (Password.Len() < 10)
+	if (InTextBlock == nullptr)
+	{
+		return;
+	}
+	
+	InTextBlock->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+	
+	if (InCover.IsEmpty())
+	{
+		InTextBlock->SetText(LOCTEXT("AuthSample_OnHttpProcessing", "Please wait..."));
+	}
+	else
+	{
+		InTextBlock->SetText(InCover);
+	}
+}
+
+bool UJWNU_BFL_AuthWidgetHelper::IsPasswordFormatValid(const FString& InPassword)
+{
+	if (InPassword.Len() < 10)
 	{
 		return false;
 	}
@@ -119,7 +140,7 @@ bool UJWNU_BFL_AuthWidgetHelper::IsPasswordFormatValid(const FString& Password)
 	bool bHasDigit = false;
 	bool bHasSpecial = false;
 
-	for (const TCHAR Ch : Password)
+	for (const TCHAR Ch : InPassword)
 	{
 		if (FChar::IsUpper(Ch))       { bHasUpper = true; }
 		else if (FChar::IsLower(Ch))  { bHasLower = true; }
@@ -129,3 +150,5 @@ bool UJWNU_BFL_AuthWidgetHelper::IsPasswordFormatValid(const FString& Password)
 
 	return bHasUpper && bHasLower && bHasDigit && bHasSpecial;
 }
+
+#undef LOCTEXT_NAMESPACE
