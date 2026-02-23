@@ -6,6 +6,7 @@
 #include "JWNetworkUtilityTypes.h"
 #include "JWNetworkUtilityDelegates.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "JWNU_HttpRequestJobHandle.h"
 #include "JWNU_BFL_ApiClientService.generated.h"
 
 /**
@@ -30,13 +31,13 @@ public:
 	 * @param InOnHttpRequestJobRetry 리퀘스트 재시도 때 호출되는 블루프린트 이벤트
 	 */
 	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="InQueryParams, InOnHttpRequestJobRetry"))
-	static void SendHttpRequest(
-		const UObject* WorldContextObject, 
-		const EJWNU_HttpMethod InMethod, 
-		const FString& InURL, 
-		const FString& InAuthToken, 
-		const FString& InContentBody, 
-		const TMap<FString, FString>& InQueryParams, 
+	static UJWNU_HttpRequestJobHandle* SendHttpRequest(
+		const UObject* WorldContextObject,
+		const EJWNU_HttpMethod InMethod,
+		const FString& InURL,
+		const FString& InAuthToken,
+		const FString& InContentBody,
+		const TMap<FString, FString>& InQueryParams,
 		const FOnHttpResponseBPEvent& InOnHttpResponse,
 		const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry);
 
@@ -53,7 +54,7 @@ public:
 	 * @param bRequiresAuth 인증 토큰 요구 여부
 	 */
 	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="InQueryParams, InOnHttpRequestJobRetry"))
-	static void CallApi(
+	static UJWNU_HttpRequestJobHandle* CallApi(
 		const UObject* WorldContextObject,
 		const EJWNU_ServiceType InServiceType,
 		const EJWNU_HttpMethod InMethod,

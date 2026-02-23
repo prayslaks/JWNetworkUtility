@@ -6,6 +6,7 @@
 #include "JWNetworkUtilityTypes.h"
 #include "JWNetworkUtilityDelegates.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "JWNU_HttpRequestJob.h"
 #include "JWNU_GIS_HttpClientHelper.generated.h"
 
 /**
@@ -44,16 +45,16 @@ public:
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
 	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
-	static void SendRequest_RawResponse(
+	static UJWNU_HttpRequestJob* SendRequest_RawResponse(
 		const UObject* WorldContextObject,
-		const EJWNU_HttpMethod InMethod, 
-		const FString& InURL, 
-		const FString& InAuthToken, 
-		const FString& InContentBody, 
-		const TMap<FString, FString>& InQueryParams, 
+		const EJWNU_HttpMethod InMethod,
+		const FString& InURL,
+		const FString& InAuthToken,
+		const FString& InContentBody,
+		const TMap<FString, FString>& InQueryParams,
 		const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
 		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
-	
+
 	/**
 	 * HTTP 리퀘스트를 보내는 함수. 전처리된 Custom Response Body를 콜백으로 반환한다.
 	 * @param WorldContextObject 월드 컨텍스트 오브젝트
@@ -65,13 +66,13 @@ public:
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
 	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
-	static void SendRequest_CustomResponse(
+	static UJWNU_HttpRequestJob* SendRequest_CustomResponse(
 		const UObject* WorldContextObject,
-		const EJWNU_HttpMethod InMethod, 
-		const FString& InURL, 
-		const FString& InAuthToken, 
-		const FString& InContentBody, 
-		const TMap<FString, FString>& InQueryParams, 
+		const EJWNU_HttpMethod InMethod,
+		const FString& InURL,
+		const FString& InAuthToken,
+		const FString& InContentBody,
+		const TMap<FString, FString>& InQueryParams,
 		const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
 		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
 	
@@ -87,15 +88,15 @@ private:
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
 	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
-	void SendRequest_RawResponse(
-		const EJWNU_HttpMethod InMethod, 
-		const FString& InURL, 
-		const FString& InAuthToken, 
-		const FString& InContentBody, 
-		const TMap<FString, FString>& InQueryParams, 
+	UJWNU_HttpRequestJob* SendRequest_RawResponse(
+		const EJWNU_HttpMethod InMethod,
+		const FString& InURL,
+		const FString& InAuthToken,
+		const FString& InContentBody,
+		const TMap<FString, FString>& InQueryParams,
 		const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
 		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
-	
+
 	/**
 	 * 동일한 이름의 정적 함수에 의해 호출되어, 실제로 처리하는 비정적 함수.
 	 * @param InMethod HTTP 메서드
@@ -106,12 +107,12 @@ private:
 	 * @param InOnHttpResponse 서버 로직 도달 여부와 리스폰스 바디를 전달하는 콜백 델리게이트
 	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
-	void SendRequest_CustomResponse(
-		const EJWNU_HttpMethod InMethod, 
-		const FString& InURL, 
-		const FString& InAuthToken, 
-		const FString& InContentBody, 
-		const TMap<FString, FString>& InQueryParams, 
+	UJWNU_HttpRequestJob* SendRequest_CustomResponse(
+		const EJWNU_HttpMethod InMethod,
+		const FString& InURL,
+		const FString& InAuthToken,
+		const FString& InContentBody,
+		const TMap<FString, FString>& InQueryParams,
 		const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
 		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
 	

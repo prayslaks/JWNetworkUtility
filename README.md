@@ -15,6 +15,7 @@ A standalone Unreal Engine 5.6 plugin providing a layered HTTP API client system
 - [Core Class List](#core-class-list)
 - [Usage](#usage)
   - [C++](#c)
+- [Job Handle](#job-handle)
 - [HTTP Response Modes](#http-response-modes)
   - [Raw Response](#raw-response-sendrequest_rawresponse)
   - [Custom Response](#custom-response-sendrequest_customresponse)
@@ -49,6 +50,7 @@ This plugin includes everything you need for immediate testing:
 - C++ template API (`CallApi_Template<T>`) and Blueprint Support
 - Blueprint wildcard struct parsing (`CustomThunk`): JSON ↔ USTRUCT Conversion
 - Pre-built request/response structs (`FJWNU_REQ_*`, `FJWNU_RES_*`) matching test server API
+- Request Job Handle (`UJWNU_HttpRequestJobHandle`): exposes `Cancel`, `IsRunning`, `IsCancelled` to C++ and Blueprint; handle remains valid across 401 token refresh cycles
 
 ## Module Structure
 
@@ -71,6 +73,7 @@ This plugin includes everything you need for immediate testing:
 | `UJWNU_GIS_ApiIdentityProvider`     | GameInstanceSubsystem | Token + UserId/SessionId storage, DPAPI encryption |
 | `UJWNU_GIS_ApiHostProvider`         | GameInstanceSubsystem | Host URLs from INI config |
 | `UJWNU_HttpRequestJob`              | UObject | Single request lifecycle: retry, timeout, cancel |
+| `UJWNU_HttpRequestJobHandle`        | UObject (BlueprintType) | Logical request handle: survives 401 refresh, exposes `Cancel`/`IsRunning`/`IsCancelled` |
 | `UJWNU_BFL_ApiClientService`        | BlueprintFunctionLibrary | Blueprint-exposed API |
 | `UJWNU_BFL_AuthWidgetHelper`        | BlueprintFunctionLibrary | Auth widget validation helpers (email, password) |
 
@@ -117,14 +120,15 @@ const FString Endpoint = TEXT("/health");
 const FString ContentBody = {};
 const TMap<FString, FString> QueryParams = {};
 
-UJWNU_GIS_ApiClientService::CallApi_Template<FJWNU_RES_Base>(
-    GetWorld(), 
-    EJWNU_HttpMethod::Get, 
-    EJWNU_ServiceType::AuthServer, 
-    Endpoint, 
-    ContentBody, 
-    QueryParams, 
+UJWNU_HttpRequestJobHandle* Handle = UJWNU_GIS_ApiClientService::CallApi_Template<FJWNU_RES_Base>(
+    GetWorld(),
+    EJWNU_HttpMethod::Get,
+    EJWNU_ServiceType::AuthServer,
+    Endpoint,
+    ContentBody,
+    QueryParams,
     Callback);
+// Handle->Cancel(), Handle->IsRunning(), Handle->IsCancelled()
 ```
 
 ```cpp
@@ -138,14 +142,15 @@ const FString Endpoint = TEXT("/health");
 const FString ContentBody = {};
 const TMap<FString, FString> QueryParams = {};
 
-UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
-    GetWorld(), 
-    EJWNU_HttpMethod::Get, 
-    EJWNU_ServiceType::AuthServer, 
-    Endpoint, 
-    ContentBody, 
-    QueryParams, 
+UJWNU_HttpRequestJobHandle* Handle = UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
+    GetWorld(),
+    EJWNU_HttpMethod::Get,
+    EJWNU_ServiceType::AuthServer,
+    Endpoint,
+    ContentBody,
+    QueryParams,
     Callback);
+// Handle->Cancel(), Handle->IsRunning(), Handle->IsCancelled()
 ```
 
 ### Blueprint
@@ -154,6 +159,35 @@ Please Open Test Level and WBPs in (`Plugins/JWNetworkUtility/Content`) with Unr
 ![img.png](./Resources/BlueprintExample_0.png)
 ![img.png](./Resources/BlueprintExample_1.png)
 ![img.png](./Resources/BlueprintExample_2.png)
+![img.png](./Resources/BlueprintExample_3.png)
+![img.png](./Resources/BlueprintExample_4.png)
+![img.png](./Resources/BlueprintExample_5.png)
+
+## Job Handle
+
+`UJWNU_HttpRequestJobHandle` is a `BlueprintType` UObject that wraps the logical lifetime of an HTTP request. A handle is created once per `CallApi` / `SendHttpRequest` call and remains valid across 401 token refresh cycles, providing a stable object to control or observe the request from either C++ or Blueprint.
+
+| Method | Blueprint | Description |
+|---|---|---|
+| `Cancel()` | `BlueprintCallable` | Cancel the in-progress request |
+| `IsRunning()` | `BlueprintPure` | `true` while the job is running **or** waiting for a 401 token refresh |
+| `IsCancelled()` | `BlueprintPure` | `true` if the request was cancelled |
+
+**Return chain:**
+
+| Caller | Returns |
+|---|---|
+| `BFL::SendHttpRequest` / `BFL::CallApi` | `Handle*` |
+| `ApiClientService::CallApi_Template` / `CallApi_NoTemplate` | `Handle*` |
+| `HttpClientHelper::SendRequest_*` | `Job*` (lower-level transport, no Handle) |
+
+**401 refresh lifecycle:**
+
+1. 401 detected → `Handle->MarkWaitingForRefresh()` → `IsRunning()` stays `true`
+2. Refresh success → new Job created → `Handle->BindJob(newJob)` → original request re-sent with new token
+3. `Handle->Cancel()` during refresh → retry is skipped in the drain callback; `IsCancelled()` returns `true`
+
+**Blueprint:** `SendHttpRequest` and `CallApi` nodes expose a `Handle` return pin. Connect it to `Cancel`, `IsRunning`, or `IsCancelled` nodes to control the request lifecycle from Blueprint.
 
 ## HTTP Response Modes
 
@@ -340,6 +374,7 @@ JWNetworkUtility/
 │   │   │   ├── JWNU_GIS_CustomCodeHelper.h
 │   │   │   ├── JWNU_GIS_SteamWorks.h
 │   │   │   ├── JWNU_HttpRequestJob.h
+│   │   │   ├── JWNU_HttpRequestJobHandle.h
 │   │   │   ├── JWNU_BFL_ApiClientService.h
 │   │   │   └── JWNU_BFL_AuthWidgetHelper.h
 │   │   └── Private/
@@ -354,6 +389,7 @@ JWNetworkUtility/
 │   │       ├── JWNU_GIS_CustomCodeHelper.cpp
 │   │       ├── JWNU_GIS_SteamWorks.cpp
 │   │       ├── JWNU_HttpRequestJob.cpp
+│   │       ├── JWNU_HttpRequestJobHandle.cpp
 │   │       ├── JWNU_BFL_ApiClientService.cpp
 │   │       └── JWNU_BFL_AuthWidgetHelper.cpp
 │   └── JWNetworkUtilityTest/          (Runtime, depends on JWNetworkUtility)

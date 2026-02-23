@@ -36,7 +36,7 @@ public:
 	 * @param InOnHttpRequestJobCompleted 완료 콜백
 	 * @param InOnHttpRequestJobRetry 재시도 콜백
 	 */
-	void ProcessHttpRequestJob(
+	UJWNU_HttpRequestJob* ProcessHttpRequestJob(
 		const EJWNU_HttpMethod InMethod,
 		const FString& InURL,
 		const FString& InAuthToken,

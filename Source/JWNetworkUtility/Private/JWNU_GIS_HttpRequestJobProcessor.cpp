@@ -7,7 +7,7 @@
 
 DEFINE_LOG_CATEGORY(LogJWNU_GIS_HttpRequestJobProcessor);
 
-void UJWNU_GIS_HttpRequestJobProcessor::ProcessHttpRequestJob(
+UJWNU_HttpRequestJob* UJWNU_GIS_HttpRequestJobProcessor::ProcessHttpRequestJob(
 	const EJWNU_HttpMethod InMethod,
 	const FString& InURL,
 	const FString& InAuthToken,
@@ -43,6 +43,8 @@ void UJWNU_GIS_HttpRequestJobProcessor::ProcessHttpRequestJob(
 	{
 		PRINT_LOG(LogJWNU_GIS_HttpRequestJobProcessor, Warning, TEXT("%s 실행 이상!"), *InURL);
 	}
+
+	return RequestJob;
 }
 
 FString UJWNU_GIS_HttpRequestJobProcessor::BuildURL(const FString& BaseURL, const TMap<FString, FString>& QueryParams)

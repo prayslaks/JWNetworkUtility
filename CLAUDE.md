@@ -38,8 +38,8 @@ Endpoints: `/health`, `/auth/register/*`, `/auth/login`, `/auth/refresh`, `/auth
 Source/
 ├── JWNetworkUtility/              (Runtime, LoadingPhase: Default)
 │   ├── JWNetworkUtility.Build.cs
-│   ├── Public/                    # 12 headers
-│   └── Private/                   # 12 implementations
+│   ├── Public/                    # 13 headers
+│   └── Private/                   # 13 implementations
 └── JWNetworkUtilityTest/          (Runtime, LoadingPhase: Default, depends on JWNetworkUtility)
     ├── JWNetworkUtilityTest.Build.cs
     ├── Public/                    # 3 headers
@@ -70,14 +70,21 @@ An editor module `JWNetworkUtilityEditor` was designed for a custom K2Node (`UJW
 ┌─────────────────────────────────────────────────────┐
 │  Blueprint Layer                                     │
 │  UJWNU_BFL_ApiClientService (BlueprintFunctionLib)   │
-│    - CallApi, SendHttpRequest                        │
+│    - CallApi → Handle*, SendHttpRequest → Handle*    │
 │    - ConvertJsonStringToStruct / ConvertStructTo     │
 │      JsonString (CustomThunk wildcard)               │
 │    - GetUserId, SetUserId, ClearSession              │
 ├─────────────────────────────────────────────────────┤
+│  Handle Layer                                        │
+│  UJWNU_HttpRequestJobHandle (UObject, BlueprintType) │
+│    - Cancel, IsRunning, IsCancelled                  │
+│    - BindJob (internal: Job rebind on 401 refresh)   │
+│    - WaitingForRefresh state management              │
+├─────────────────────────────────────────────────────┤
 │  Service Layer                                       │
 │  UJWNU_GIS_ApiClientService (GameInstanceSubsystem)  │
-│    - CallApi_Template<T>() / CallApi_NoTemplate()    │
+│    - CallApi_Template<T>() → Handle*                 │
+│    - CallApi_NoTemplate()  → Handle*                 │
 │    - 401 auto-refresh with per-ServiceType queue     │
 │    - Host & token resolution from providers          │
 ├─────────────────────────────────────────────────────┤
@@ -90,8 +97,9 @@ An editor module `JWNetworkUtilityEditor` was designed for a custom K2Node (`UJW
 │  Transport Layer                                     │
 │  UJWNU_GIS_HttpClientHelper (GameInstanceSubsystem)  │
 │    - Response normalization (non-2xx → custom JSON)  │
+│    - SendRequest_* → UJWNU_HttpRequestJob*           │
 │  UJWNU_GIS_HttpRequestJobProcessor                   │
-│    - Creates UJWNU_HttpRequestJob                    │
+│    - ProcessHttpRequestJob → UJWNU_HttpRequestJob*   │
 │  UJWNU_HttpRequestJob (UObject)                      │
 │    - Retry, timeout, cancellation                    │
 ├─────────────────────────────────────────────────────┤
@@ -113,6 +121,7 @@ An editor module `JWNetworkUtilityEditor` was designed for a custom K2Node (`UJW
 | `UJWNU_GIS_CustomCodeHelper` | GameInstanceSubsystem | HTTP status → localized FText (Korean default) |
 | `UJWNU_GIS_SteamWorks` | GameInstanceSubsystem | Steam auth ticket |
 | `UJWNU_HttpRequestJob` | UObject | Single request lifecycle: retry, timeout, cancel |
+| `UJWNU_HttpRequestJobHandle` | UObject (BlueprintType) | Logical request handle: survives 401 refresh, exposes Cancel/IsRunning/IsCancelled |
 | `UJWNU_BFL_ApiClientService` | BlueprintFunctionLibrary | Blueprint-exposed API |
 
 ### Class List (JWNetworkUtilityTest)
@@ -179,11 +188,12 @@ The server is expected to return:
 ### Template API Call (C++)
 
 ```cpp
-UJWNU_GIS_ApiClientService::CallApi_Template<FMyStruct>(
+UJWNU_HttpRequestJobHandle* Handle = UJWNU_GIS_ApiClientService::CallApi_Template<FMyStruct>(
     WorldContext, EJWNU_HttpMethod::Get, EJWNU_ServiceType::GameServer,
     TEXT("/api/data"), TEXT(""), TMap<FString,FString>(),
     [](const FMyStruct& Response) { /* typed result */ }
 );
+// Handle->Cancel(), Handle->IsRunning(), Handle->IsCancelled()
 ```
 
 ### Token & Identity Security
@@ -199,6 +209,26 @@ UJWNU_GIS_ApiClientService::CallApi_Template<FMyStruct>(
 `FJWNU_RequestConfig` controls retry behavior:
 - Configurable retry on 5xx, timeout, network errors
 - Timeout management via `FTimerHandle`
+
+### Job Handle Pattern
+
+`UJWNU_HttpRequestJobHandle` wraps the logical lifetime of a request. Handle is created once per call and survives 401 token refresh cycles.
+
+**Return chain:**
+```
+BFL (SendHttpRequest)   → Handle* (BFL creates Handle, binds Job)
+BFL (CallApi)           → Handle* (forwarded from ApiClientService)
+ApiClientService        → Handle* (creates Handle, rebinds Job on 401)
+HttpClientHelper        → Job*    (pass-through)
+HttpRequestJobProcessor → Job*    (creates Job)
+```
+
+**401 refresh integration:**
+1. 401 detected → `Handle->MarkWaitingForRefresh()` → `IsRunning()` stays true
+2. Refresh success → `Handle->ClearWaitingForRefresh()` → new Job created → `Handle->BindJob(newJob)`
+3. `Handle->Cancel()` during refresh → `IsCancelled()` true → retry skipped in `OnTokenReady`
+
+**Blueprint usage:** `SendHttpRequest`/`CallApi` nodes return a `UJWNU_HttpRequestJobHandle*` output pin. Call `Cancel`, `IsRunning`, `IsCancelled` on the handle.
 
 ### Blueprint Wildcard Struct Parsing
 
@@ -290,6 +320,7 @@ JWNetworkUtility/
 │   │   │   ├── JWNU_GIS_CustomCodeHelper.h
 │   │   │   ├── JWNU_GIS_SteamWorks.h
 │   │   │   ├── JWNU_HttpRequestJob.h
+│   │   │   ├── JWNU_HttpRequestJobHandle.h
 │   │   │   └── JWNU_BFL_ApiClientService.h
 │   │   └── Private/
 │   │       ├── JWNetworkUtility.cpp
@@ -303,6 +334,7 @@ JWNetworkUtility/
 │   │       ├── JWNU_GIS_CustomCodeHelper.cpp
 │   │       ├── JWNU_GIS_SteamWorks.cpp
 │   │       ├── JWNU_HttpRequestJob.cpp
+│   │       ├── JWNU_HttpRequestJobHandle.cpp
 │   │       └── JWNU_BFL_ApiClientService.cpp
 │   └── JWNetworkUtilityTest/
 │       ├── JWNetworkUtilityTest.Build.cs

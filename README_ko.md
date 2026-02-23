@@ -20,6 +20,7 @@ Unreal Engine 5.6용 독립 플러그인으로, JWT 인증, 자동 토큰 갱신
 - [핵심 클래스 목록](#핵심-클래스-목록)
 - [사용법](#사용법)
   - [C++](#c)
+- [Job Handle](#job-handle)
 - [HTTP 응답 모드](#http-응답-모드)
   - [Raw 응답](#raw-응답-sendrequest_rawresponse)
   - [Custom 응답](#custom-응답-sendrequest_customresponse)
@@ -49,6 +50,7 @@ Unreal Engine 5.6용 독립 플러그인으로, JWT 인증, 자동 토큰 갱신
 - C++ 템플릿 API (`CallApi_Template<T>`) 및 Blueprint 지원
 - Blueprint 와일드카드 구조체 파싱 (`CustomThunk`): JSON ↔ USTRUCT 변환
 - 테스트 서버 API에 대응하는 사전 정의 요청/응답 구조체 (`FJWNU_REQ_*`, `FJWNU_RES_*`)
+- Request Job Handle (`UJWNU_HttpRequestJobHandle`): `Cancel`, `IsRunning`, `IsCancelled`를 C++ 및 Blueprint에 노출; 401 토큰 리프레시 사이클 동안에도 핸들 유효성 유지
 
 ## 모듈 구조
 
@@ -71,6 +73,7 @@ Unreal Engine 5.6용 독립 플러그인으로, JWT 인증, 자동 토큰 갱신
 | `UJWNU_GIS_ApiIdentityProvider` | GameInstanceSubsystem | 토큰 + UserId/SessionId 저장, DPAPI 암호화 |
 | `UJWNU_GIS_ApiHostProvider` | GameInstanceSubsystem | INI 설정 기반 호스트 URL |
 | `UJWNU_HttpRequestJob` | UObject | 단일 요청 수명주기: 재시도, 타임아웃, 취소 |
+| `UJWNU_HttpRequestJobHandle` | UObject (BlueprintType) | 논리적 요청 핸들: 401 리프레시 생존, `Cancel`/`IsRunning`/`IsCancelled` 노출 |
 | `UJWNU_BFL_ApiClientService` | BlueprintFunctionLibrary | Blueprint 노출 API |
 | `UJWNU_BFL_AuthWidgetHelper` | BlueprintFunctionLibrary | 인증 위젯 유효성 검사 헬퍼 (이메일, 비밀번호) |
 
@@ -117,7 +120,7 @@ const FString Endpoint = TEXT("/health");
 const FString ContentBody = {};
 const TMap<FString, FString> QueryParams = {};
 
-UJWNU_GIS_ApiClientService::CallApi_Template<FJWNU_RES_Base>(
+UJWNU_HttpRequestJobHandle* Handle = UJWNU_GIS_ApiClientService::CallApi_Template<FJWNU_RES_Base>(
     GetWorld(),
     EJWNU_HttpMethod::Get,
     EJWNU_ServiceType::AuthServer,
@@ -125,6 +128,7 @@ UJWNU_GIS_ApiClientService::CallApi_Template<FJWNU_RES_Base>(
     ContentBody,
     QueryParams,
     Callback);
+// Handle->Cancel(), Handle->IsRunning(), Handle->IsCancelled()
 ```
 
 ```cpp
@@ -138,7 +142,7 @@ const FString Endpoint = TEXT("/health");
 const FString ContentBody = {};
 const TMap<FString, FString> QueryParams = {};
 
-UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
+UJWNU_HttpRequestJobHandle* Handle = UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
     GetWorld(),
     EJWNU_HttpMethod::Get,
     EJWNU_ServiceType::AuthServer,
@@ -146,6 +150,7 @@ UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
     ContentBody,
     QueryParams,
     Callback);
+// Handle->Cancel(), Handle->IsRunning(), Handle->IsCancelled()
 ```
 
 ### Blueprint
@@ -154,6 +159,32 @@ UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 ![img.png](./Resources/BlueprintExample_0.png)
 ![img.png](./Resources/BlueprintExample_1.png)
 ![img.png](./Resources/BlueprintExample_2.png)
+
+## Job Handle
+
+`UJWNU_HttpRequestJobHandle`는 HTTP 요청의 논리적 수명을 추적하는 `BlueprintType` UObject입니다. `CallApi` / `SendHttpRequest` 호출당 하나의 핸들이 생성되며, 401 토큰 리프레시 사이클 동안에도 유효한 상태를 유지합니다. C++과 Blueprint 모두에서 요청을 제어하거나 상태를 조회하는 데 사용합니다.
+
+| 메서드 | Blueprint | 설명 |
+|---|---|---|
+| `Cancel()` | `BlueprintCallable` | 진행 중인 요청을 취소 |
+| `IsRunning()` | `BlueprintPure` | Job이 실행 중이거나 401 리프레시 대기 중이면 `true` |
+| `IsCancelled()` | `BlueprintPure` | 요청이 취소됐으면 `true` |
+
+**반환 체인:**
+
+| 호출자 | 반환값 |
+|---|---|
+| `BFL::SendHttpRequest` / `BFL::CallApi` | `Handle*` |
+| `ApiClientService::CallApi_Template` / `CallApi_NoTemplate` | `Handle*` |
+| `HttpClientHelper::SendRequest_*` | `Job*` (저수준 전송 계층, Handle 없음) |
+
+**401 리프레시 수명주기:**
+
+1. 401 감지 → `Handle->MarkWaitingForRefresh()` → `IsRunning()`이 `true` 유지
+2. 리프레시 성공 → 새 Job 생성 → `Handle->BindJob(newJob)` → 새 토큰으로 원래 요청 재전송
+3. 리프레시 중 `Handle->Cancel()` → 드레인 콜백에서 재시도 건너뜀; `IsCancelled()`가 `true` 반환
+
+**Blueprint:** `SendHttpRequest` 및 `CallApi` 노드는 `Handle` 반환 핀을 노출합니다. 이를 `Cancel`, `IsRunning`, `IsCancelled` 노드에 연결하여 Blueprint에서 요청 수명주기를 제어할 수 있습니다.
 
 ## HTTP 응답 모드
 
@@ -340,6 +371,7 @@ JWNetworkUtility/
 │   │   │   ├── JWNU_GIS_CustomCodeHelper.h
 │   │   │   ├── JWNU_GIS_SteamWorks.h
 │   │   │   ├── JWNU_HttpRequestJob.h
+│   │   │   ├── JWNU_HttpRequestJobHandle.h
 │   │   │   ├── JWNU_BFL_ApiClientService.h
 │   │   │   └── JWNU_BFL_AuthWidgetHelper.h
 │   │   └── Private/
@@ -354,6 +386,7 @@ JWNetworkUtility/
 │   │       ├── JWNU_GIS_CustomCodeHelper.cpp
 │   │       ├── JWNU_GIS_SteamWorks.cpp
 │   │       ├── JWNU_HttpRequestJob.cpp
+│   │       ├── JWNU_HttpRequestJobHandle.cpp
 │   │       ├── JWNU_BFL_ApiClientService.cpp
 │   │       └── JWNU_BFL_AuthWidgetHelper.cpp
 │   └── JWNetworkUtilityTest/          (Runtime, JWNetworkUtility 의존)

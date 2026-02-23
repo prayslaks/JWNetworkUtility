@@ -73,52 +73,52 @@ UJWNU_GIS_HttpClientHelper* UJWNU_GIS_HttpClientHelper::Get(const UObject* World
 	return GameInstance->GetSubsystem<UJWNU_GIS_HttpClientHelper>();
 }
 
-void UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
+UJWNU_HttpRequestJob* UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
 	const UObject* WorldContextObject,
-	const EJWNU_HttpMethod InMethod, 
-	const FString& InURL, 
-	const FString& InAuthToken, 
-	const FString& InContentBody,
-	const TMap<FString, FString>& InQueryParams, 
-	const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
-	const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry)
-{
-	// 객체 획득
-	UJWNU_GIS_HttpClientHelper* Self = Get(WorldContextObject);
-	if (Self == nullptr)
-	{
-		return;
-	}
-	
-	// 실제 처리
-	Self->SendRequest_RawResponse(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, InOnHttpResponse, InOnHttpRequestJobRetry);
-}
-
-void UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(
-	const UObject* WorldContextObject,
-	const EJWNU_HttpMethod InMethod, 
-	const FString& InURL, 
-	const FString& InAuthToken, 
-	const FString& InContentBody,
-	const TMap<FString, FString>& InQueryParams, 
-	const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
-	const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry)
-{
-	// 객체 획득
-	UJWNU_GIS_HttpClientHelper* Self = Get(WorldContextObject);
-	if (Self == nullptr)
-	{
-		return;
-	}
-	
-	Self->SendRequest_CustomResponse(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, InOnHttpResponse, InOnHttpRequestJobRetry);
-}
-
-void UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
-	const EJWNU_HttpMethod InMethod, 
+	const EJWNU_HttpMethod InMethod,
 	const FString& InURL,
-	const FString& InAuthToken, 
-	const FString& InContentBody, 
+	const FString& InAuthToken,
+	const FString& InContentBody,
+	const TMap<FString, FString>& InQueryParams,
+	const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
+	const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry)
+{
+	// 객체 획득
+	UJWNU_GIS_HttpClientHelper* Self = Get(WorldContextObject);
+	if (Self == nullptr)
+	{
+		return nullptr;
+	}
+
+	// 실제 처리
+	return Self->SendRequest_RawResponse(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, InOnHttpResponse, InOnHttpRequestJobRetry);
+}
+
+UJWNU_HttpRequestJob* UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(
+	const UObject* WorldContextObject,
+	const EJWNU_HttpMethod InMethod,
+	const FString& InURL,
+	const FString& InAuthToken,
+	const FString& InContentBody,
+	const TMap<FString, FString>& InQueryParams,
+	const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
+	const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry)
+{
+	// 객체 획득
+	UJWNU_GIS_HttpClientHelper* Self = Get(WorldContextObject);
+	if (Self == nullptr)
+	{
+		return nullptr;
+	}
+
+	return Self->SendRequest_CustomResponse(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, InOnHttpResponse, InOnHttpRequestJobRetry);
+}
+
+UJWNU_HttpRequestJob* UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
+	const EJWNU_HttpMethod InMethod,
+	const FString& InURL,
+	const FString& InAuthToken,
+	const FString& InContentBody,
 	const TMap<FString, FString>& InQueryParams,
 	const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
 	const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry)
@@ -127,9 +127,9 @@ void UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
 	UJWNU_GIS_HttpRequestJobProcessor* Subsystem = GetGameInstance()->GetSubsystem<UJWNU_GIS_HttpRequestJobProcessor>();
 	if (Subsystem == nullptr)
 	{
-		return;
+		return nullptr;
 	}
-	
+
 	// 콜백에서 리스폰스를 외부 델리게이트에 전달하게 된다
 	FOnHttpRequestJobCompletedDelegate Callback;
 	Callback.BindWeakLambda(this, [this, InOnHttpResponse](const bool bNetworkAvailable, const int32 StatusCode, const FString& ResponseBody)
@@ -138,16 +138,16 @@ void UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(
 			PRINT_LOG(LogJWNU_GIS_HttpClientHelper, Display, TEXT("%d, %s"), StatusCode, *Result);
 			InOnHttpResponse.ExecuteIfBound(StatusCode, ResponseBody);
 		});
-	
+
 	// 콜백과 패러미터를 잡 프로세서에 넘긴다
-	Subsystem->ProcessHttpRequestJob(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, DefaultRequestConfig, Callback, InOnHttpRequestJobRetry);
+	return Subsystem->ProcessHttpRequestJob(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, DefaultRequestConfig, Callback, InOnHttpRequestJobRetry);
 }
 
-void UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(
-	const EJWNU_HttpMethod InMethod, 
+UJWNU_HttpRequestJob* UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(
+	const EJWNU_HttpMethod InMethod,
 	const FString& InURL,
-	const FString& InAuthToken, 
-	const FString& InContentBody, 
+	const FString& InAuthToken,
+	const FString& InContentBody,
 	const TMap<FString, FString>& InQueryParams,
 	const FOnHttpRequestCompletedDelegate& InOnHttpResponse,
 	const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry)
@@ -156,9 +156,9 @@ void UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(
 	UJWNU_GIS_HttpRequestJobProcessor* Subsystem = GetGameInstance()->GetSubsystem<UJWNU_GIS_HttpRequestJobProcessor>();
 	if (Subsystem == nullptr)
 	{
-		return;
+		return nullptr;
 	}
-	
+
 	// 콜백에서 리스폰스를 전처리해서 외부 델리게이트에 전달하게 된다
 	FOnHttpRequestJobCompletedDelegate Callback;
 	Callback.BindWeakLambda(this, [this, InOnHttpResponse](const bool bNetworkAvailable, const int32 StatusCode, const FString& ResponseBody)
@@ -209,5 +209,5 @@ void UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(
 	});
 	
 	// 콜백과 패러미터를 잡 프로세서에 넘긴다
-	Subsystem->ProcessHttpRequestJob(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, DefaultRequestConfig, Callback, InOnHttpRequestJobRetry);
+	return Subsystem->ProcessHttpRequestJob(InMethod, InURL, InAuthToken, InContentBody, InQueryParams, DefaultRequestConfig, Callback, InOnHttpRequestJobRetry);
 }

@@ -2,6 +2,7 @@
 
 #include "JWNU_GIS_ApiClientService.h"
 #include "JWNU_GIS_ApiHostProvider.h"
+#include "JWNU_HttpRequestJobHandle.h"
 
 DEFINE_LOG_CATEGORY(LogJWNU_GIS_ApiClientService);
 
@@ -34,23 +35,26 @@ UJWNU_GIS_ApiClientService* UJWNU_GIS_ApiClientService::Get(const UObject* World
 	return GameInstance->GetSubsystem<UJWNU_GIS_ApiClientService>();
 }
 
-void UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
-	const UObject* WorldContextObject, 
+UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
+	const UObject* WorldContextObject,
 	const EJWNU_HttpMethod InMethod,
-	const EJWNU_ServiceType InServiceType, 
-	const FString& InEndpoint, 
+	const EJWNU_ServiceType InServiceType,
+	const FString& InEndpoint,
 	const FString& InContentBody,
-	const TMap<FString, FString>& InQueryParams, 
+	const TMap<FString, FString>& InQueryParams,
 	const FOnHttpResponseDelegate& OnHttpResponse,
-	const FOnHttpRequestJobRetryDelegate& OnHttpRequestJobRetry, 
+	const FOnHttpRequestJobRetryDelegate& OnHttpRequestJobRetry,
 	const bool bRequiresAuth)
 {
 	// 객체 획득
 	UJWNU_GIS_ApiClientService* Self = Get(WorldContextObject);
 	if (Self == nullptr)
 	{
-		return;
+		return nullptr;
 	}
+
+	// Handle 생성
+	UJWNU_HttpRequestJobHandle* Handle = NewObject<UJWNU_HttpRequestJobHandle>(Self);
 
 	// 호스트 프로바이더에서 호스트 획득
 	FString ProvidedHost;
@@ -61,7 +65,7 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("호스트 획득 실패!"));
 			const FString FakeResponseBody = TEXT("{\"success\": false, \"code\": \"HOST_NOT_FOUND\", \"message\": \"Failed to get host from provider\"}");
 			OnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None, FakeResponseBody);
-			return;
+			return nullptr;
 		}
 	}
 
@@ -71,8 +75,8 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 	// 인증이 필요하지 않은 경우, 토큰 로직을 건너뛰고 바로 실행
 	if (bRequiresAuth == false)
 	{
-		Self->CallApi_NoTemplate_Execution(InMethod, InServiceType, ConstructedURL, TEXT(""), InContentBody, InQueryParams, OnHttpResponse, OnHttpRequestJobRetry, false);
-		return;
+		Self->CallApi_NoTemplate_Execution(InMethod, InServiceType, ConstructedURL, TEXT(""), InContentBody, InQueryParams, OnHttpResponse, Handle, OnHttpRequestJobRetry, false);
+		return Handle;
 	}
 
 	// 토큰 프로바이더에서 엑세스 토큰 획득
@@ -84,7 +88,7 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("엑세스 토큰 획득 실패!"));
 			const FString FakeResponseBody = TEXT("{\"success\": false, \"code\": \"TOKEN_NOT_FOUND\", \"message\": \"Failed to get access token from provider\"}");
 			OnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None, FakeResponseBody);
-			return;
+			return nullptr;
 		}
 	}
 	else
@@ -92,7 +96,7 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("토큰 프로바이더 획득 실패!"));
 		const FString FakeResponseBody = TEXT("{\"success\": false, \"code\": \"PROVIDER_NOT_FOUND\", \"message\": \"Failed to get token provider\"}");
 		OnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None, FakeResponseBody);
-		return;
+		return nullptr;
 	}
 
 	// 토큰 만료 또는 리프레시 진행 중인 경우 잡 큐에 적재
@@ -102,35 +106,41 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 	{
 		PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("엑세스 토큰 만료 또는 리프레시 진행 중, 잡 큐에 적재..."));
 		JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Yellow, TEXT("[JWNU] Access Token Expired — Queuing refresh for %s"), *UEnum::GetValueAsString(InServiceType));
+		Handle->MarkWaitingForRefresh();
 		FJWNU_PendingJob Job;
 		Job.RequestInfo.ServiceType = InServiceType;
 		Job.RequestInfo.Method = InMethod;
 		Job.RequestInfo.URL = ConstructedURL;
 		Job.RequestInfo.ContentBody = InContentBody;
 		Job.RequestInfo.QueryParams = InQueryParams;
-		Job.OnTokenReady = [Self, InMethod, InServiceType, ConstructedURL, InContentBody, InQueryParams, OnHttpResponse, OnHttpRequestJobRetry](const FString& NewAccessToken)
+		Job.OnTokenReady = [Self, InMethod, InServiceType, ConstructedURL, InContentBody, InQueryParams, OnHttpResponse, OnHttpRequestJobRetry, Handle](const FString& NewAccessToken)
 		{
-			Self->CallApi_NoTemplate_Execution(InMethod, InServiceType, ConstructedURL, NewAccessToken, InContentBody, InQueryParams, OnHttpResponse, OnHttpRequestJobRetry, false);
+			if (Handle->IsCancelled()) { Handle->ClearWaitingForRefresh(); return; }
+			Handle->ClearWaitingForRefresh();
+			Self->CallApi_NoTemplate_Execution(InMethod, InServiceType, ConstructedURL, NewAccessToken, InContentBody, InQueryParams, OnHttpResponse, Handle, OnHttpRequestJobRetry, false);
 		};
-		Job.OnTokenFailed = [OnHttpResponse](const FString& ErrorCode, const FString& ErrorMessage)
+		Job.OnTokenFailed = [OnHttpResponse, Handle](const FString& ErrorCode, const FString& ErrorMessage)
 		{
+			Handle->ClearWaitingForRefresh();
 			const FString FakeResponseBody = FString::Printf(TEXT("{\"success\": false, \"code\": \"%s\", \"message\": \"%s\"}"), *ErrorCode, *ErrorMessage);
 			OnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None, FakeResponseBody);
 		};
 		Self->RequestTokenRefresh(InServiceType, MoveTemp(Job));
-		return;
+		return Handle;
 	}
 
-	Self->CallApi_NoTemplate_Execution(InMethod, InServiceType, ConstructedURL, ProvidedAccessTokenContainer.AccessToken, InContentBody, InQueryParams, OnHttpResponse, OnHttpRequestJobRetry, true);
+	Self->CallApi_NoTemplate_Execution(InMethod, InServiceType, ConstructedURL, ProvidedAccessTokenContainer.AccessToken, InContentBody, InQueryParams, OnHttpResponse, Handle, OnHttpRequestJobRetry, true);
+	return Handle;
 }
 
 void UJWNU_GIS_ApiClientService::CallApi_NoTemplate_Execution(
 	const EJWNU_HttpMethod InMethod,
-	const EJWNU_ServiceType InServiceType, 
+	const EJWNU_ServiceType InServiceType,
 	const FString& InURL, const FString& InAccessToken,
-	const FString& InContentBody, 
+	const FString& InContentBody,
 	const TMap<FString, FString>& InQueryParams,
-	const FOnHttpResponseDelegate& OnHttpResponse, 
+	const FOnHttpResponseDelegate& OnHttpResponse,
+	UJWNU_HttpRequestJobHandle* InHandle,
 	const FOnHttpRequestJobRetryDelegate& OnHttpRequestJobRetry,
 	const bool bTryTokenRefreshing)
 {
@@ -142,24 +152,28 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate_Execution(
 		PendingRequest.Method = InMethod;
 		PendingRequest.URL = InURL;
 		PendingRequest.ContentBody = InContentBody;
-		PendingRequest.QueryParams = InQueryParams;		
-		
+		PendingRequest.QueryParams = InQueryParams;
+
 		// 401 상태 코드를 처리할 수 있는 콜백
 		const auto CallbackManage401 = FOnHttpRequestCompletedDelegate::CreateWeakLambda(this,
-			[this, PendingRequest, OnHttpResponse, OnHttpRequestJobRetry](const int32 StatusCode, const FString& ResponseBody)
+			[this, PendingRequest, OnHttpResponse, OnHttpRequestJobRetry, InHandle](const int32 StatusCode, const FString& ResponseBody)
 			{
 				if (StatusCode == 401)
 				{
 					PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("401 토큰 만료 감지, 잡 큐에 적재 후 리프레시 시도..."));
 					JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Orange, TEXT("[JWNU] 401 Unauthorized — Triggering token refresh for %s"), *UEnum::GetValueAsString(PendingRequest.ServiceType));
+					InHandle->MarkWaitingForRefresh();
 					FJWNU_PendingJob Job;
 					Job.RequestInfo = PendingRequest;
-					Job.OnTokenReady = [this, PendingRequest, OnHttpResponse, OnHttpRequestJobRetry](const FString& NewAccessToken)
+					Job.OnTokenReady = [this, PendingRequest, OnHttpResponse, OnHttpRequestJobRetry, InHandle](const FString& NewAccessToken)
 					{
-						CallApi_NoTemplate_Execution(PendingRequest.Method, PendingRequest.ServiceType, PendingRequest.URL, NewAccessToken, PendingRequest.ContentBody, PendingRequest.QueryParams, OnHttpResponse, OnHttpRequestJobRetry, false);
+						if (InHandle->IsCancelled()) { InHandle->ClearWaitingForRefresh(); return; }
+						InHandle->ClearWaitingForRefresh();
+						CallApi_NoTemplate_Execution(PendingRequest.Method, PendingRequest.ServiceType, PendingRequest.URL, NewAccessToken, PendingRequest.ContentBody, PendingRequest.QueryParams, OnHttpResponse, InHandle, OnHttpRequestJobRetry, false);
 					};
-					Job.OnTokenFailed = [OnHttpResponse](const FString& ErrorCode, const FString& ErrorMessage)
+					Job.OnTokenFailed = [OnHttpResponse, InHandle](const FString& ErrorCode, const FString& ErrorMessage)
 					{
+						InHandle->ClearWaitingForRefresh();
 						const FString FakeResponseBody = FString::Printf(TEXT("{\"success\": false, \"code\": \"%s\", \"message\": \"%s\"}"), *ErrorCode, *ErrorMessage);
 						OnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None, FakeResponseBody);
 					};
@@ -169,9 +183,10 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate_Execution(
 
 				OnHttpResponse.ExecuteIfBound(JWNU_IntToHttpStatusCode(StatusCode), ResponseBody);
 			});
-		
+
 		// Http 리퀘스트
-		UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackManage401, OnHttpRequestJobRetry);
+		UJWNU_HttpRequestJob* Job = UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackManage401, OnHttpRequestJobRetry);
+		if (Job) { InHandle->BindJob(Job); }
 	}
 	else
 	{
@@ -181,10 +196,11 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate_Execution(
 			{
 				OnHttpResponse.ExecuteIfBound(JWNU_IntToHttpStatusCode(StatusCode), ResponseBody);
 			});
-	
+
 		// Http 리퀘스트
-		UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackNoManage401, OnHttpRequestJobRetry);
-	}	
+		UJWNU_HttpRequestJob* Job = UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), InMethod, InURL, InAccessToken, InContentBody, InQueryParams, CallbackNoManage401, OnHttpRequestJobRetry);
+		if (Job) { InHandle->BindJob(Job); }
+	}
 }
 
 void UJWNU_GIS_ApiClientService::RequestTokenRefresh(const EJWNU_ServiceType InServiceType, FJWNU_PendingJob&& InJob)

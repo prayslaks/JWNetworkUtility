@@ -759,6 +759,7 @@ async def get_data(
 
     user_id = request.state.user["sub"]
     data = user_data_store.get(user_id, "")
+    print(f"  [DATA GET] user={user_id[:8]}... value='{data}'")
     return DataResponse(
         Success=True,
         Code="SUCCESS",
@@ -780,6 +781,7 @@ async def post_data(
 
     user_id = request.state.user["sub"]
     user_data_store[user_id] = req.data
+    print(f"  [DATA POST] user={user_id[:8]}... → '{req.data}'")
     return DataResponse(
         Success=True,
         Code="SUCCESS",
@@ -801,6 +803,7 @@ async def put_data(
 
     user_id = request.state.user["sub"]
     user_data_store[user_id] = req.data
+    print(f"  [DATA PUT]  user={user_id[:8]}... → '{req.data}'")
     return DataResponse(
         Success=True,
         Code="SUCCESS",
@@ -820,7 +823,8 @@ async def delete_data(
         return err
 
     user_id = request.state.user["sub"]
-    user_data_store.pop(user_id, None)
+    old_data = user_data_store.pop(user_id, None)
+    print(f"  [DATA DELETE] user={user_id[:8]}... ← '{old_data}'")
     return DataResponse(
         Success=True,
         Code="SUCCESS",
