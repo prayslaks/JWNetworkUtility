@@ -59,7 +59,7 @@ load_dotenv()
 # 로그 다국어 (LOG_LANG: ko / en)
 # ──────────────────────────────────────────────
 
-LOG_LANG = os.getenv("LOG_LANG", "ko").lower()
+LOG_LANG = os.getenv("LOG_LANG", "en").lower()
 
 _LOG_MESSAGES: dict[str, dict[str, str]] = {
     "smtp_status_not_configured": {
