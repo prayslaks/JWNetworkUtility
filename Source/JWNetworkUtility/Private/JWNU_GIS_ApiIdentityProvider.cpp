@@ -9,7 +9,6 @@
 #include <windows.h>
 #include <dpapi.h>
 #pragma comment(lib, "crypt32.lib")
-#include "Windows/HideWindowsPlatformTypes.h"
 #endif
 
 DEFINE_LOG_CATEGORY(LogJWNU_GIS_ApiIdentityProvider);
@@ -27,7 +26,7 @@ UJWNU_GIS_ApiIdentityProvider* UJWNU_GIS_ApiIdentityProvider::Get(const UObject*
 	// 월드 컨텍스트 오브젝트 이상
 	if (WorldContextObject == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("월드 컨텍스트 오브젝트 이상!"));
+		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("WorldContextObject is invalid!"));
 		return nullptr;
 	}
 
@@ -35,7 +34,7 @@ UJWNU_GIS_ApiIdentityProvider* UJWNU_GIS_ApiIdentityProvider::Get(const UObject*
 	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	if (World == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("월드 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Failed to get World!"));
 		return nullptr;
 	}
 
@@ -43,7 +42,7 @@ UJWNU_GIS_ApiIdentityProvider* UJWNU_GIS_ApiIdentityProvider::Get(const UObject*
 	const UGameInstance* GameInstance = World->GetGameInstance();
 	if (GameInstance == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("게임인스턴스 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Failed to get GameInstance!"));
 		return nullptr;
 	}
 
@@ -58,7 +57,7 @@ bool UJWNU_GIS_ApiIdentityProvider::GetAccessTokenContainer(const EJWNU_ServiceT
 		OutAccessTokenContainer = ServiceTypeToTokenContainerMap[InServiceType];
 		if (OutAccessTokenContainer.AccessToken.IsEmpty())
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty! - 엑세스 토큰 추출에 성공했지만 내용물이 비어있습니다!"));
+			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty!"));
 			OutTokenGetResult = EJWNU_TokenGetResult::Empty;
 			return true;
 		}
@@ -80,7 +79,7 @@ bool UJWNU_GIS_ApiIdentityProvider::GetAccessTokenContainer(const EJWNU_ServiceT
 		OutAccessTokenContainer = ServiceTypeToTokenContainerMap[InServiceType];
 		if (OutAccessTokenContainer.AccessToken.IsEmpty())
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty! - 엑세스 토큰 추출에 성공했지만 내용물이 비어있습니다!"));
+			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Extraction of AccessToken is Successful, but it's Empty!"));
 		}
 
 		// 단, 내용물이 유효한지는 보장할 수 없다
@@ -94,7 +93,7 @@ bool UJWNU_GIS_ApiIdentityProvider::GetAccessTokenContainer(const EJWNU_ServiceT
 bool UJWNU_GIS_ApiIdentityProvider::SetAccessTokenContainer(const EJWNU_ServiceType InServiceType, EJWNU_TokenSetResult& OutTokenSetResult, const FJWNU_AccessTokenContainer& InAccessTokenContainer)
 {
 	ServiceTypeToTokenContainerMap.Add(InServiceType, InAccessTokenContainer);
-	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("Token Container Updated for Service Type - 서비스 타입의 토큰 컨테이너가 갱신되었습니다!"));
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("Token Container Updated for Service Type"));
 	OutTokenSetResult = EJWNU_TokenSetResult::Success;
 	return true;
 }
@@ -102,7 +101,7 @@ bool UJWNU_GIS_ApiIdentityProvider::SetAccessTokenContainer(const EJWNU_ServiceT
 bool UJWNU_GIS_ApiIdentityProvider::SetAccessTokenContainer(const EJWNU_ServiceType InServiceType, const FJWNU_AccessTokenContainer& InTokenContainer)
 {
 	ServiceTypeToTokenContainerMap.Add(InServiceType, InTokenContainer);
-	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("Token Container Updated for Service Type - 서비스 타입의 토큰 컨테이너가 갱신되었습니다!"));
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("Token Container Updated for Service Type"));
 	return true;
 }
 
@@ -113,7 +112,7 @@ bool UJWNU_GIS_ApiIdentityProvider::GetRefreshTokenContainer(const EJWNU_Service
 		if (OutRefreshTokenContainer.RefreshToken.IsEmpty())
 		{
 			OutTokenGetResult = EJWNU_TokenGetResult::Empty;
-			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("리프레시 토큰 컨테이너를 획득했지만 토큰이 비어있습니다!"));
+			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Refresh token container retrieved, but token is empty!"));
 		}
 
 		// 단, 내용물이 유효한지는 보장할 수 없다
@@ -132,7 +131,7 @@ bool UJWNU_GIS_ApiIdentityProvider::GetRefreshTokenContainer(const EJWNU_Service
 	{
 		if (OutRefreshTokenContainer.RefreshToken.IsEmpty())
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("리프레시 토큰 컨테이너를 획득했지만 토큰이 비어있습니다!"));
+			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Refresh token container retrieved, but token is empty!"));
 		}
 		return true;
 	}
@@ -166,7 +165,7 @@ FString UJWNU_GIS_ApiIdentityProvider::GetUserId() const
 void UJWNU_GIS_ApiIdentityProvider::SetUserId(const FString& InUserId)
 {
 	UserId = InUserId;
-	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("UserId 설정됨: %s"), *UserId);
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("UserId set: %s"), *UserId);
 }
 
 // ──────── 세션 정리 ────────
@@ -176,7 +175,7 @@ void UJWNU_GIS_ApiIdentityProvider::ClearSession(const EJWNU_ServiceType InServi
 	// AccessToken 정리
 	ServiceTypeToTokenContainerMap.Add(InServiceType, {});
 
-	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("세션 정리 완료 (ServiceType: %s) — UserId 유지"), *UEnum::GetValueAsString(InServiceType));
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("Session cleared (ServiceType: %s) — UserId preserved"), *UEnum::GetValueAsString(InServiceType));
 }
 
 // ──────── Token Encryption ────────
@@ -187,7 +186,7 @@ bool UJWNU_GIS_ApiIdentityProvider::SaveRefreshTokenContainer(const EJWNU_Servic
 	FString JsonString;
 	if (FJsonObjectConverter::UStructToJsonObjectString(InRefreshTokenContainer, JsonString) == false)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("리프레시 토큰 컨테이너 JSON 직렬화 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Failed to serialize refresh token container to JSON!"));
 		return false;
 	}
 
@@ -195,7 +194,7 @@ bool UJWNU_GIS_ApiIdentityProvider::SaveRefreshTokenContainer(const EJWNU_Servic
 	TArray<uint8> OutEncryptedData;
 	if (EncryptToken(JsonString, OutEncryptedData) == false)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("토큰 암호화 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Failed to encrypt token!"));
 		return false;
 	}
 
@@ -211,22 +210,22 @@ bool UJWNU_GIS_ApiIdentityProvider::SaveRefreshTokenContainer(const EJWNU_Servic
 		// CreateDirectoryTree는 하위 폴더까지 한 번에 생성한다.
 		if (PlatformFile.CreateDirectoryTree(*DirectoryPath))
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("디렉토리 생성 성공: %s"), *DirectoryPath);
+			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("Directory created: %s"), *DirectoryPath);
 		}
 		else
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Error, TEXT("디렉토리 생성 실패!"));
+			PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Error, TEXT("Failed to create directory!"));
 		}
 	}
 
 	// 파일 저장
 	if (FFileHelper::SaveArrayToFile(OutEncryptedData, *Path) == false)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("암호화된 파일 저장 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Failed to save encrypted file!"));
 		return false;
 	}
 
-	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("리프레시 토큰 컨테이너 암호화 및 파일 저장 성공!"));
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("Refresh token container encrypted and saved successfully!"));
 	return true;
 }
 
@@ -241,7 +240,7 @@ bool UJWNU_GIS_ApiIdentityProvider::LoadRefreshTokenContainer(const EJWNU_Servic
 	TArray<uint8> Result;
 	if (FFileHelper::LoadFileToArray(Result, *FullPath) == false)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("암호화된 파일 로드 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Failed to load encrypted file!"));
 		return false;
 	}
 
@@ -249,18 +248,18 @@ bool UJWNU_GIS_ApiIdentityProvider::LoadRefreshTokenContainer(const EJWNU_Servic
 	FString JsonString;
 	if (DecryptToken(Result, JsonString) == false)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("토큰 복호화 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Failed to decrypt token!"));
 		return false;
 	}
 
 	// JSON 문자열에서 컨테이너로 역직렬화
 	if (FJsonObjectConverter::JsonObjectStringToUStruct(JsonString, &OutRefreshTokenContainer, 0, 0) == false)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("리프레시 토큰 컨테이너 JSON 역직렬화 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Warning, TEXT("Failed to deserialize refresh token container from JSON!"));
 		return false;
 	}
 
-	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("파일 로드 및 리프레시 토큰 컨테이너 복호화 성공!"));
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Display, TEXT("File loaded and refresh token container decrypted successfully!"));
 	return true;
 }
 
@@ -308,7 +307,7 @@ bool UJWNU_GIS_ApiIdentityProvider::EncryptToken(const FString& InToken, TArray<
 	}
 	return false;
 #else
-	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Error, TEXT("토큰 암호화는 현재 Windows 플랫폼에서만 지원됩니다."));
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Error, TEXT("Token encryption is only supported on Windows platform."));
 	return false;
 #endif
 }
@@ -352,7 +351,7 @@ bool UJWNU_GIS_ApiIdentityProvider::DecryptToken(const TArray<uint8>& InEncrypte
 	}
 	return false;
 #else
-	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Error, TEXT("토큰 복호화는 현재 Windows 플랫폼에서만 지원됩니다."));
+	PRINT_LOG(LogJWNU_GIS_ApiIdentityProvider, Error, TEXT("Token decryption is only supported on Windows platform."));
 	return false;
 #endif
 }

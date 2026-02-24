@@ -47,7 +47,7 @@ public:
 	 * @param OutHost API 서버 호스트 주소
 	 * @return 호스트 URL (매핑이 없으면 빈 문자열)
 	 */
-	UFUNCTION(BlueprintCallable, Category="JWNetworkUtiltiy|Configuration")
+	UFUNCTION(BlueprintCallable, Category="JWNetworkUtility|Configuration")
 	bool GetHost(const EJWNU_ServiceType InServiceType, EJWNU_HostGetResult& OutHostGetResult, FString& OutHost) const;
 
 protected:
@@ -55,6 +55,6 @@ protected:
 	/**
 	 * 서비스 타입별 호스트 URL 매핑.
 	 */
-	UPROPERTY(BlueprintReadOnly, Category = "JWNetworkUtiltiy|Configuration")
+	UPROPERTY(BlueprintReadOnly, Category = "JWNetworkUtility|Configuration")
 	TMap<EJWNU_ServiceType, FString> ServiceTypeToHostMap;
 };

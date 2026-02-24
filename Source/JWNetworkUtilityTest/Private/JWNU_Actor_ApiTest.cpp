@@ -46,20 +46,20 @@ void AJWNU_Actor_ApiTest::BeginPlay()
 
 void AJWNU_Actor_ApiTest::TestOne_HttpClientHelper() const
 {
-	PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== 첫 번째 테스트 시작 : Only HTTPClientHelper ===================="));
+	PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== Test 1 Start : Only HTTPClientHelper ===================="));
 	
 	// RawResponseBody를 가정한 콜백
 	const auto Callback = FOnHttpRequestCompletedDelegate::CreateLambda([](const int32 StatusCode, const FString& ResponseBody)
 	{
-		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("서버로부터 획득한 리스폰스 바디 : %s"), *ResponseBody);	
-		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== 첫 번째 테스트 종료 : Only HTTPClientHelper ===================="));
+		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("Response body from server: %s"), *ResponseBody);
+		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== Test 1 End : Only HTTPClientHelper ===================="));
 	});
 		
 	// 호스트 획득
 	FString ProvidedHost;
 	if (UJWNU_GIS_ApiHostProvider::Get(GetWorld())->GetHost(EJWNU_ServiceType::AuthServer, ProvidedHost) == false)
 	{
-		PRINT_LOG(LogJWNU_Actor_ApiTest, Warning, TEXT("호스트 획득 실패!"));
+		PRINT_LOG(LogJWNU_Actor_ApiTest, Warning, TEXT("Failed to get host!"));
 		return;
 	}
 	
@@ -81,13 +81,13 @@ void AJWNU_Actor_ApiTest::TestOne_HttpClientHelper() const
 
 void AJWNU_Actor_ApiTest::TestTwo_ApiClientService_Template() const
 {
-	PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== 두 번째 테스트 시작 : ApiClientService Template ===================="));
+	PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== Test 2 Start : ApiClientService Template ===================="));
 	
 	// JSON 리스폰스 바디가 자동으로 언리얼 구조체로 파싱되어 돌아오는 콜백
 	const auto Callback = [](const FJWNU_RES_Base& Response)
 	{
-		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("서버로부터 획득한 리스폰스 객체 : %s %s"), *Response.Code, *Response.Message);
-		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== 두 번째 테스트 종료 : ApiClientService Template ===================="));
+		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("Response object from server: %s %s"), *Response.Code, *Response.Message);
+		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== Test 2 End : ApiClientService Template ===================="));
 	};
 	
 	// 엔드포인트
@@ -105,13 +105,13 @@ void AJWNU_Actor_ApiTest::TestTwo_ApiClientService_Template() const
 
 void AJWNU_Actor_ApiTest::TestThree_ApiClientService_NoTemplate() const
 {
-	PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== 세 번째 테스트 시작 : ApiClientService No Template ===================="));
+	PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== Test 3 Start : ApiClientService No Template ===================="));
 	
 	// JSON 리스폰스 바디 그대로 돌아오는 콜백
 	const auto Callback = FOnHttpResponseDelegate::CreateLambda([](const EJWNU_HttpStatusCode StatusCode, const FString& ResponseBody)
 	{
-		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("서버로부터 획득한 리스폰스 바디 : %s"), *ResponseBody);
-		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== 세 번째 테스트 종료 : ApiClientService No Template ===================="));
+		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("Response body from server: %s"), *ResponseBody);
+		PRINT_LOG(LogJWNU_Actor_ApiTest, Display, TEXT("==================== Test 3 End : ApiClientService No Template ===================="));
 	});
 	
 	// 엔드포인트

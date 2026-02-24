@@ -49,7 +49,7 @@ UJWNU_GIS_HttpClientHelper* UJWNU_GIS_HttpClientHelper::Get(const UObject* World
 	// 월드 컨텍스트 오브젝트 이상
 	if (WorldContextObject == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_HttpClientHelper, Warning, TEXT("월드 컨텍스트 오브젝트 이상!"));
+		PRINT_LOG(LogJWNU_GIS_HttpClientHelper, Warning, TEXT("WorldContextObject is invalid!"));
 		return nullptr;
 	}
 
@@ -57,7 +57,7 @@ UJWNU_GIS_HttpClientHelper* UJWNU_GIS_HttpClientHelper::Get(const UObject* World
 	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	if (World == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_HttpClientHelper, Warning, TEXT("월드 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_HttpClientHelper, Warning, TEXT("Failed to get World!"));
 		return nullptr;
 	}
 
@@ -65,7 +65,7 @@ UJWNU_GIS_HttpClientHelper* UJWNU_GIS_HttpClientHelper::Get(const UObject* World
 	const UGameInstance* GameInstance = World->GetGameInstance();
 	if (GameInstance == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_HttpClientHelper, Warning, TEXT("게임인스턴스 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_HttpClientHelper, Warning, TEXT("Failed to get GameInstance!"));
 		return nullptr;
 	}
     

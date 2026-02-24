@@ -16,23 +16,23 @@ void UJWNU_GIS_ApiHostProvider::Initialize(FSubsystemCollectionBase& Collection)
 	const auto Plugin = IPluginManager::Get().FindPlugin(TEXT("JWNetworkUtility"));
 	if (!Plugin.IsValid())
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Error, TEXT("JWNetworkUtility 플러그인을 찾을 수 없습니다!"));
+		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Error, TEXT("JWNetworkUtility plugin not found!"));
 		return;
 	}
 	FString PluginDir = Plugin->GetBaseDir();
 	const FString ConfigPath = FPaths::Combine(PluginDir, TEXT("Config"), TEXT("DefaultJWNetworkUtility.ini"));
-	PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("호스트 주소 로드 시도 : %s"), *ConfigPath);
+	PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("Attempting to load host address from: %s"), *ConfigPath);
 	
 	auto TryLoad = [&](const EJWNU_ServiceType Type, const TCHAR* Key)
 	{
 		if (FString Value; GConfig->GetString(*Section, Key, Value, ConfigPath))
 		{
 			ServiceTypeToHostMap.Add(Type, Value);
-			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("호스트 주소 로드 완료 — %s : %s"), Key, *Value);
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("Host address loaded — %s : %s"), Key, *Value);
 		}
 		else
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("호스트 주소 로드 실패 - %s : ???"), Key);
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Failed to load host address — %s : ???"), Key);
 		}
 	};
 
@@ -45,7 +45,7 @@ UJWNU_GIS_ApiHostProvider* UJWNU_GIS_ApiHostProvider::Get(const UObject* WorldCo
 	// 월드 컨텍스트 오브젝트 이상
 	if (WorldContextObject == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("월드 컨텍스트 오브젝트 이상!"));
+		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("WorldContextObject is invalid!"));
 		return nullptr;
 	}
 
@@ -53,7 +53,7 @@ UJWNU_GIS_ApiHostProvider* UJWNU_GIS_ApiHostProvider::Get(const UObject* WorldCo
 	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	if (World == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("월드 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Failed to get World!"));
 		return nullptr;
 	}
 
@@ -61,7 +61,7 @@ UJWNU_GIS_ApiHostProvider* UJWNU_GIS_ApiHostProvider::Get(const UObject* WorldCo
 	const UGameInstance* GameInstance = World->GetGameInstance();
 	if (GameInstance == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("게임인스턴스 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Failed to get GameInstance!"));
 		return nullptr;
 	}
 
@@ -76,7 +76,7 @@ bool UJWNU_GIS_ApiHostProvider::GetHost(const EJWNU_ServiceType InServiceType, F
 		OutHost = ServiceTypeToHostMap[InServiceType];
 		if (OutHost.IsEmpty())
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of Host is Successful, but it's Empty! - 호스트 추출에 성공했지만 내용물이 비어있습니다!"));
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of Host is Successful, but it's Empty!"));
 			return true;
 		}
 		
@@ -96,7 +96,7 @@ bool UJWNU_GIS_ApiHostProvider::GetHost(const EJWNU_ServiceType InServiceType, E
 		OutHost = ServiceTypeToHostMap[InServiceType];
 		if (OutHost.IsEmpty())
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of Host is Successful, but it's Empty! - 호스트 추출에 성공했지만 내용물이 비어있습니다!"));
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Extraction of Host is Successful, but it's Empty!"));
 			OutHostGetResult = EJWNU_HostGetResult::Empty;
 			return true;
 		}

@@ -28,9 +28,6 @@ public class JWNetworkUtility : ModuleRules
 				"Json",							// FJsonObject, FJsonValue
 				"JsonUtilities",				// FJsonObjectConverter, FJsonSerializer
 				"UMG",							// Widget Blueprint
-				"OnlineSubsystem",
-				"OnlineSubsystemSteam",
-				"OnlineSubsystemUtils"
 			]
 		);
 		

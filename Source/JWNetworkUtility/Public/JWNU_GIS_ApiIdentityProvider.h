@@ -45,7 +45,7 @@ public:
 	 * @param OutAccessTokenContainer Extracted Access Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 엑세스 토큰 컨테이너
 	 * @return Success or Fail \n 성공 여부
 	 */
-	UFUNCTION(BlueprintCallable, Category="JWNetworkUtiltiy|Authorization", meta=(BlueprintOutRef="OutTokenGetResult, OutAccessTokenContainer"))
+	UFUNCTION(BlueprintCallable, Category="JWNetworkUtility|Authorization", meta=(BlueprintOutRef="OutTokenGetResult, OutAccessTokenContainer"))
 	bool GetAccessTokenContainer(const EJWNU_ServiceType InServiceType, EJWNU_TokenGetResult& OutTokenGetResult, FJWNU_AccessTokenContainer& OutAccessTokenContainer) const;
 
 	/**
@@ -63,7 +63,7 @@ public:
 	 * @param InAccessTokenContainer New Access Token Container \n 새로운 JWT 인증 토큰 컨테이너
 	 * @return Success or Fail \n 성공 여부
 	 */
-	UFUNCTION(BlueprintCallable, Category="JWNetworkUtiltiy|Authorization", meta=(BlueprintOutRef="OutTokenSetResult"))
+	UFUNCTION(BlueprintCallable, Category="JWNetworkUtility|Authorization", meta=(BlueprintOutRef="OutTokenSetResult"))
 	bool SetAccessTokenContainer(const EJWNU_ServiceType InServiceType, EJWNU_TokenSetResult& OutTokenSetResult, const FJWNU_AccessTokenContainer& InAccessTokenContainer);
 
 	/**
@@ -81,7 +81,7 @@ public:
 	 * @param OutRefreshTokenContainer Loaded Refresh Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 리프레시 토큰 컨테이너
 	 * @return Success or Fail \n 성공 여부
 	 */
-	UFUNCTION(BlueprintCallable, Category="JWNetworkUtiltiy|Authorization", meta=(BlueprintOutRef="OutTokenGetResult, OutRefreshTokenContainer"))
+	UFUNCTION(BlueprintCallable, Category="JWNetworkUtility|Authorization", meta=(BlueprintOutRef="OutTokenGetResult, OutRefreshTokenContainer"))
 	bool GetRefreshTokenContainer(const EJWNU_ServiceType InServiceType, EJWNU_TokenGetResult& OutTokenGetResult, FJWNU_RefreshTokenContainer& OutRefreshTokenContainer) const;
 
 	/**
@@ -99,7 +99,7 @@ public:
 	 * @param InRefreshTokenContainer Targeting Refresh Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 리프레시 토큰 컨테이너
 	 * @return Success or Fail \n 성공 여부
 	 */
-	UFUNCTION(BlueprintCallable, Category="JWNetworkUtiltiy|Authorization", meta=(BlueprintOutRef="OutTokenSetResult"))
+	UFUNCTION(BlueprintCallable, Category="JWNetworkUtility|Authorization", meta=(BlueprintOutRef="OutTokenSetResult"))
 	bool SetRefreshTokenContainer(const EJWNU_ServiceType InServiceType, EJWNU_TokenSetResult& OutTokenSetResult, const FJWNU_RefreshTokenContainer& InRefreshTokenContainer);
 
 	/**

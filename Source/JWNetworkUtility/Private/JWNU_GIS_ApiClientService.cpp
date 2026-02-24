@@ -11,7 +11,7 @@ UJWNU_GIS_ApiClientService* UJWNU_GIS_ApiClientService::Get(const UObject* World
 	// 월드 컨텍스트 오브젝트 이상
 	if (WorldContextObject == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("월드 컨텍스트 오브젝트 이상!"));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("WorldContextObject is invalid!"));
 		return nullptr;
 	}
 
@@ -19,7 +19,7 @@ UJWNU_GIS_ApiClientService* UJWNU_GIS_ApiClientService::Get(const UObject* World
 	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	if (World == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("월드 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get World!"));
 		return nullptr;
 	}
 
@@ -27,7 +27,7 @@ UJWNU_GIS_ApiClientService* UJWNU_GIS_ApiClientService::Get(const UObject* World
 	const UGameInstance* GameInstance = World->GetGameInstance();
 	if (GameInstance == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("게임 인스턴스 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get GameInstance!"));
 		return nullptr;
 	}
     
@@ -62,7 +62,7 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 	{
 		if (HostProvider->GetHost(InServiceType, ProvidedHost) == false)
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("호스트 획득 실패!"));
+			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get host!"));
 			const FString FakeResponseBody = TEXT("{\"success\": false, \"code\": \"HOST_NOT_FOUND\", \"message\": \"Failed to get host from provider\"}");
 			OnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None, FakeResponseBody);
 			return nullptr;
@@ -85,7 +85,7 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 	{
 		if (TokenProvider->GetAccessTokenContainer(InServiceType, ProvidedAccessTokenContainer) == false)
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("엑세스 토큰 획득 실패!"));
+			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get access token!"));
 			const FString FakeResponseBody = TEXT("{\"success\": false, \"code\": \"TOKEN_NOT_FOUND\", \"message\": \"Failed to get access token from provider\"}");
 			OnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None, FakeResponseBody);
 			return nullptr;
@@ -93,7 +93,7 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 	}
 	else
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("토큰 프로바이더 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get token provider!"));
 		const FString FakeResponseBody = TEXT("{\"success\": false, \"code\": \"PROVIDER_NOT_FOUND\", \"message\": \"Failed to get token provider\"}");
 		OnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None, FakeResponseBody);
 		return nullptr;
@@ -104,7 +104,7 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 	const bool bTokenExpired = ProvidedAccessTokenContainer.ExpiresAt > 0 && CurrentUnixTime >= (ProvidedAccessTokenContainer.ExpiresAt - 30);
 	if (bTokenExpired || Self->RefreshInProgressFlags.FindOrAdd(InServiceType))
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("엑세스 토큰 만료 또는 리프레시 진행 중, 잡 큐에 적재..."));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("Access token expired or refresh in progress, queuing job..."));
 		JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Yellow, TEXT("[JWNU] Access Token Expired — Queuing refresh for %s"), *UEnum::GetValueAsString(InServiceType));
 		Handle->MarkWaitingForRefresh();
 		FJWNU_PendingJob Job;
@@ -160,7 +160,7 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate_Execution(
 			{
 				if (StatusCode == 401)
 				{
-					PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("401 토큰 만료 감지, 잡 큐에 적재 후 리프레시 시도..."));
+					PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("401 detected, queuing job and triggering token refresh..."));
 					JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Orange, TEXT("[JWNU] 401 Unauthorized — Triggering token refresh for %s"), *UEnum::GetValueAsString(PendingRequest.ServiceType));
 					InHandle->MarkWaitingForRefresh();
 					FJWNU_PendingJob Job;
@@ -212,7 +212,7 @@ void UJWNU_GIS_ApiClientService::RequestTokenRefresh(const EJWNU_ServiceType InS
 	bool& bRefreshing = RefreshInProgressFlags.FindOrAdd(InServiceType);
 	if (bRefreshing)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("리프레시 이미 진행 중, 잡 큐에 적재만 수행"));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("Refresh already in progress, queuing job only"));
 		return;
 	}
 
@@ -227,7 +227,7 @@ void UJWNU_GIS_ApiClientService::ExecuteTokenRefresh(EJWNU_ServiceType InService
 	const auto IdentityProvider = UJWNU_GIS_ApiIdentityProvider::Get(GetWorld());
 	if (IdentityProvider == nullptr)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("IdentityProvider 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get IdentityProvider!"));
 		DrainPendingJobs_Failure(InServiceType, TEXT("IDENTITY_PROVIDER_NOT_FOUND"), TEXT("Failed to get identity provider"));
 		return;
 	}
@@ -236,7 +236,7 @@ void UJWNU_GIS_ApiClientService::ExecuteTokenRefresh(EJWNU_ServiceType InService
 	FJWNU_RefreshTokenContainer RefreshTokenContainer;
 	if (UJWNU_GIS_ApiIdentityProvider::GetRefreshTokenContainer(InServiceType, RefreshTokenContainer) == false)
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("리프레시 토큰 컨테이너 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get refresh token container!"));
 		DrainPendingJobs_Failure(InServiceType, TEXT("REFRESH_TOKEN_NOT_FOUND"), TEXT("Failed to get refresh token container"));
 		return;
 	}
@@ -256,12 +256,12 @@ void UJWNU_GIS_ApiClientService::ExecuteTokenRefresh(EJWNU_ServiceType InService
 			// 파싱한 결과물 확인
 			if (ResultData.Success == false || ResultData.AccessToken.IsEmpty())
 			{
-				PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("토큰 리프레시 실패: %s"), *ResultData.Message);
+				PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Token Refresh has been failed : %s"), *ResultData.Message);
 				DrainPendingJobs_Failure(InServiceType, TEXT("TOKEN_REFRESH_FAILED"), FString::Printf(TEXT("Token refresh failed: %s"), *ResultData.Message));
 				return;
 			}
 
-			PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("토큰 리프레시 성공, 대기 중인 요청 일괄 처리..."));
+			PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("Token Refresh Success, Drain Pending Request Jobs..."));
 
 			// 토큰 점검
 			const FString NewAccessToken = ResultData.AccessToken;
@@ -291,7 +291,7 @@ void UJWNU_GIS_ApiClientService::ExecuteTokenRefresh(EJWNU_ServiceType InService
 	const FString RefreshBody = FString::Printf(
 		TEXT("{\"userId\": \"%s\", \"targetServer\": \"%s\", \"refreshToken\": \"%s\"}"),
 		*CurrentUserId, *TargetServer, *RefreshTokenContainer.RefreshToken);
-	JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Cyan, TEXT("[JWNU] Calling Refresh API → %s"), *RefreshURL);
+	JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Cyan, TEXT("[JWNU] Calling Refresh API : %s"), *RefreshURL);
 	UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), EJWNU_HttpMethod::Post, RefreshURL, TEXT(""), RefreshBody, {}, RefreshCallback);
 }
 
@@ -307,7 +307,7 @@ void UJWNU_GIS_ApiClientService::DrainPendingJobs_Success(const EJWNU_ServiceTyp
 		Jobs = MoveTemp(*Queue);
 	}
 
-	PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("리프레시 성공, 대기 잡 %d개 처리 시작"), Jobs.Num());
+	PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("Refresh succeeded, draining %d pending jobs"), Jobs.Num());
 	JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Green, TEXT("[JWNU] Token Refresh SUCCESS — Draining %d pending jobs"), Jobs.Num());
 	for (auto& Job : Jobs)
 	{
@@ -330,7 +330,7 @@ void UJWNU_GIS_ApiClientService::DrainPendingJobs_Failure(const EJWNU_ServiceTyp
 		Jobs = MoveTemp(*Queue);
 	}
 
-	PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("리프레시 실패, 대기 잡 %d개 에러 처리 (Code: %s)"), Jobs.Num(), *ErrorCode);
+	PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Refresh failed, draining %d pending jobs with error (Code: %s)"), Jobs.Num(), *ErrorCode);
 	JWNU_SCREEN_DEBUG(-1, 7.0f, FColor::Red, TEXT("[JWNU] Token Refresh FAILED — %s: %s (%d jobs drained)"), *ErrorCode, *ErrorMessage, Jobs.Num());
 	for (auto& Job : Jobs)
 	{
@@ -352,7 +352,7 @@ FString UJWNU_GIS_ApiClientService::BuildRefreshTokenURL() const
 		}
 	}
 
-	PRINT_LOG(LogJWNU_GIS_ApiClientService, Error, TEXT("AuthServer 호스트 획득 실패! INI 설정을 확인하세요."));
+	PRINT_LOG(LogJWNU_GIS_ApiClientService, Error, TEXT("Failed to get AuthServer host! Check your INI configuration."));
 #if !UE_BUILD_SHIPPING
 	return TEXT("http://localhost:5000/auth/refresh");
 #else

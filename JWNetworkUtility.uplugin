@@ -7,8 +7,8 @@
 	"Category": "Code Plugins > Networking",
 	"CreatedBy": "prayslaks",
 	"CreatedByURL": "https://github.com/prayslaks",
-	"DocsURL": "https://github.com/prayslaks/JWNetworkUtility",
-	"MarketplaceURL": "",
+	"DocsURL": "https://github.com/prayslaks/JWNetworkUtility/wiki",
+	"MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/bf6dd857-dceb-4b7c-ab63-239d6d47a682",
 	"SupportURL": "https://github.com/prayslaks/JWNetworkUtility/issues",
 	"CanContainContent": true,
 	"IsBetaVersion": true,
@@ -27,13 +27,5 @@
 		}
 	],
 	"Plugins": [
-		{
-			"Name": "OnlineSubsystem",
-			"Enabled": true
-		},
-		{
-			"Name": "OnlineSubsystemSteam",
-			"Enabled": true
-		}
 	]
 }

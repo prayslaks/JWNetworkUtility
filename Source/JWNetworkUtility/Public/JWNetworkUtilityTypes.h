@@ -131,37 +131,37 @@ struct JWNETWORKUTILITY_API FJWNU_RequestConfig
 	/**
 	 * 최대 재시도 횟수. (1이면 재시도 없이 1회만 시도)
 	 */
-	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Config")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	int32 MaxRetries;
 
 	/**
 	 * 재시도 간 대기 시간 (초).
 	 */
-	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Config")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	float RetryDelaySeconds;
 
 	/**
 	 * 요청 타임아웃 시간 (초).
 	 */
-	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Config")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	float TimeoutSeconds;
 
 	/**
 	 * 5xx 서버 에러 시 재시도 여부.
 	 */
-	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Config")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	bool bRetryOn5XX;
 
 	/**
 	 * 타임아웃 시 재시도 여부.
 	 */
-	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Config")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	bool bRetryOnTimeout;
 
 	/**
 	 * 네트워크 에러 시 재시도 여부.
 	 */
-	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Config")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	bool bRetryOnNetworkError;
 
 	/**
@@ -232,14 +232,14 @@ struct JWNETWORKUTILITY_API FJWNU_AccessTokenContainer
 	/**
 	 * 인증 JWT 엑세스 토큰 값. 거의 대부분의 API에 Authorization으로 활용하며 서버에 의해 만료 시간이 관리된다.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString AccessToken;
 	
 	/**
 	 * 엑세스 토큰의 만료 예정 시간을 유닉스 타임스탬프를 활용해, 클라이언트 단에서 판단할 수 있도록 한다.
 	 * 단, 30초 정도의 버퍼 타임을 통해서 엑세스 토큰이 왠만하면 살아남을 수 있도록 관리한다.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	int64 ExpiresAt;
 
 	/**
@@ -274,13 +274,13 @@ struct JWNETWORKUTILITY_API FJWNU_RefreshTokenContainer
 	/**
 	 * 인증 Opaque 리프레시 토큰 값. 리프레시 API에 Authorization으로 활용하며 서버에 의해 만료 시간이 관리된다.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString RefreshToken;
 
 	/**
 	 * 리프레시 토큰의 만료 예정 시간을 유닉스 타임스탬프를 활용해, 클라이언트 단에서 판단할 수 있도록 한다.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	int64 ExpiresAt;
 	
 	/**
@@ -426,7 +426,7 @@ struct JWNETWORKUTILITY_API FJWNU_REQ_AuthRegisterSendCode
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Email;
 };
 
@@ -438,10 +438,10 @@ struct JWNETWORKUTILITY_API FJWNU_REQ_AuthRegisterVerifyCode
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Email;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Code;
 };
 
@@ -453,13 +453,13 @@ struct JWNETWORKUTILITY_API FJWNU_REQ_AuthRegister
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Email;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Password;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Code;
 };
 
@@ -471,10 +471,10 @@ struct JWNETWORKUTILITY_API FJWNU_REQ_AuthLogin
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Email;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Password;
 };
 
@@ -486,13 +486,13 @@ struct JWNETWORKUTILITY_API FJWNU_REQ_AuthLogout
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString UserId;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString TargetServer;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString RefreshToken;
 };
 
@@ -504,13 +504,13 @@ struct JWNETWORKUTILITY_API FJWNU_REQ_AuthRefresh
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString UserId;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString TargetServer;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString RefreshToken;
 };
 
@@ -522,7 +522,7 @@ struct JWNETWORKUTILITY_API FJWNU_REQ_Data
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Data;
 };
 
@@ -537,19 +537,19 @@ struct JWNETWORKUTILITY_API FJWNU_RES_Base
 	/**
 	 * 비즈니스 로직의 성공 여부를 나타내는 불 필드. 
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	bool Success;
 
 	/**
 	 * 네트워크, 파싱, 비즈니스 상태를 나타내는 커스텀 코드 문자열 필드.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Code;
 
 	/**
 	 * 네트워크, 파싱, 비즈니스 결과를 나타내는 메시지 문자열 필드.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Message;
 
 	/**
@@ -574,31 +574,31 @@ struct JWNETWORKUTILITY_API FJWNU_RES_AuthRefresh : public FJWNU_RES_Base
 	/**
 	 * 새로 발급된 엑세스 토큰.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString AccessToken;
 
 	/**
 	 * 새로 발급된 엑세스 토큰의 만료 시한을 나타내는 유닉스 타임스탬프.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	int64 ExpiresAt;
 	
 	/**
 	 * 새로 발급된 리프레시 토큰.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString RefreshToken;
 
 	/**
 	 * 새로 발급된 리프레시 토큰의 만료 시한을 나타내는 유닉스 타임스탬프.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	int64 RefreshTokenExpiresAt;
 
 	/**
 	 * 서버가 반환한 사용자 ID.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString UserId;
 
 	/**
@@ -622,6 +622,6 @@ struct JWNETWORKUTILITY_API FJWNU_RES_Data : public FJWNU_RES_Base
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Data;
 };

@@ -28,7 +28,7 @@ bool UJWNU_HttpRequestJob::Execute()
 	// 이미 실행 중인 경우 무시
 	if (bIsRunning)
 	{
-		PRINT_LOG(LogJWNU_HttpRequestJob, Warning, TEXT("Job이 이미 실행 중입니다."));
+		PRINT_LOG(LogJWNU_HttpRequestJob, Warning, TEXT("Job is already running."));
 		return false;
 	}
 
@@ -64,7 +64,7 @@ void UJWNU_HttpRequestJob::Cancel()
 
 	bIsRunning = false;
 
-	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("Job이 취소되었습니다. (총 시도 횟수: %d)"), CurrentAttempt);
+	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("Job cancelled. (Total attempts: %d)"), CurrentAttempt);
 }
 
 void UJWNU_HttpRequestJob::SendRequest()
@@ -76,7 +76,7 @@ void UJWNU_HttpRequestJob::SendRequest()
 	}
 
 	CurrentAttempt++;
-	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("HTTP 요청 시도 %d/%d: %s"), CurrentAttempt, Config.MaxRetries, *URL);
+	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("HTTP request attempt %d/%d: %s"), CurrentAttempt, Config.MaxRetries, *URL);
 
 	// HTTP 요청 객체 생성
 	CurrentRequest = FHttpModule::Get().CreateRequest();
@@ -155,7 +155,7 @@ void UJWNU_HttpRequestJob::OnResponseReceived(FHttpRequestPtr Request, FHttpResp
 
 	// 상태 코드 획득
 	const int32 StatusCode = Response.IsValid() ? Response->GetResponseCode() : 0;
-	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("HTTP 응답 수신 - 상태 코드: %d, 네트워크 성공: %s"), StatusCode, bNetworkAvailable ? TEXT("true") : TEXT("false"));
+	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("HTTP response received — status code: %d, network available: %s"), StatusCode, bNetworkAvailable ? TEXT("true") : TEXT("false"));
 
 	// 재시도 필요 여부 판단
 	if (ShouldRetry(StatusCode, bNetworkAvailable) && CurrentAttempt < Config.MaxRetries)
@@ -179,7 +179,7 @@ void UJWNU_HttpRequestJob::OnTimeout()
 		return;
 	}
 
-	PRINT_LOG(LogJWNU_HttpRequestJob, Warning, TEXT("HTTP 요청 타임아웃 (시도 %d/%d)"), CurrentAttempt, Config.MaxRetries);
+	PRINT_LOG(LogJWNU_HttpRequestJob, Warning, TEXT("HTTP request timed out (attempt %d/%d)"), CurrentAttempt, Config.MaxRetries);
 
 	// 현재 요청 취소
 	if (CurrentRequest.IsValid())
@@ -210,7 +210,7 @@ void UJWNU_HttpRequestJob::ScheduleRetry()
 		return;
 	}
 
-	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("%.1f초 후 재시도 예정 (다음 시도: %d/%d)"), Config.RetryDelaySeconds, CurrentAttempt + 1, Config.MaxRetries);
+	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("Retry scheduled in %.1fs (next attempt: %d/%d)"), Config.RetryDelaySeconds, CurrentAttempt + 1, Config.MaxRetries);
 
 	// 재시도 이벤트 브로드캐스트
 	OnHttpRequestJobRetry.ExecuteIfBound(CurrentAttempt + 1);
@@ -235,7 +235,7 @@ void UJWNU_HttpRequestJob::CompleteJob(const bool bNetworkAvailable, const int32
 	CurrentRequest.Reset();
 	ClearAllTimers();
 	
-	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("Job 완료 - 서비스 성공: %s, 총 시도 횟수: %d"), bNetworkAvailable ? TEXT("true") : TEXT("false"), CurrentAttempt);
+	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("Job completed — network available: %s, total attempts: %d"), bNetworkAvailable ? TEXT("true") : TEXT("false"), CurrentAttempt);
 	
 	OnHttpRequestJobComplete.ExecuteIfBound(bNetworkAvailable, StatusCode, ResponseBody);
 }
@@ -245,14 +245,14 @@ bool UJWNU_HttpRequestJob::ShouldRetry(const int32 StatusCode, const bool bNetwo
 	// 네트워크 실패
 	if (bNetworkAvailable == false && Config.bRetryOnNetworkError)
 	{
-		PRINT_LOG(LogJWNU_HttpRequestJob, Warning, TEXT("네트워크 에러로 재시도 필요..."));
+		PRINT_LOG(LogJWNU_HttpRequestJob, Warning, TEXT("Network error, retry needed..."));
 		return true;
 	}
 
 	// 5XX 서버 에러
 	if (Config.bRetryOn5XX && StatusCode >= 500 && StatusCode < 600)
 	{
-		PRINT_LOG(LogJWNU_HttpRequestJob, Warning, TEXT("서버 에러(%d)로 재시도 필요..."), StatusCode);
+		PRINT_LOG(LogJWNU_HttpRequestJob, Warning, TEXT("Server error (%d), retry needed..."), StatusCode);
 		return true;
 	}
 
@@ -265,6 +265,6 @@ void UJWNU_HttpRequestJob::ClearAllTimers()
 	{
 		World->GetTimerManager().ClearTimer(RetryTimerHandle);
 		World->GetTimerManager().ClearTimer(TimeoutTimerHandle);
-		PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("타이머 정리 완료"));
+		PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("Timers cleared"));
 	}
 }

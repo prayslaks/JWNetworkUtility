@@ -216,7 +216,7 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_Template(
 	{
 		if (HostProvider->GetHost(InServiceType, ProvidedHost) == false)
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("호스트 획득 실패!"));
+			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get host!"));
 			StructType ErrorResult;
 			ErrorResult.Code = TEXT("HOST_NOT_FOUND");
 			ErrorResult.Message = TEXT("Failed to get host from provider");
@@ -241,7 +241,7 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_Template(
 	{
 		if (TokenProvider->GetAccessTokenContainer(InServiceType, ProvidedAccessTokenContainer) == false)
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("엑세스 토큰 획득 실패!"));
+			PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get access token!"));
 			StructType ErrorResult;
 			ErrorResult.Code = TEXT("TOKEN_NOT_FOUND");
 			ErrorResult.Message = TEXT("Failed to get access token from provider");
@@ -251,7 +251,7 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_Template(
 	}
 	else
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("토큰 프로바이더 획득 실패!"));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Warning, TEXT("Failed to get token provider!"));
 		StructType ErrorResult;
 		ErrorResult.Code = TEXT("PROVIDER_NOT_FOUND");
 		ErrorResult.Message = TEXT("Failed to get token provider");
@@ -264,7 +264,7 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_Template(
 	const bool bTokenExpired = ProvidedAccessTokenContainer.ExpiresAt > 0 && CurrentUnixTime >= (ProvidedAccessTokenContainer.ExpiresAt - 30);
 	if (bTokenExpired || Self->RefreshInProgressFlags.FindOrAdd(InServiceType))
 	{
-		PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("엑세스 토큰 만료 또는 리프레시 진행 중, 잡 큐에 적재..."));
+		PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("Access token expired or refresh in progress, queuing job..."));
 		JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Yellow, TEXT("[JWNU] Access Token Expired — Queuing refresh for %s"), *UEnum::GetValueAsString(InServiceType));
 		Handle->MarkWaitingForRefresh();
 		FJWNU_PendingJob Job;
@@ -325,7 +325,7 @@ void UJWNU_GIS_ApiClientService::CallApi_Template_Execution(
 			{
 				if (StatusCode == 401)
 				{
-					PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("401 토큰 만료 감지, 잡 큐에 적재 후 리프레시 시도..."));
+					PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("401 detected, queuing job and triggering token refresh..."));
 					JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Orange, TEXT("[JWNU] 401 Unauthorized — Triggering token refresh for %s"), *UEnum::GetValueAsString(PendingRequest.ServiceType));
 					InHandle->MarkWaitingForRefresh();
 					FJWNU_PendingJob Job;

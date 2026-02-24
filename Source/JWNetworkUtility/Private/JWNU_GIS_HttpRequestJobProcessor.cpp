@@ -23,7 +23,7 @@ UJWNU_HttpRequestJob* UJWNU_GIS_HttpRequestJobProcessor::ProcessHttpRequestJob(
 	// GET 메서드에 바디가 달려오는 상황은 표준에서 벗어나있다
 	if (InMethod == EJWNU_HttpMethod::Get && !InContentBody.IsEmpty())
 	{
-		PRINT_LOG(LogJWNU_GIS_HttpRequestJobProcessor, Warning, TEXT("HTTP 표준 위반, GET 메서드에 Body를 넣으려는 시도..."))
+		PRINT_LOG(LogJWNU_GIS_HttpRequestJobProcessor, Warning, TEXT("HTTP standard violation: attempting to set a Body on a GET request..."))
 	}
 
 	// 쿼리 패리미터 합성
@@ -37,11 +37,11 @@ UJWNU_HttpRequestJob* UJWNU_GIS_HttpRequestJobProcessor::ProcessHttpRequestJob(
 	// 리퀘스트 잡 실행 및 확인
 	if (RequestJob->Execute())
 	{
-		PRINT_LOG(LogJWNU_GIS_HttpRequestJobProcessor, Display, TEXT("%s 실행 정상!"), *InURL);
+		PRINT_LOG(LogJWNU_GIS_HttpRequestJobProcessor, Display, TEXT("%s executed successfully!"), *InURL);
 	}
 	else
 	{
-		PRINT_LOG(LogJWNU_GIS_HttpRequestJobProcessor, Warning, TEXT("%s 실행 이상!"), *InURL);
+		PRINT_LOG(LogJWNU_GIS_HttpRequestJobProcessor, Warning, TEXT("%s execution failed!"), *InURL);
 	}
 
 	return RequestJob;
