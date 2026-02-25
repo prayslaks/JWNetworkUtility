@@ -19,25 +19,37 @@ void UJWNU_GIS_ApiHostProvider::Initialize(FSubsystemCollectionBase& Collection)
 		PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Error, TEXT("JWNetworkUtility plugin not found!"));
 		return;
 	}
-	FString PluginDir = Plugin->GetBaseDir();
-	const FString ConfigPath = FPaths::Combine(PluginDir, TEXT("Config"), TEXT("DefaultJWNetworkUtility.ini"));
-	PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("Attempting to load host address from: %s"), *ConfigPath);
-	
-	auto TryLoad = [&](const EJWNU_ServiceType Type, const TCHAR* Key)
+	const FString PluginConfigPath  = FPaths::Combine(Plugin->GetBaseDir(), TEXT("Config"), TEXT("DefaultJWNetworkUtility.ini"));
+	const FString ProjectConfigPath = FPaths::ProjectConfigDir() / TEXT("DefaultJWNetworkUtility.ini");
+
+	const UEnum* ServiceTypeEnum = StaticEnum<EJWNU_ServiceType>();
+	if (!ServiceTypeEnum) return;
+
+	for (int32 i = 0; i < ServiceTypeEnum->NumEnums() - 1; i++)
 	{
-		if (FString Value; GConfig->GetString(*Section, Key, Value, ConfigPath))
+		const EJWNU_ServiceType Type = static_cast<EJWNU_ServiceType>(ServiceTypeEnum->GetValueByIndex(i));
+
+		FString Key = ServiceTypeEnum->GetNameStringByIndex(i);
+		const int32 ColonIdx = Key.Find(TEXT("::"), ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+		if (ColonIdx != INDEX_NONE) Key = Key.Mid(ColonIdx + 2);
+
+		FString Value;
+		const bool bFoundInProject = GConfig->GetString(*Section, *Key, Value, ProjectConfigPath);
+		if (!bFoundInProject)
+		{
+			GConfig->GetString(*Section, *Key, Value, PluginConfigPath);
+		}
+
+		if (!Value.IsEmpty())
 		{
 			ServiceTypeToHostMap.Add(Type, Value);
-			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("Host address loaded — %s : %s"), Key, *Value);
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Display, TEXT("Host address loaded — %s : %s"), *Key, *Value);
 		}
 		else
 		{
-			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Failed to load host address — %s : ???"), Key);
+			PRINT_LOG(LogJWNU_GIS_ApiHostProvider, Warning, TEXT("Failed to load host address — %s : ???"), *Key);
 		}
-	};
-
-	TryLoad(EJWNU_ServiceType::GameServer, TEXT("GameServer"));
-	TryLoad(EJWNU_ServiceType::AuthServer, TEXT("AuthServer"));
+	}
 }
 
 UJWNU_GIS_ApiHostProvider* UJWNU_GIS_ApiHostProvider::Get(const UObject* WorldContextObject)
