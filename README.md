@@ -6,14 +6,19 @@ A standalone Unreal Engine 5.6+ plugin providing a layered HTTP API client syste
 
 ## Table of Contents
 
-- [Features](#features)
-- [Module Structure](#module-structure)
-- [Architecture](#architecture)
-- [Core Class List](#core-class-list)
-- [Usage](#usage)
-- [Documentation](#documentation)
-- [File Structure](#file-structure)
-- [License](#license)
+- [JWNetworkUtility Plugin](#jwnetworkutility-plugin)
+  - [Table of Contents](#table-of-contents)
+  - [☕ Support](#-support)
+  - [Features](#features)
+  - [Module Structure](#module-structure)
+  - [Architecture](#architecture)
+  - [Core Class List](#core-class-list)
+  - [Usage](#usage)
+    - [C++](#c)
+    - [Blueprint](#blueprint)
+  - [Documentation](#documentation)
+  - [File Structure](#file-structure)
+  - [License](#license)
 
 ## ☕ Support
 If this project helped you, please consider buying me a coffee to support further development!
@@ -119,7 +124,7 @@ Full documentation is available on the [Wiki](https://github.com/prayslaks/JWNet
 JWNetworkUtility/
 ├── Config/DefaultJWNetworkUtility.ini
 ├── Content/
-├── Resources/Icon128.png
+├── Resources/
 ├── Source/
 │   ├── JWNetworkUtility/              (Runtime)
 │   │   ├── JWNetworkUtility.Build.cs
@@ -133,7 +138,6 @@ JWNetworkUtility/
 │   │   │   ├── JWNU_GIS_ApiIdentityProvider.h
 │   │   │   ├── JWNU_GIS_ApiHostProvider.h
 │   │   │   ├── JWNU_GIS_CustomCodeHelper.h
-│   │   │   ├── JWNU_GIS_SteamWorks.h
 │   │   │   ├── JWNU_HttpRequestJob.h
 │   │   │   ├── JWNU_HttpRequestJobHandle.h
 │   │   │   ├── JWNU_BFL_ApiClientService.h
@@ -148,7 +152,6 @@ JWNetworkUtility/
 │   │       ├── JWNU_GIS_ApiIdentityProvider.cpp
 │   │       ├── JWNU_GIS_ApiHostProvider.cpp
 │   │       ├── JWNU_GIS_CustomCodeHelper.cpp
-│   │       ├── JWNU_GIS_SteamWorks.cpp
 │   │       ├── JWNU_HttpRequestJob.cpp
 │   │       ├── JWNU_HttpRequestJobHandle.cpp
 │   │       ├── JWNU_BFL_ApiClientService.cpp
@@ -164,16 +167,13 @@ JWNetworkUtility/
 ├── TestServer/
 │   ├── main.py
 │   ├── requirements.txt
-│   ├── .env.example
-│   ├── openapi.json
-│   └── dist/
-│       └── main.exe
-├── Doxygen/
-├── Analysis/                      (gitignored, analysis artifacts)
+│   └── .env.example
+├── Dosc/
+│   ├── Analysis/                      (gitignored, analysis artifacts)
+│   └── Doxygen/
 ├── JWNetworkUtility.uplugin
 ├── CLAUDE.md
 ├── LICENSE
-├── README_ko.md
 └── README.md
 ```
 
