@@ -22,9 +22,11 @@ FileOpenOrder/
 Thumbs.db
 
 #--- 환경 변수 ---
-TestServer/.env
+Content/Python/DefaultTestServer/.env
 
 #--- 플러그인 개발 전용 ---
 .claude
+.ptignore
 Doxyfile
 Analysis/
+Docs/JWNetworkUtility.wiki/

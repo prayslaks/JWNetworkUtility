@@ -7,6 +7,7 @@
 #include "JWNetworkUtilityDelegates.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "JWNU_HttpRequestJobHandle.h"
+#include "Engine/Engine.h"
 #include "JWNU_BFL_ApiClientService.generated.h"
 
 /**

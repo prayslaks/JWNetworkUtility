@@ -2,6 +2,9 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
+    "EngineVersion": "5.6",
+    "PlatformAllowList": [ "Win64" ],
+    "PlatformDenyList": [ "Win32", "Mac", "IOS", "Android" ],
 	"FriendlyName": "JWNetworkUtility",
 	"Description": "Unreal Network Utility Plugin by JungWoo. HTTP Client Helper, API Client Service, Access and Refresh Token Management with Encryption and Services.",
 	"Category": "Code Plugins > Networking",
@@ -18,12 +21,30 @@
 		{
 			"Name": "JWNetworkUtility",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+            "PlatformAllowList": [
+              "Win64"
+            ],
+            "PlatformDenyList": [
+              "Win32",
+              "Mac",
+              "IOS",
+              "Android"
+            ]
 		},
 		{
 			"Name": "JWNetworkUtilityTest",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+            "PlatformAllowList": [
+              "Win64"
+            ],
+            "PlatformDenyList": [
+              "Win32",
+              "Mac",
+              "IOS",
+              "Android"
+            ]
 		}
 	],
 	"Plugins": [

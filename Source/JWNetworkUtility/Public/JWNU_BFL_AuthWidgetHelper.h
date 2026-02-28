@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Engine/Engine.h"
 #include "JWNU_BFL_AuthWidgetHelper.generated.h"
 
 class UTextBlock;

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "JWNU_HttpRequestJob.h"
+#include "Engine/Engine.h"
 #include "JWNU_HttpRequestJobHandle.generated.h"
 
 /**

@@ -122,58 +122,57 @@ Full documentation is available on the [Wiki](https://github.com/prayslaks/JWNet
 
 ```
 JWNetworkUtility/
-├── Config/DefaultJWNetworkUtility.ini
+├── Config/
+│   ├── DefaultJWNetworkUtility.ini
+│   └── FilterPlugin.ini
 ├── Content/
+├── Docs/
 ├── Resources/
 ├── Source/
-│   ├── JWNetworkUtility/              (Runtime)
-│   │   ├── JWNetworkUtility.Build.cs
+│   ├── JWNetworkUtility/
+│   │   ├── Private/
+│   │   │   ├── JWNetworkUtility.cpp
+│   │   │   ├── JWNetworkUtilityTypes.cpp
+│   │   │   ├── JWNetworkUtiltiyDelegates.cpp
+│   │   │   ├── JWNU_BFL_ApiClientService.cpp
+│   │   │   ├── JWNU_BFL_AuthWidgetHelper.cpp
+│   │   │   ├── JWNU_GIS_ApiClientService.cpp
+│   │   │   ├── JWNU_GIS_ApiHostProvider.cpp
+│   │   │   ├── JWNU_GIS_ApiIdentityProvider.cpp
+│   │   │   ├── JWNU_GIS_CustomCodeHelper.cpp
+│   │   │   ├── JWNU_GIS_HttpClientHelper.cpp
+│   │   │   ├── JWNU_GIS_HttpRequestJobProcessor.cpp
+│   │   │   ├── JWNU_HttpRequestJob.cpp
+│   │   │   └── JWNU_HttpRequestJobHandle.cpp
 │   │   ├── Public/
 │   │   │   ├── JWNetworkUtility.h
-│   │   │   ├── JWNetworkUtilityTypes.h
 │   │   │   ├── JWNetworkUtilityDelegates.h
+│   │   │   ├── JWNetworkUtilityTypes.h
+│   │   │   ├── JWNU_BFL_ApiClientService.h
+│   │   │   ├── JWNU_BFL_AuthWidgetHelper.h
 │   │   │   ├── JWNU_GIS_ApiClientService.h
+│   │   │   ├── JWNU_GIS_ApiHostProvider.h
+│   │   │   ├── JWNU_GIS_ApiIdentityProvider.h
+│   │   │   ├── JWNU_GIS_CustomCodeHelper.h
 │   │   │   ├── JWNU_GIS_HttpClientHelper.h
 │   │   │   ├── JWNU_GIS_HttpRequestJobProcessor.h
-│   │   │   ├── JWNU_GIS_ApiIdentityProvider.h
-│   │   │   ├── JWNU_GIS_ApiHostProvider.h
-│   │   │   ├── JWNU_GIS_CustomCodeHelper.h
 │   │   │   ├── JWNU_HttpRequestJob.h
-│   │   │   ├── JWNU_HttpRequestJobHandle.h
-│   │   │   ├── JWNU_BFL_ApiClientService.h
-│   │   │   └── JWNU_BFL_AuthWidgetHelper.h
-│   │   └── Private/
-│   │       ├── JWNetworkUtility.cpp
-│   │       ├── JWNetworkUtilityTypes.cpp
-│   │       ├── JWNetworkUtilityDelegates.cpp
-│   │       ├── JWNU_GIS_ApiClientService.cpp
-│   │       ├── JWNU_GIS_HttpClientHelper.cpp
-│   │       ├── JWNU_GIS_HttpRequestJobProcessor.cpp
-│   │       ├── JWNU_GIS_ApiIdentityProvider.cpp
-│   │       ├── JWNU_GIS_ApiHostProvider.cpp
-│   │       ├── JWNU_GIS_CustomCodeHelper.cpp
-│   │       ├── JWNU_HttpRequestJob.cpp
-│   │       ├── JWNU_HttpRequestJobHandle.cpp
-│   │       ├── JWNU_BFL_ApiClientService.cpp
-│   │       └── JWNU_BFL_AuthWidgetHelper.cpp
-│   └── JWNetworkUtilityTest/          (Runtime, depends on JWNetworkUtility)
-│       ├── JWNetworkUtilityTest.Build.cs
+│   │   │   └── JWNU_HttpRequestJobHandle.h
+│   │   └── JWNetworkUtility.Build.cs
+│   └── JWNetworkUtilityTest/
+│       ├── Private/
+│       │   ├── JWNetworkUtilityTest.cpp
+│       │   └── JWNU_Actor_ApiTest.cpp
 │       ├── Public/
 │       │   ├── JWNetworkUtilityTest.h
 │       │   └── JWNU_Actor_ApiTest.h
-│       └── Private/
-│           ├── JWNetworkUtilityTest.cpp
-│           └── JWNU_Actor_ApiTest.cpp
-├── TestServer/
-│   ├── main.py
-│   ├── requirements.txt
-│   └── .env.example
-├── Dosc/
-│   ├── Analysis/                      (gitignored, analysis artifacts)
-│   └── Doxygen/
-├── JWNetworkUtility.uplugin
+│       └── JWNetworkUtilityTest.Build.cs
+├── .gitignore
+├── .ptignore
 ├── CLAUDE.md
+├── JWNetworkUtility.uplugin
 ├── LICENSE
+├── print_tree.py
 └── README.md
 ```
 

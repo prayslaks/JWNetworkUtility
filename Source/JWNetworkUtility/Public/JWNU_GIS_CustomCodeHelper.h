@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Engine/Engine.h"
 #include "JWNU_GIS_CustomCodeHelper.generated.h"
 
 /**

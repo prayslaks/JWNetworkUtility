@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
+#include "HAL/IConsoleManager.h"
 
 class FJWNetworkUtilityModule : public IModuleInterface
 {

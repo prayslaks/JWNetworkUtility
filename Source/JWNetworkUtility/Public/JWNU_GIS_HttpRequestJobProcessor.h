@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "JWNU_GIS_HttpClientHelper.h"
 #include "UObject/Object.h"
 #include "JWNU_HttpRequestJob.h"
+#include "Engine/Engine.h"
+#include "Subsystems/GameInstanceSubsystem.h"
 #include "JWNU_GIS_HttpRequestJobProcessor.generated.h"
 
 /**

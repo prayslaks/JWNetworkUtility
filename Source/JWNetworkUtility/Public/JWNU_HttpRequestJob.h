@@ -6,6 +6,7 @@
 #include "JWNetworkUtilityTypes.h"
 #include "JWNetworkUtilityDelegates.h"
 #include "Interfaces/IHttpRequest.h"
+#include "Engine/EngineTypes.h"
 #include "JWNU_HttpRequestJob.generated.h"
 
 /** 

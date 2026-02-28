@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "JWNetworkUtilityTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Engine/Engine.h"
 #include "JWNU_GIS_ApiIdentityProvider.generated.h"
 
 /**

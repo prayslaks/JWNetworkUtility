@@ -2,6 +2,7 @@
 
 #include "JWNU_GIS_ApiClientService.h"
 #include "JWNU_GIS_ApiHostProvider.h"
+#include "Engine/GameInstance.h"
 #include "JWNU_HttpRequestJobHandle.h"
 
 DEFINE_LOG_CATEGORY(LogJWNU_GIS_ApiClientService);

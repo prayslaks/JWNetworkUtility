@@ -1,9 +1,10 @@
 ﻿// Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
 
 #include "JWNU_GIS_ApiHostProvider.h"
-
 #include "Interfaces/IPluginManager.h"
-
+#include "Engine/GameInstance.h"
+#include "Misc/Paths.h"
+#include "Misc/ConfigCacheIni.h"					// 설정 파일
 #include "JWNetworkUtility.h"
 
 DEFINE_LOG_CATEGORY(LogJWNU_GIS_ApiHostProvider);

@@ -3,6 +3,11 @@
 #include "JWNU_GIS_ApiIdentityProvider.h"
 #include "JWNetworkUtility.h"
 #include "JsonObjectConverter.h"
+#include "Engine/GameInstance.h"
+#include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
+#include "HAL/PlatformFileManager.h"
+#include "GenericPlatform/GenericPlatformFile.h"
 
 #if PLATFORM_WINDOWS
 #include "Windows/AllowWindowsPlatformTypes.h"

@@ -15,6 +15,7 @@
 #include "JWNU_GIS_ApiIdentityProvider.h"
 #include "JWNU_GIS_ApiHostProvider.h"
 #include "JWNU_HttpRequestJobHandle.h"
+#include "Engine/Engine.h"
 #include "JWNU_GIS_ApiClientService.generated.h"
 
 /**
