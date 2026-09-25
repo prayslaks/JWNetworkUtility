@@ -1,5 +1,7 @@
 # JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-25 — 독립 WebSocket 연결 핸들·BP 노드·에코 예제 추가. [WebSocket 가이드](Docs/WebSocket.md).
+
 > 부분 갱신 일자: 2026-09-24 — TestServer의 uv 가상환경·의존성 잠금과 실행 명령 추가.
 
 > 부분 갱신 일자: 2026-09-24 — Content 밖의 TestServer로 이전하고 Uvicorn 실행 안내 추가.
@@ -47,6 +49,9 @@ uv run uvicorn main:app --host 127.0.0.1 --port 5000 --reload
 실행 후 API 문서는 `http://127.0.0.1:5000/docs`, SSE 데모 URL은 `http://127.0.0.1:5000/sse/events`다. 종료는 `Ctrl+C`를 사용한다. 선택적으로 `.env.example`을 `.env`로 복사해 토큰 만료 시간·SMTP·로그 언어를 설정한다. 설정 파일은 `main.py` 옆에서 읽으며 환경변수가 우선한다. 테스트 세션은 메모리에 저장되므로 worker는 하나를 사용하고, `--reload`로 재시작되면 다시 로그인한다. SSE 검증 절차는 [SSE 사용 가이드](Docs/SSE.md)를 참고한다.
 
 ## Features
+
+- WebSocket connections: Connect / SendText / SendBinary / Close, C++ and Blueprint events, lifetime management and a local echo/push example. See [WebSocket guide](Docs/WebSocket.md).
+  - Uses a plugin-owned libwebsockets driver with the engine's bundled libraries to preserve fragmented UTF-8 text; no engine patch is required. See the guide for the reproduced engine-wrapper issue and regression tests.
 
 - SSE HTTP streaming: incremental UTF-8 event parsing, C++ typed callbacks, Blueprint events, bounded buffers, cancellation and JWT refresh integration. See [SSE guide](Docs/SSE.md).
 

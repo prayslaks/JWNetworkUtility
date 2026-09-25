@@ -1,0 +1,29 @@
+# Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
+# Candidate only: installed UE 5.7 source; not applied or compiled.
+--- a/Engine/Source/Runtime/Online/WebSockets/Private/Lws/LwsWebSocket.h
++++ b/Engine/Source/Runtime/Online/WebSockets/Private/Lws/LwsWebSocket.h
+@@ -345 +345 @@
+-	FString ReceiveBuffer;
++	TArray<uint8> ReceiveBuffer;
+--- a/Engine/Source/Runtime/Online/WebSockets/Private/Lws/LwsWebSocket.cpp
++++ b/Engine/Source/Runtime/Online/WebSockets/Private/Lws/LwsWebSocket.cpp
+@@ -312,3 +312,2 @@
+-			FUTF8ToTCHAR Convert((const ANSICHAR*)Data, Length);
+-
+-			if (ReceiveBuffer.Len() + Length > MaxTextMessageBufferSize)
++			if (static_cast<uint64>(ReceiveBuffer.Num()) + Length > MaxTextMessageBufferSize
++				|| Length > static_cast<SIZE_T>(MAX_int32 - ReceiveBuffer.Num()))
+@@ -323,6 +322,11 @@
+-				ReceiveBuffer.Append(Convert.Get(), Convert.Length());
++				if (Length > 0)
++				{
++					ReceiveBuffer.Append(static_cast<const uint8*>(Data), static_cast<int32>(Length));
++				}
+ 				if (BytesLeft == 0 && bIsFinalFragment)
+ 				{
+ 					bWakeGameThread = true;
+-					ReceiveTextQueue.Enqueue(MakeUnique<FLwsReceiveBufferText>(MoveTemp(ReceiveBuffer)));
++					const ANSICHAR* Utf8 = ReceiveBuffer.IsEmpty() ? "" : reinterpret_cast<const ANSICHAR*>(ReceiveBuffer.GetData());
++					FUTF8ToTCHAR Convert(Utf8, ReceiveBuffer.Num());
++					ReceiveTextQueue.Enqueue(MakeUnique<FLwsReceiveBufferText>(FString(Convert.Length(), Convert.Get())));
+ 					ReceiveBuffer.Empty();

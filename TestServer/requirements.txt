@@ -39,3 +39,5 @@ typing-inspection==0.4.4
     #   pydantic
 uvicorn==0.53.0
     # via jwnetworkutility-test-server
+websockets==17.1
+    # via jwnetworkutility-test-server

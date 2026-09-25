@@ -37,9 +37,12 @@ public class JWNetworkUtility : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"SSL",
 			]
 		);
 		
+		AddEngineThirdPartyPrivateStaticDependencies(Target, "OpenSSL", "libWebSockets", "zlib");
+
 		DynamicallyLoadedModuleNames.AddRange(
 			[
 				// ... add any modules that your module loads dynamically here ...

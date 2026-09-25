@@ -1,5 +1,7 @@
 # CLAUDE.md — JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-25 — WebSocket 독립 연결 계층과 로컬 테스트 추가. 정본: [Docs/WebSocket.md](Docs/WebSocket.md).
+
 > 부분 갱신 일자: 2026-09-24 — uv 프로젝트·Python 3.13 가상환경과 잠금 파일 반영.
 
 > 부분 갱신 일자: 2026-09-24 — 테스트 서버를 TestServer로 이동하고 Uvicorn CLI 실행으로 통일.
@@ -45,6 +47,10 @@ FastAPI owns the ASGI app and routes; Uvicorn owns the server process. `main.py`
 SSE endpoints: `/sse/events` (public), `/api/sse/events` (JWT), GET/POST. `run_sse_tests.py --engine <UE-root> --project <uproject>` runs the local server and Unreal automation. `UJWNU_GIS_SseClient` provides `SendSseRequest`, `CallSseApi_NoTemplate`, `CallSseApi_Template<T>`; `UJWNU_BFL_SseClient` exposes direct/service Blueprint nodes. Existing JSON conversion nodes handle event Data. The SSE job subclasses the HTTP job and shares request construction; it does not automatically replay streams. The original planned custom K2Node below remains unimplemented and is not required for SSE.
 
 ## Module Structure
+
+WebSocket uses `FJWNU_WebSocketTransport`, a plugin-owned I/O driver linked to engine-bundled libWebSockets/OpenSSL/zlib plus SSL. The installed UE 5.7 IWebSocket wrapper corrupts UTF-8 split across receive chunks; our driver assembles bytes first and passes the regression without changing the engine. `Docs/EnginePatches/` is an unapplied diagnostic candidate, not a runtime dependency. The public C++/BP API remains transport-independent. Each active connection owns one I/O thread; send/receive queues are bounded and delivery is on the game thread.
+
+WebSocket is independent of HTTP/SSE jobs: `UJWNU_WebSocketConnection` owns connection state, `UJWNU_GIS_WebSocketClient` retains active handles and closes them on world cleanup, and `UJWNU_BFL_WebSocketClient` exposes creation/connect nodes. Bind BP/native events before `Connect`; convenience `ConnectWebSocket` starts on the next Tick. Pass an absolute ws:// or wss:// URL, with no Host/Endpoint concatenation. No automatic reconnect, offline send queue or JWT refresh. Example: `ws://127.0.0.1:5000/ws/echo`; `?push_count=3` enables server push. `uv run python websocket_demo.py` verifies echo; `uv run python run_websocket_tests.py --engine <UE-root> --project <uproject>` runs Python and Unreal tests. TestServer requires the locked `websockets` package.
 
 ```
 Source/
