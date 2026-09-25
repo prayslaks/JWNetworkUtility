@@ -16,6 +16,10 @@ public class JWNetworkUtilityTest : ModuleRules
             new string[]
             {
                 "Core",
+                "JWNetworkUtilityAudio",
+                "CoreUObject",
+                "Engine",
+                "UMG",
                 "Projects",						// IPluginManager
                 "HTTP",							// FHttpModule, IHttpRequest, IHttpResponse
                 "Json",							// FJsonObject, FJsonValue
@@ -26,12 +30,10 @@ public class JWNetworkUtilityTest : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
-                "CoreUObject",
-                "Engine",
-                "UMG",
                 "Slate",
                 "SlateCore", 
-                "JWNetworkUtility"
+                "JWNetworkUtility",
+                "JWNetworkUtilityOpenAI"
             }
         );
     }

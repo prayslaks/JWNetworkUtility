@@ -52,6 +52,7 @@ from fastapi import FastAPI, Header, Query, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 from websocket_examples import router as websocket_router
+from live_examples import router as live_router
 
 # .env 파일 로드
 load_dotenv(Path(__file__).with_name(".env"))
@@ -157,6 +158,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="JWNetworkUtility Test Server", lifespan=lifespan)
 app.include_router(websocket_router)
+app.include_router(live_router)
 
 # ──────────────────────────────────────────────
 # 응답 모델 (UPROPERTY 이름과 일치)

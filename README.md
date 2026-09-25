@@ -1,5 +1,9 @@
 # JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-26 — 범용 JWNetworkUtilityAudio와 로컬 녹음·재생 UMG 패널 추가. [서버 없는 음성 테스트](Docs/Audio.md).
+
+> 부분 갱신 일자: 2026-09-25 — JWNetworkUtilityOpenAI 모듈과 GPT-Live 세션·로컬 오디오·BP 편의 컴포넌트 추가. [BP 빠른 시작](Docs/OpenAILive.md).
+
 > 부분 갱신 일자: 2026-09-25 — 독립 WebSocket 연결 핸들·BP 노드·에코 예제 추가. [WebSocket 가이드](Docs/WebSocket.md).
 
 > 부분 갱신 일자: 2026-09-24 — TestServer의 uv 가상환경·의존성 잠금과 실행 명령 추가.

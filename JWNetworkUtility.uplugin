@@ -19,6 +19,18 @@
 	"Installed": false,
 	"Modules": [
 		{
+			"Name": "JWNetworkUtilityAudio",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64" ]
+		},
+		{
+			"Name": "JWNetworkUtilityOpenAI",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64" ]
+		},
+		{
 			"Name": "JWNetworkUtility",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",

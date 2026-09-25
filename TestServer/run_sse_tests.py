@@ -17,7 +17,8 @@ import urllib.request
 def main(suite="sse"):
     """SSE와 WebSocket 실행기가 서버·UE 프로세스 수명 관리를 공유한다."""
     websocket = suite == "websocket"
-    label = "WebSocket" if websocket else "SSE"
+    live = suite == "live"
+    label = "OpenAI.Live" if live else ("WebSocket" if websocket else "SSE")
     parser = argparse.ArgumentParser(description=f"Local FastAPI + Unreal {label} integration tests")
     parser.add_argument("--engine", type=Path, required=True, help="UE 설치 루트")
     parser.add_argument("--project", type=Path, required=True, help="호스트 .uproject")
@@ -33,7 +34,7 @@ def main(suite="sse"):
     tls_args = ["--ssl-certfile", str(args.tls_cert.resolve()), "--ssl-keyfile", str(args.tls_key.resolve())] if tls else []
     health_context = ssl.create_default_context(cafile=str(args.tls_cert.resolve())) if tls else None
     project = args.project.resolve()
-    output = project.parent / "Saved" / "Automation" / (("JWNUWebSocket-" if websocket else "JWNUSse-") + time.strftime("%Y%m%d-%H%M%S"))
+    output = project.parent / "Saved" / "Automation" / (("JWNUOpenAILive-" if live else ("JWNUWebSocket-" if websocket else "JWNUSse-")) + time.strftime("%Y%m%d-%H%M%S"))
     output.mkdir(parents=True, exist_ok=True)
     # 이미 실행 중인 다른 서버를 테스트 대상으로 오인하지 않는다.
     with socket.socket() as probe:
@@ -67,8 +68,8 @@ def main(suite="sse"):
             command = [str(args.engine / "Engine/Binaries/Win64/UnrealEditor-Cmd.exe"), str(project),
                        "/Engine/Maps/Entry",
                        "-unattended", "-nop4", "-NullRHI", "-nosplash", "-nosound",
-                       "-JWNUWebSocketIntegration" if websocket else "-JWNUSseIntegration",
-                       f"-JWNUWebSocketTestURL={socket_base}" if websocket else f"-JWNUSseTestURL={base}",
+                       "-JWNULiveIntegration" if live else ("-JWNUWebSocketIntegration" if websocket else "-JWNUSseIntegration"),
+                       f"-JWNULiveTestURL={socket_base}" if live else (f"-JWNUWebSocketTestURL={socket_base}" if websocket else f"-JWNUSseTestURL={base}"),
                        f"-ExecCmds=Automation RunTests JWNetworkUtility.{label}",
                        "-TestExit=Automation Test Queue Empty", f"-ReportExportPath={output}",
                        f"-abslog={output / 'Unreal.log'}"]
@@ -86,7 +87,8 @@ def main(suite="sse"):
                 raise RuntimeError(f"Unreal tests failed (exit {result.returncode}); see {output}")
             report = json.loads(index.read_text(encoding="utf-8-sig"))
             passed = report.get("succeeded", 0) + report.get("succeededWithWarnings", 0)
-            if report.get("failed", 0) or report.get("notRun", 0) or report.get("inProcess", 0) or passed != 2:
+            expected = 1 if live else 2
+            if report.get("failed", 0) or report.get("notRun", 0) or report.get("inProcess", 0) or passed != expected:
                 raise RuntimeError(f"Automation did not pass; see {index}")
             print(f"Passed: {passed}; failed: {report.get('failed', 0)}; with warnings: {report.get('succeededWithWarnings', 0)}", flush=True)
         finally:

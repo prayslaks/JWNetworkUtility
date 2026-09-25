@@ -1,5 +1,9 @@
 # CLAUDE.md — JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-26 — 오디오 모듈 분리와 UMG 테스트 Actor·패널 추가. 정본: [Docs/Audio.md](Docs/Audio.md).
+
+> 부분 갱신 일자: 2026-09-25 — OpenAI Runtime 모듈과 GPT-Live 테스트 추가. 정본: [Docs/OpenAILive.md](Docs/OpenAILive.md).
+
 > 부분 갱신 일자: 2026-09-25 — WebSocket 독립 연결 계층과 로컬 테스트 추가. 정본: [Docs/WebSocket.md](Docs/WebSocket.md).
 
 > 부분 갱신 일자: 2026-09-24 — uv 프로젝트·Python 3.13 가상환경과 잠금 파일 반영.
@@ -47,6 +51,10 @@ FastAPI owns the ASGI app and routes; Uvicorn owns the server process. `main.py`
 SSE endpoints: `/sse/events` (public), `/api/sse/events` (JWT), GET/POST. `run_sse_tests.py --engine <UE-root> --project <uproject>` runs the local server and Unreal automation. `UJWNU_GIS_SseClient` provides `SendSseRequest`, `CallSseApi_NoTemplate`, `CallSseApi_Template<T>`; `UJWNU_BFL_SseClient` exposes direct/service Blueprint nodes. Existing JSON conversion nodes handle event Data. The SSE job subclasses the HTTP job and shares request construction; it does not automatically replay streams. The original planned custom K2Node below remains unimplemented and is not required for SSE.
 
 ## Module Structure
+
+`JWNetworkUtilityAudio` owns provider-independent `UJWNU_MicrophoneCaptureComponent`, `UJWNU_PCMPlayerComponent`, PCM/error/device types and conversion. It has no JWNU network or OpenAI dependency. `JWNetworkUtilityOpenAI` depends on Audio and translates audio errors to Live errors; its 16/24kHz restriction stays at the session layer. `AJWNU_AudioTestActor` and `UJWNU_AudioTestWidget` in Test provide a ten-second local recorder and paced playback panel. Use `ShowTestPanel` from Level BP; callers choose input mode/cursor. `run_audio_tests.py` runs `JWNetworkUtility.Audio` without a server or hardware; Live now has one integration test, with PCM tests moved to Audio. Class redirects are in plugin Config; independent audio OnError BP pins now use AudioError and require refresh.
+
+`JWNetworkUtilityOpenAI` is a provider-specific Runtime module inside this plugin. It depends on core JWNU, never the reverse. `UJWNU_OpenAILiveSession` owns the Live protocol without audio devices; `UJWNU_GIS_OpenAI` retains active sessions. Separate microphone/player actor components handle local PCM and `UJWNU_OpenAILiveComponent` wires them for BP. The Win64 capture backend is engine AudioCaptureWasapi; Server targets exclude capture dependencies. No marketplace audio plugin dependency. Primary endpoint: `wss://api.openai.com/v1/live/sessions`, model `gpt-live-1`, Responses backend `gpt-5.6-luna`. TestServer `/live/sessions` is a local echo mock; `run_live_tests.py` runs protocol/BP/PCM tests without credentials or devices. Start binds events before connection; only session.started permits audio; graceful close waits for session.closed. Sessions are single-use. API keys must not be put in serialized settings/assets.
 
 WebSocket uses `FJWNU_WebSocketTransport`, a plugin-owned I/O driver linked to engine-bundled libWebSockets/OpenSSL/zlib plus SSL. The installed UE 5.7 IWebSocket wrapper corrupts UTF-8 split across receive chunks; our driver assembles bytes first and passes the regression without changing the engine. `Docs/EnginePatches/` is an unapplied diagnostic candidate, not a runtime dependency. The public C++/BP API remains transport-independent. Each active connection owns one I/O thread; send/receive queues are bounded and delivery is on the game thread.
 
