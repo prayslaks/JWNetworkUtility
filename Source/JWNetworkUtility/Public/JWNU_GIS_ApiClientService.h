@@ -30,6 +30,7 @@ UCLASS(Config=JWNetworkUtility)
 class JWNETWORKUTILITY_API UJWNU_GIS_ApiClientService : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
+	friend class UJWNU_GIS_SseClient;
 	
 public:
 	/**
@@ -182,6 +183,10 @@ private:
 	 * ServiceType별 토큰 리프레시 진행 중 여부를 나타내는 플래그 맵.
 	 */
 	TMap<EJWNU_ServiceType, bool> RefreshInProgressFlags;
+
+	/** 완료되지 않은 인증 갱신 Job을 GC로부터 보관하는 맵. */
+	UPROPERTY()
+	TMap<EJWNU_ServiceType, TObjectPtr<UJWNU_HttpRequestJob>> ActiveRefreshJobs;
 
 	/**
 	 * ServiceType별 토큰 리프레시 대기열 맵. 리프레시 완료 시 일괄 처리된다.

@@ -22,7 +22,12 @@ FileOpenOrder/
 Thumbs.db
 
 #--- 환경 변수 ---
-Content/Python/DefaultTestServer/.env
+TestServer/.env
+TestServer/.venv/
+TestServer/__pycache__/
+TestServer/*.pyc
+TestServer/dist/
+TestServer/build/
 
 #--- 플러그인 개발 전용 ---
 .claude

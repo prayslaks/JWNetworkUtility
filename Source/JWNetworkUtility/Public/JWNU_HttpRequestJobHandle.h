@@ -55,6 +55,11 @@ public:
 	 */
 	void ClearWaitingForRefresh();
 
+	/** 스트림 관리자가 현재 Job을 조회하는 함수. */
+	UJWNU_HttpRequestJob* GetJob() const { return CurrentJob; }
+	/** Job 생성 또는 인증 갱신 대기 중 SSE 취소 알림을 지정하는 함수. */
+	void SetSsePendingCancel(const FSimpleDelegate& Callback) { SsePendingCancel = Callback; }
+
 private:
 
 	/**
@@ -72,4 +77,5 @@ private:
 	 * 401 리프레시 대기 중 여부를 나타내는 플래그. IsRunning()이 true를 유지하도록 한다.
 	 */
 	bool bIsWaitingForRefresh = false;
+	FSimpleDelegate SsePendingCancel;
 };

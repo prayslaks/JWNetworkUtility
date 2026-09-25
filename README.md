@@ -1,5 +1,11 @@
 # JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-24 — TestServer의 uv 가상환경·의존성 잠금과 실행 명령 추가.
+
+> 부분 갱신 일자: 2026-09-24 — Content 밖의 TestServer로 이전하고 Uvicorn 실행 안내 추가.
+
+> 부분 갱신 일자: 2026-09-23 — SSE HTTP 스트림과 C++·BP API, FastAPI 종단 테스트 추가. [SSE 사용 가이드](Docs/SSE.md).
+
 A standalone Unreal Engine 5.6+ plugin providing a layered HTTP API client system with JWT authentication, automatic token refresh, retry/timeout handling, and Blueprint support.
 
 **Engine:** Unreal Engine 5.6+ | **Author:** prayslaks | **Status:** Beta
@@ -10,6 +16,7 @@ A standalone Unreal Engine 5.6+ plugin providing a layered HTTP API client syste
   - [Table of Contents](#table-of-contents)
   - [☕ Support](#-support)
   - [Features](#features)
+  - [로컬 테스트 서버 실행](#로컬-테스트-서버-실행)
   - [Module Structure](#module-structure)
   - [Architecture](#architecture)
   - [Core Class List](#core-class-list)
@@ -25,7 +32,23 @@ If this project helped you, please consider buying me a coffee to support furthe
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support%20Me-orange?style=flat-square&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/prayslaks)
 
+## 로컬 테스트 서버 실행
+
+프로젝트 루트에서 다음 명령으로 실행한다. FastAPI 앱은 `TestServer`에 있으며 Uvicorn이 HTTP·SSE 연결을 처리한다.
+
+```powershell
+cd Plugins/JWNetworkUtility/TestServer
+uv sync --locked
+uv run uvicorn main:app --host 127.0.0.1 --port 5000 --reload
+```
+
+[uv](https://docs.astral.sh/uv/getting-started/installation/)가 필요하다. 설치 직후 명령을 찾지 못하면 터미널을 다시 연다. `uv sync`가 Python 3.13의 `.venv`를 구성하고 `uv.lock`에 고정된 의존성을 설치한다. `uv run`이 환경을 사용하므로 수동 activate는 필요 없다. `pyproject.toml`과 `uv.lock`은 버전 관리하고 `.venv`는 제외한다. 의존성 변경은 `uv add`/`uv remove`로 관리하며, `requirements.txt`는 호환용 내보내기 파일이다. 변경 후 `uv export --locked --format requirements-txt --no-dev --no-emit-project --no-hashes --output-file requirements.txt`로 갱신한다.
+
+실행 후 API 문서는 `http://127.0.0.1:5000/docs`, SSE 데모 URL은 `http://127.0.0.1:5000/sse/events`다. 종료는 `Ctrl+C`를 사용한다. 선택적으로 `.env.example`을 `.env`로 복사해 토큰 만료 시간·SMTP·로그 언어를 설정한다. 설정 파일은 `main.py` 옆에서 읽으며 환경변수가 우선한다. 테스트 세션은 메모리에 저장되므로 worker는 하나를 사용하고, `--reload`로 재시작되면 다시 로그인한다. SSE 검증 절차는 [SSE 사용 가이드](Docs/SSE.md)를 참고한다.
+
 ## Features
+
+- SSE HTTP streaming: incremental UTF-8 event parsing, C++ typed callbacks, Blueprint events, bounded buffers, cancellation and JWT refresh integration. See [SSE guide](Docs/SSE.md).
 
 - JWT Access/Refresh Token management (Windows DPAPI encryption)
 - Automatic HTTP Request Retry with HTTP Request Job (5xx, timeout, network errors)

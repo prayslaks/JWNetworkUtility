@@ -4,6 +4,8 @@
 
 void UJWNU_HttpRequestJobHandle::Cancel()
 {
+	if (bIsCancelled) { return; }
+	const bool bWasWaiting = bIsWaitingForRefresh;
 	bIsCancelled = true;
 	bIsWaitingForRefresh = false;
 
@@ -11,6 +13,7 @@ void UJWNU_HttpRequestJobHandle::Cancel()
 	{
 		CurrentJob->Cancel();
 	}
+	else if (bWasWaiting) { SsePendingCancel.ExecuteIfBound(); }
 }
 
 bool UJWNU_HttpRequestJobHandle::IsRunning() const

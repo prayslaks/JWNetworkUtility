@@ -60,29 +60,33 @@ public:
 	 * Job을 실행하는 함수.
 	 */
 	UFUNCTION(Category="Job")
-	bool Execute();
+	virtual bool Execute();
 
 	/**
 	 * 진행 중인 Job을 취소하는 함수.
 	 */
 	UFUNCTION(Category="Job")
-	void Cancel();
+	virtual void Cancel();
 
 	/**
 	 * Job이 현재 실행 중인지 반환하는 함수.
 	 * @return 실행 중이면 true
 	 */
 	UFUNCTION(Category="Job|State")
-	FORCEINLINE bool IsRunning() const { return bIsRunning; }
+	virtual bool IsRunning() const { return bIsRunning; }
 
 	/**
 	 * Job이 취소됐는지 반환하는 함수.
 	 * @return 취소됐다면 true
 	 */
 	UFUNCTION(Category="Job|State")
-	FORCEINLINE bool IsCancelled() const {return bIsCancelled; }
+	virtual bool IsCancelled() const {return bIsCancelled; }
 	
 #pragma endregion
+
+protected:
+	/** 일반 HTTP와 SSE가 같은 요청 설정을 사용하는 함수. */
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> CreateConfiguredRequest() const;
 
 private:
 	

@@ -1,5 +1,11 @@
 # CLAUDE.md — JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-24 — uv 프로젝트·Python 3.13 가상환경과 잠금 파일 반영.
+
+> 부분 갱신 일자: 2026-09-24 — 테스트 서버를 TestServer로 이동하고 Uvicorn CLI 실행으로 통일.
+
+> 부분 갱신 일자: 2026-09-23 — SSE 구현과 실제 FastAPI 경로 반영. SSE 정본: [Docs/SSE.md](Docs/SSE.md).
+
 This file provides guidance to Claude Code when working with this plugin.
 
 ## Overview
@@ -26,11 +32,17 @@ Or command line:
 
 ```bash
 cd TestServer
-pip install -r requirements.txt
-uvicorn main:app --reload --port 5000
+uv sync --locked
+uv run uvicorn main:app --host 127.0.0.1 --port 5000 --reload
 ```
 
+`TestServer/pyproject.toml` declares Python 3.13 and dependencies; commit `uv.lock`, ignore `.venv`. Use `uv add`/`uv remove` and export `requirements.txt` with `uv export --locked --format requirements-txt --no-dev --no-emit-project --no-hashes --output-file requirements.txt`. Run the automation script through `uv run python run_sse_tests.py ...` so its Uvicorn subprocess inherits the same interpreter.
+
 Endpoints: `/health`, `/auth/register/*`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/reset`, `/api/data` (CRUD, JWT-protected, `?delay`/`?status` simulation)
+
+FastAPI owns the ASGI app and routes; Uvicorn owns the server process. `main.py` has no standalone CLI. Optional `.env` beside `main.py` configures token TTLs (`ACCESS_TOKEN_EXPIRE_SECONDS=60`, `REFRESH_TOKEN_EXPIRE_SECONDS=360`), SMTP and logging. Environment variables override `.env`. Use one worker because test sessions are in memory; reload resets them.
+
+SSE endpoints: `/sse/events` (public), `/api/sse/events` (JWT), GET/POST. `run_sse_tests.py --engine <UE-root> --project <uproject>` runs the local server and Unreal automation. `UJWNU_GIS_SseClient` provides `SendSseRequest`, `CallSseApi_NoTemplate`, `CallSseApi_Template<T>`; `UJWNU_BFL_SseClient` exposes direct/service Blueprint nodes. Existing JSON conversion nodes handle event Data. The SSE job subclasses the HTTP job and shares request construction; it does not automatically replay streams. The original planned custom K2Node below remains unimplemented and is not required for SSE.
 
 ## Module Structure
 
@@ -348,9 +360,11 @@ JWNetworkUtility/
 │           └── JWNU_BFL_AuthWidget.cpp
 ├── TestServer/
 │   ├── main.py
+│   ├── pyproject.toml
+│   ├── uv.lock
 │   ├── requirements.txt
 │   ├── .env.example
-│   └── openapi.json               (runtime-generated via /docs)
+│   └── run_sse_tests.py           (Uvicorn + Unreal automation runner)
 ├── Doxygen/                       (gitignored, generated docs)
 ├── Analysis/                      (gitignored, analysis artifacts)
 ├── JWNetworkUtility.uplugin

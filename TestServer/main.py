@@ -6,11 +6,8 @@ JWNetworkUtility Test Server
 플러그인의 API 클라이언트 기능을 테스트하기 위한 FastAPI 서버.
 
 실행:
-    pip install -r requirements.txt
-    python main.py
-
-또는:
-    uvicorn main:app --host 0.0.0.0 --port 5000 --reload
+    uv sync --locked
+    uv run uvicorn main:app --host 127.0.0.1 --port 5000 --reload
 
 SMTP 설정 (.env 파일 또는 환경변수):
     SMTP_HOST=smtp.gmail.com
@@ -35,6 +32,7 @@ SMTP 설정 (.env 파일 또는 환경변수):
 """
 
 import asyncio
+import json
 import hashlib
 import os
 import random
@@ -42,8 +40,8 @@ import smtplib
 import string
 import time
 import uuid
-import argparse
 from contextlib import asynccontextmanager
+from pathlib import Path
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import Optional
@@ -51,11 +49,11 @@ from typing import Optional
 import jwt
 from dotenv import load_dotenv
 from fastapi import FastAPI, Header, Query, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
 # .env 파일 로드
-load_dotenv()
+load_dotenv(Path(__file__).with_name(".env"))
 
 # ──────────────────────────────────────────────
 # 로그 다국어 (LOG_LANG: ko / en)
@@ -109,8 +107,8 @@ def log(key: str, **kwargs: object) -> str:
 SECRET_KEY = "jwnetworkutility-test-secret-key"
 
 # 짧게 설정하여 리프레시 플로우 테스트 용이
-ACCESS_TOKEN_EXPIRE_SECONDS = 15
-REFRESH_TOKEN_EXPIRE_SECONDS = 60
+ACCESS_TOKEN_EXPIRE_SECONDS = int(os.getenv("ACCESS_TOKEN_EXPIRE_SECONDS", "60"))
+REFRESH_TOKEN_EXPIRE_SECONDS = int(os.getenv("REFRESH_TOKEN_EXPIRE_SECONDS", "360"))
 
 # 인증코드 5분 유효
 VERIFICATION_CODE_EXPIRE_SECONDS = 300  
@@ -631,6 +629,8 @@ def refresh(req: RefreshRequest):
     플러그인의 ExecuteTokenRefresh가 호출하는 엔드포인트.
     요청 형식: { "userId": "...", "targetServer": "...", "refreshToken": "..." }
     """
+    if os.getenv("JWNU_SSE_TEST_FIXTURES") == "1" and req.userId == "jwnu-sse-test":
+        time.sleep(0.3)  # 갱신 대기 중 GC·취소를 결정적으로 검증한다.
     stored = refresh_token_store.pop(req.refreshToken, None)
     if stored is None:
         return AuthResponse(
@@ -923,20 +923,68 @@ def debug_verifications():
 
 
 # ──────────────────────────────────────────────
-# 엔트리포인트
+# SSE 연결·분할·취소·오류 통합 테스트
 # ──────────────────────────────────────────────
 
-if __name__ == "__main__":
-    import uvicorn
+@app.api_route("/sse/events", methods=["GET", "POST"])
+@app.api_route("/api/sse/events", methods=["GET", "POST"])
+async def sse_events(
+    request: Request,
+    count: int = Query(3, ge=1, le=20),
+    delay: float = Query(0.15, ge=0, le=5),
+    split: int = Query(0, ge=0, le=65536),
+    mode: str = Query("normal"),
+    status: int = Query(200, ge=200, le=599),
+):
+    """실제 스트리밍 수신을 검증하는 유한 SSE. split은 전송 조각 크기다."""
+    if status >= 400:
+        return JSONResponse(status_code=status, headers={"Retry-After": "1"},
+                            content={"message": "simulated SSE rejection", "padding": "x" * (2048 if mode == "large_error" else 0)})
+    if mode == "wrong_type":
+        return JSONResponse(content={"message": "this is not SSE"})
+    body = (await request.body()).decode("utf-8")
+    if mode == "before_open":
+        await asyncio.sleep(2)
 
-    parser = argparse.ArgumentParser(description="JWNetworkUtility Test Server")
-    parser.add_argument("--host", default="0.0.0.0", help="바인드 호스트 (기본: 0.0.0.0)")
-    parser.add_argument("--port", type=int, default=5000, help="바인드 포트 (기본: 5000)")
-    parser.add_argument("--access-token-expire", type=int, default=60, help="엑세스 토큰 만료 시간(초) (기본: 60)")
-    parser.add_argument("--refresh-token-expire", type=int, default=360, help="리프레시 토큰 만료 시간(초) (기본: 360)")
-    args = parser.parse_args()
+    async def generate():
+        yield b": heartbeat\r\nretry: 1000\r\n\r\n"
+        for index in range(count):
+            if await request.is_disconnected():
+                return
+            if mode == "bad_json" and index == 1:
+                data = "not-json"
+            else:
+                data = json.dumps({"Index": index, "Text": "안녕 ✈", "Echo": body,
+                                   "Header": request.headers.get("x-jwnu-test", "")}, ensure_ascii=False)
+            frame = f"event: delta\r\nid: {index}\r\ndata: {data}\r\n\r\n".encode("utf-8")
+            if split:
+                for offset in range(0, len(frame), split):
+                    yield frame[offset:offset + split]
+                    await asyncio.sleep(0.001)
+            else:
+                yield frame
+            if mode == "disconnect":
+                raise RuntimeError("Intentional JWNU SSE disconnect")
+            if mode == "stall":
+                await asyncio.sleep(2)
+            await asyncio.sleep(delay)
+        if mode == "unfinished":
+            yield b"data: must-not-be-dispatched"
 
-    ACCESS_TOKEN_EXPIRE_SECONDS = args.access_token_expire
-    REFRESH_TOKEN_EXPIRE_SECONDS = args.refresh_token_expire
+    headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+    if mode == "disconnect":
+        # 미들웨어가 예외를 EOF로 전달해도 미완료 HTTP 본문으로 판별되도록 한다.
+        headers["Content-Length"] = "1000000"
+    return StreamingResponse(generate(), media_type="text/event-stream", headers=headers)
 
-    uvicorn.run(app, host=args.host, port=args.port)
+
+@app.post("/sse/test-session")
+async def sse_test_session(request: Request):
+    """명시적으로 켠 로컬 테스트 서버에서만 인증 갱신용 세션을 발급한다."""
+    if os.getenv("JWNU_SSE_TEST_FIXTURES") != "1" or not request.client or request.client.host not in ("127.0.0.1", "::1"):
+        return JSONResponse(status_code=404, content={"message": "not found"})
+    user_id = "jwnu-sse-test"
+    token, expiry = create_refresh_token(user_id, "GameServer")
+    return AuthResponse(Success=True, Code="TEST_SESSION", Message="Local SSE fixture",
+                        AccessToken="intentionally-invalid", ExpiresAt=int(time.time()) + 600,
+                        RefreshToken=token, RefreshTokenExpiresAt=expiry, UserId=user_id)

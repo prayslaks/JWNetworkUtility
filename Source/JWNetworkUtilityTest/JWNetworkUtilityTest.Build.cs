@@ -6,6 +6,10 @@ public class JWNetworkUtilityTest : ModuleRules
 {
     public JWNetworkUtilityTest(ReadOnlyTargetRules Target) : base(Target)
     {
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "BlueprintGraph", "KismetCompiler" });
+		}
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(

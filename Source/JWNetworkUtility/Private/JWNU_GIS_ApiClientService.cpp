@@ -269,7 +269,7 @@ void UJWNU_GIS_ApiClientService::ExecuteTokenRefresh(EJWNU_ServiceType InService
 			const FString ExpireDateTime = FDateTime::FromUnixTimestamp(ResultData.ExpiresAt).ToString();
 			const FString NewRefreshToken = ResultData.RefreshToken;
 			const FString RefreshExpireDateTime = FDateTime::FromUnixTimestamp(ResultData.RefreshTokenExpiresAt).ToString();
-			PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("AccessToken : %s\nExpiresAt : %s\nRefreshToken : %s\nRefreshTokenExpiresAt : %s"), *NewAccessToken, *ExpireDateTime, *NewRefreshToken, *RefreshExpireDateTime);
+			PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("Token expiry updated: access=%s refresh=%s"), *ExpireDateTime, *RefreshExpireDateTime);
 
 			// 인증 서버로부터 엑세스 토큰과 리프레시 토큰 컨테이너 갱신
 			IdentityProvider->SetAccessTokenContainer(InServiceType, { NewAccessToken, ResultData.ExpiresAt });
@@ -293,11 +293,14 @@ void UJWNU_GIS_ApiClientService::ExecuteTokenRefresh(EJWNU_ServiceType InService
 		TEXT("{\"userId\": \"%s\", \"targetServer\": \"%s\", \"refreshToken\": \"%s\"}"),
 		*CurrentUserId, *TargetServer, *RefreshTokenContainer.RefreshToken);
 	JWNU_SCREEN_DEBUG(-1, 5.0f, FColor::Cyan, TEXT("[JWNU] Calling Refresh API : %s"), *RefreshURL);
-	UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), EJWNU_HttpMethod::Post, RefreshURL, TEXT(""), RefreshBody, {}, RefreshCallback);
+	UJWNU_HttpRequestJob* RefreshJob = UJWNU_GIS_HttpClientHelper::SendRequest_CustomResponse(GetWorld(), EJWNU_HttpMethod::Post, RefreshURL, TEXT(""), RefreshBody, {}, RefreshCallback);
+	if (RefreshJob) { ActiveRefreshJobs.Add(InServiceType, RefreshJob); }
+	else { DrainPendingJobs_Failure(InServiceType, TEXT("REFRESH_START_FAILED"), TEXT("Failed to start token refresh")); }
 }
 
 void UJWNU_GIS_ApiClientService::DrainPendingJobs_Success(const EJWNU_ServiceType InServiceType, const FString& NewAccessToken)
 {
+	ActiveRefreshJobs.Remove(InServiceType);
 	// 플래그 해제
 	RefreshInProgressFlags.FindOrAdd(InServiceType) = false;
 
@@ -321,6 +324,7 @@ void UJWNU_GIS_ApiClientService::DrainPendingJobs_Success(const EJWNU_ServiceTyp
 
 void UJWNU_GIS_ApiClientService::DrainPendingJobs_Failure(const EJWNU_ServiceType InServiceType, const FString& ErrorCode, const FString& ErrorMessage)
 {
+	ActiveRefreshJobs.Remove(InServiceType);
 	// 플래그 해제
 	RefreshInProgressFlags.FindOrAdd(InServiceType) = false;
 

@@ -78,8 +78,20 @@ void UJWNU_HttpRequestJob::SendRequest()
 	CurrentAttempt++;
 	PRINT_LOG(LogJWNU_HttpRequestJob, Display, TEXT("HTTP request attempt %d/%d: %s"), CurrentAttempt, Config.MaxRetries, *URL);
 
-	// HTTP 요청 객체 생성
-	CurrentRequest = FHttpModule::Get().CreateRequest();
+	CurrentRequest = CreateConfiguredRequest();
+
+	// 응답 콜백 바인딩
+	CurrentRequest->OnProcessRequestComplete().BindUObject(this, &UJWNU_HttpRequestJob::OnResponseReceived);
+	if (const UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(TimeoutTimerHandle, this, &UJWNU_HttpRequestJob::OnTimeout, Config.TimeoutSeconds, false);
+	}
+	CurrentRequest->ProcessRequest();
+}
+
+TSharedRef<IHttpRequest, ESPMode::ThreadSafe> UJWNU_HttpRequestJob::CreateConfiguredRequest() const
+{
+	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
 
 	// HTTP 메서드 문자열 변환
 	FString MethodString;
@@ -100,39 +112,23 @@ void UJWNU_HttpRequestJob::SendRequest()
 	}
 
 	// 요청 설정
-	CurrentRequest->SetVerb(MethodString);
-	CurrentRequest->SetURL(URL);
-	CurrentRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	Request->SetVerb(MethodString);
+	Request->SetURL(URL);
+	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
 	// JWT 인증 토큰 설정
 	if (!AuthToken.IsEmpty())
 	{
-		CurrentRequest->SetHeader(TEXT("Authorization"), FString::Printf(TEXT("Bearer %s"), *AuthToken));
+		Request->SetHeader(TEXT("Authorization"), FString::Printf(TEXT("Bearer %s"), *AuthToken));
 	}
 
 	// JSON 바디 설정 (POST/PUT)
 	if (!JsonBody.IsEmpty())
 	{
-		CurrentRequest->SetContentAsString(JsonBody);
+		Request->SetContentAsString(JsonBody);
 	}
 
-	// 응답 콜백 바인딩
-	CurrentRequest->OnProcessRequestComplete().BindUObject(this, &UJWNU_HttpRequestJob::OnResponseReceived);
-
-	// 타임아웃 타이머 설정
-	if (const UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().SetTimer(
-			TimeoutTimerHandle,
-			this,
-			&UJWNU_HttpRequestJob::OnTimeout,
-			Config.TimeoutSeconds,
-			false
-		);
-	}
-
-	// 요청 실행
-	CurrentRequest->ProcessRequest();
+	return Request;
 }
 
 void UJWNU_HttpRequestJob::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, const bool bNetworkAvailable)
