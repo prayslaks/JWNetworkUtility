@@ -1,70 +1,69 @@
-﻿// Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
+// Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
 
 #include "JWNU_BFL_ApiClientService.h"
 #include "JsonObjectConverter.h"
 #include "JWNU_GIS_ApiClientService.h"
-#include "JWNU_HttpRequestJobHandle.h"
+#include "JWNU_ApiRequest.h"
+#include "JWNU_HttpRequest.h"
+#include "UObject/StrongObjectPtr.h"
 
-UJWNU_HttpRequestJobHandle* UJWNU_BFL_ApiClientService::SendHttpRequest(
-	const UObject* WorldContextObject,
-	const EJWNU_HttpMethod InMethod,
-	const FString& InURL,
-	const FString& InAuthToken,
-	const FString& InContentBody,
-	const TMap<FString, FString>& InQueryParams,
-	const FOnHttpResponseBPEvent& InOnHttpResponse,
-	const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry)
+UJWNU_HttpRequest* UJWNU_BFL_ApiClientService::SendHttpRequest(const UObject* WorldContextObject, EJWNU_HttpMethod InMethod,
+	const FString& InURL, const FString& ApiKey, const FString& InContentBody, const TMap<FString, FString>& InQueryParams,
+	const FOnHttpResponseBPEvent& InOnHttpResponse, const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry)
 {
-	// 블루프린트 이벤트를 다시 델리게이트로 감싼다
-	const FOnHttpRequestCompletedDelegate ResponseCallback = FOnHttpRequestCompletedDelegate::CreateLambda([InOnHttpResponse](const int32 StatusCode, const FString& ResponseBody)
+	TStrongObjectPtr<UJWNU_HttpRequest> Request(UJWNU_HttpRequest::CreateHttpRequest(WorldContextObject));
+	if (!Request.IsValid())
 	{
-		InOnHttpResponse.ExecuteIfBound(JWNU_IntToHttpStatusCode(StatusCode), ResponseBody);
-	});
-
-	// 블루프린트 이벤트를 다시 델리게이트로 감싼다
-	const FOnHttpRequestJobRetryDelegate RetryCallback = FOnHttpRequestJobRetryDelegate::CreateLambda([InOnHttpRequestJobRetry](const int32 AttemptNumber)
-	{
-		InOnHttpRequestJobRetry.ExecuteIfBound(AttemptNumber);
-	});
-
-	// HTTP 리퀘스트
-	UJWNU_HttpRequestJob* Job = UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(WorldContextObject, InMethod, InURL, InAuthToken, InContentBody, InQueryParams, ResponseCallback, RetryCallback);
-	if (Job == nullptr)
-	{
+		InOnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None,
+			TEXT("{\"success\":false,\"code\":\"START_FAILED\",\"message\":\"Cannot create HTTP request for this world\"}"));
 		return nullptr;
 	}
-
-	// Handle 생성 및 바인딩
-	UJWNU_HttpRequestJobHandle* Handle = NewObject<UJWNU_HttpRequestJobHandle>(Job->GetOuter());
-	Handle->BindJob(Job);
-	return Handle;
+	Request->OnCompletedNative.AddLambda([InOnHttpResponse](const FJWNU_HttpResult& Result)
+	{ InOnHttpResponse.ExecuteIfBound(JWNU_IntToHttpStatusCode(Result.StatusCode), Result.ResponseBody); });
+	Request->OnFailedNative.AddLambda([InOnHttpResponse](const FJWNU_HttpError& Error)
+	{
+		if (Error.Code == EJWNU_HttpRequestError::Cancelled)
+		{
+			InOnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None,
+				TEXT("{\"success\":false,\"code\":\"CANCELLED\",\"message\":\"HTTP request cancelled\"}"));
+		}
+		else if (Error.Response.StatusCode == 0 && !Error.Message.IsEmpty())
+		{
+			InOnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None,
+				TEXT("{\"success\":false,\"code\":\"START_FAILED\",\"message\":\"Cannot start HTTP request\"}"));
+		}
+		else { InOnHttpResponse.ExecuteIfBound(JWNU_IntToHttpStatusCode(Error.Response.StatusCode), Error.Response.ResponseBody); }
+	});
+	Request->OnRetryNative.AddLambda([InOnHttpRequestJobRetry](int32 AttemptNumber)
+	{ InOnHttpRequestJobRetry.ExecuteIfBound(AttemptNumber); });
+	Request->Start(InMethod, InURL, InContentBody, InQueryParams, ApiKey);
+	return Request.Get();
 }
 
-UJWNU_HttpRequestJobHandle* UJWNU_BFL_ApiClientService::CallApi(
-	const UObject* WorldContextObject,
-	const EJWNU_ServiceType InServiceType,
-	const EJWNU_HttpMethod InMethod,
-	const FString& InEndpoint,
-	const FString& InContentBody,
-	const TMap<FString, FString>& InQueryParams,
-	const FOnHttpResponseBPEvent& InOnHttpResponse,
-	const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry,
-	const bool bRequiresAuth)
+UJWNU_ApiRequest* UJWNU_BFL_ApiClientService::CallApi(const UObject* WorldContextObject, EJWNU_ServiceType InServiceType,
+	EJWNU_HttpMethod InMethod, const FString& InEndpoint, const FString& InContentBody,
+	const TMap<FString, FString>& InQueryParams, const FOnHttpResponseBPEvent& InOnHttpResponse,
+	const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry, bool bRequiresAuth)
 {
-	// 블루프린트 이벤트를 다시 델리게이트로 감싼다
-	const FOnHttpResponseDelegate ResponseCallback = FOnHttpResponseDelegate::CreateLambda([InOnHttpResponse](const EJWNU_HttpStatusCode StatusCode, const FString& ResponseBody)
+	TStrongObjectPtr<UJWNU_ApiRequest> Request(UJWNU_ApiRequest::CreateApiRequest(WorldContextObject));
+	if (!Request.IsValid())
 	{
-		InOnHttpResponse.ExecuteIfBound(StatusCode, ResponseBody);
-	});
-
-	// 블루프린트 이벤트를 다시 델리게이트로 감싼다
-	const FOnHttpRequestJobRetryDelegate RetryCallback = FOnHttpRequestJobRetryDelegate::CreateLambda([InOnHttpRequestJobRetry](const int32 AttemptNumber)
+		InOnHttpResponse.ExecuteIfBound(EJWNU_HttpStatusCode::None,
+			TEXT("{\"success\":false,\"code\":\"START_FAILED\",\"message\":\"Cannot create API request for this world\"}"));
+		return nullptr;
+	}
+	Request->OnCompletedNative.AddLambda([InOnHttpResponse](const FJWNU_ApiResult& Result)
+	{ InOnHttpResponse.ExecuteIfBound(Result.StatusCode, Result.ResponseBody); });
+	Request->OnFailedNative.AddLambda([InOnHttpResponse](const FJWNU_ApiError& Error)
 	{
-		InOnHttpRequestJobRetry.ExecuteIfBound(AttemptNumber);
+		const FString Body = Error.Code == EJWNU_ApiRequestError::Cancelled
+			? TEXT("{\"success\":false,\"code\":\"CANCELLED\",\"message\":\"API request cancelled\"}") : Error.Response.ResponseBody;
+		InOnHttpResponse.ExecuteIfBound(Error.Response.StatusCode, Body);
 	});
-
-	// HTTP 리퀘스트
-	return UJWNU_GIS_ApiClientService::CallApi_NoTemplate(WorldContextObject, InMethod, InServiceType, InEndpoint, InContentBody, InQueryParams, ResponseCallback, RetryCallback, bRequiresAuth);
+	Request->OnRetryNative.AddLambda([InOnHttpRequestJobRetry](int32 AttemptNumber)
+	{ InOnHttpRequestJobRetry.ExecuteIfBound(AttemptNumber); });
+	Request->Start(InServiceType, InMethod, InEndpoint, InContentBody, InQueryParams, bRequiresAuth);
+	return Request.Get();
 }
 
 void UJWNU_BFL_ApiClientService::LoadRefreshTokenContainer(

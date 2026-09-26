@@ -57,6 +57,9 @@ enum class EJWNU_HttpStatusCode : uint8
 
 	// 미등록 상태 코드
 	UnknownError			UMETA(DisplayName = "Unknown Error"),
+
+	// 기존 저장 열거값을 유지하면서 나머지 2XX 성공을 구분한다.
+	OtherSuccess            UMETA(DisplayName = "Other 2XX Success"),
 };
 
 /**
@@ -104,7 +107,7 @@ inline EJWNU_HttpStatusCode JWNU_IntToHttpStatusCode(const int32 StatusCode)
 	case 503: return EJWNU_HttpStatusCode::ServiceUnavailable;
 	case 504: return EJWNU_HttpStatusCode::GatewayTimeout;
 
-	default:  return EJWNU_HttpStatusCode::UnknownError;
+	default:  return StatusCode >= 200 && StatusCode < 300 ? EJWNU_HttpStatusCode::OtherSuccess : EJWNU_HttpStatusCode::UnknownError;
 	}
 }
 

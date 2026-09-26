@@ -16,14 +16,16 @@ class JWNETWORKUTILITYOPENAI_API UJWNU_OpenAILiveComponent : public UActorCompon
 {
     GENERATED_BODY()
 public:
-    /** 직접 전달한 키로 Live 세션을 시작하는 함수. 로컬 모의 서버는 빈 키를 사용한다. */
-    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live")
-    bool StartLive(const FJWNU_OpenAILiveOptions& Options, const FString& ApiKey);
-    /** OPENAI_API_KEY 환경변수로 공식 OpenAI 세션을 시작하는 함수. */
-    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live")
-    bool StartLiveFromEnvironment(const FJWNU_OpenAILiveOptions& Options);
+    /** 직접 전달한 키로 세션을 시작하는 함수. 미연결 Options는 기본값이며 로컬 모의 서버는 빈 키를 사용한다. */
+    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live", meta=(AutoCreateRefTerm="Options"))
+    bool Start(const FJWNU_OpenAILiveOptions& Options, UPARAM(DisplayName="API Key") const FString& ApiKey);
+    /** OPENAI_API_KEY로 공식 세션을 시작하는 함수. 미연결 Options는 기본값을 사용한다. */
+    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live", meta=(AutoCreateRefTerm="Options"))
+    bool StartFromEnvironment(const FJWNU_OpenAILiveOptions& Options);
     /** 녹음·재생을 중단하고 세션의 정상 종료를 요청하는 함수. */
-    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live") void StopLive();
+    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live") void Close();
+    /** 녹음·재생과 활성 세션을 즉시 취소하는 함수. */
+    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live") void Cancel();
     UFUNCTION(BlueprintPure, Category="JWNU|OpenAI|Live") UJWNU_OpenAILiveSession* GetSession() const { return Session; }
 
     /** 시작할 때 마이크를 함께 사용할지 결정하는 필드. */

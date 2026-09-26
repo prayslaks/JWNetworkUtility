@@ -7,6 +7,7 @@ void UJWNU_SseTestReceiver::ReceiveEvent_Implementation(const FJWNU_SseEvent& Ev
 {
 	FJWNU_SseTestPayload Payload;
 	if (FJsonObjectConverter::JsonObjectStringToUStruct(Event.Data, &Payload, 0, 0)) { RecordParsed(Payload); }
+	else { ++ParseErrorCount; }
 }
 
 void UJWNU_SseTestReceiver::RecordParsed(const FJWNU_SseTestPayload& Payload)
@@ -18,5 +19,5 @@ void UJWNU_SseTestReceiver::RecordParsed(const FJWNU_SseTestPayload& Payload)
 
 void UJWNU_SseTestReceiver::ReceiveOpened(const FJWNU_SseResponse& Response) { ++OpenCount; LastResponse = Response; }
 void UJWNU_SseTestReceiver::ReceiveCompleted(const FJWNU_SseResponse& Response) { ++TerminalCount; LastResponse = Response; CompletedSeconds = FPlatformTime::Seconds(); }
-void UJWNU_SseTestReceiver::ReceiveError(const FJWNU_SseResponse& Response) { ++TerminalCount; LastResponse = Response; }
-void UJWNU_SseTestReceiver::ReceiveCancelled() { ++TerminalCount; bCancelled = true; }
+void UJWNU_SseTestReceiver::ReceiveError(const FJWNU_SseResponse& Response) { ++TerminalCount; LastResponse = Response; bCancelled = Response.Error == EJWNU_SseError::Cancelled; }
+void UJWNU_SseTestReceiver::ReceiveCancelled() { FJWNU_SseResponse Response; Response.Error = EJWNU_SseError::Cancelled; ReceiveError(Response); }

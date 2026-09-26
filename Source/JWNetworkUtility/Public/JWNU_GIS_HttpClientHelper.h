@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Containers/Ticker.h"
 #include "JWNetworkUtilityTypes.h"
 #include "JWNetworkUtilityDelegates.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "JWNU_HttpRequestJob.h"
 #include "Engine/Engine.h"
 #include "JWNU_GIS_HttpClientHelper.generated.h"
+
+class UJWNU_HttpRequest;
 
 /**
  * 클래스 전용 로그 카테고리 선언
@@ -27,6 +30,7 @@ class JWNETWORKUTILITY_API UJWNU_GIS_HttpClientHelper : public UGameInstanceSubs
 public:
 	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
 	
 	/**
 	 * 외부에서 HTTP 클라이언트 헬퍼 서브시스템을 획득하기 위해 호출하는 함수. (네이티브 C++ 용)
@@ -78,6 +82,15 @@ public:
 		const FOnHttpRequestJobRetryDelegate& InOnHttpRequestJobRetry = FOnHttpRequestJobRetryDelegate());
 	
 private:
+	friend class UJWNU_HttpRequest;
+	bool TrackRequest(UJWNU_HttpRequest* Request);
+	bool TickRequests(float DeltaSeconds);
+	void CleanupRequestWorld(UWorld* World, bool bSessionEnded, bool bCleanupResources);
+	/** 직접 HTTP 요청을 완료까지 GC로부터 보호하는 필드. */
+	UPROPERTY(Transient) TArray<TObjectPtr<UJWNU_HttpRequest>> ActiveRequests;
+	FTSTicker::FDelegateHandle RequestTicker;
+	FDelegateHandle RequestWorldCleanup;
+	bool bStoppingRequests = false;
 	
 	/**
 	 * 동일한 이름의 정적 함수에 의해 호출되어, 실제로 처리하는 비정적 함수.

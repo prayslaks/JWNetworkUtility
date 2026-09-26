@@ -12,7 +12,7 @@
 #include "Misc/Base64.h"
 #include "UObject/StrongObjectPtr.h"
 
-UJWNU_OpenAILiveSession* UJWNU_OpenAILiveSession::CreateLiveSession(const UObject* Context)
+UJWNU_OpenAILiveSession* UJWNU_OpenAILiveSession::CreateOpenAILiveSession(const UObject* Context)
 {
     check(IsInGameThread());
     UWorld* World = GEngine ? GEngine->GetWorldFromContextObject(Context, EGetWorldErrorMode::ReturnNull) : nullptr;
@@ -61,7 +61,7 @@ bool UJWNU_OpenAILiveSession::Start(const FJWNU_OpenAILiveOptions& Options, cons
         Fail(TEXT("configuration"), TEXT("Invalid endpoint, PCM rate, model, voice or timeout."));
         return false;
     }
-    if (!bLocal && ApiKey.IsEmpty()) { Fail(TEXT("credentials"), TEXT("A bearer credential is required.")); return false; }
+    if (!bLocal && ApiKey.IsEmpty()) { Fail(TEXT("credentials"), TEXT("An API key is required.")); return false; }
     if (!OwnerClient.IsValid() || !OwnerClient->Track(this))
     {
         Fail(TEXT("world"), TEXT("The owning world is unavailable."));
@@ -143,7 +143,7 @@ bool UJWNU_OpenAILiveSession::SendEventJson(const FString& Json)
 bool UJWNU_OpenAILiveSession::Close()
 {
     check(IsInGameThread());
-    if (State == EJWNU_OpenAILiveState::Connecting || State == EJWNU_OpenAILiveState::Starting) { Abort(); return true; }
+    if (State == EJWNU_OpenAILiveState::Connecting || State == EJWNU_OpenAILiveState::Starting) { Cancel(); return true; }
     if (State != EJWNU_OpenAILiveState::Ready) { return false; }
     State = EJWNU_OpenAILiveState::Closing;
     Deadline = FPlatformTime::Seconds() + Settings.CloseTimeoutSeconds;
@@ -151,7 +151,7 @@ bool UJWNU_OpenAILiveSession::Close()
     return true;
 }
 
-void UJWNU_OpenAILiveSession::Abort()
+void UJWNU_OpenAILiveSession::Cancel()
 {
     check(IsInGameThread());
     if (!IsActive()) { return; }

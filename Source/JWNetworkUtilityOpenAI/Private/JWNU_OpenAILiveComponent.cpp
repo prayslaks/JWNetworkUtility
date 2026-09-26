@@ -10,7 +10,7 @@ bool UJWNU_OpenAILiveComponent::Prepare()
 {
     check(IsInGameThread());
     if (bAwaitingClose || bInCallback || !GetOwner() || !IsRegistered()) { return false; }
-    Session = UJWNU_OpenAILiveSession::CreateLiveSession(this);
+    Session = UJWNU_OpenAILiveSession::CreateOpenAILiveSession(this);
     if (!Session) { return false; }
     bCaptureThisSession = bUseMicrophone;
     bPlayThisSession = bPlayAudio;
@@ -37,13 +37,13 @@ bool UJWNU_OpenAILiveComponent::Prepare()
     bAwaitingClose = true;
     return true;
 }
-bool UJWNU_OpenAILiveComponent::StartLive(const FJWNU_OpenAILiveOptions& Options, const FString& ApiKey)
+bool UJWNU_OpenAILiveComponent::Start(const FJWNU_OpenAILiveOptions& Options, const FString& ApiKey)
 {
     if (!Prepare()) { return false; }
     TGuardValue<bool> Guard(bInCallback, true);
     return Session->Start(Options, ApiKey);
 }
-bool UJWNU_OpenAILiveComponent::StartLiveFromEnvironment(const FJWNU_OpenAILiveOptions& Options)
+bool UJWNU_OpenAILiveComponent::StartFromEnvironment(const FJWNU_OpenAILiveOptions& Options)
 {
     if (!Prepare()) { return false; }
     TGuardValue<bool> Guard(bInCallback, true);
@@ -62,7 +62,7 @@ void UJWNU_OpenAILiveComponent::Ready(const FString& Id)
 }
 void UJWNU_OpenAILiveComponent::Audio(const TArray<uint8>& Bytes)
 {
-    // StopLive 이후 최종 이벤트를 기다리는 동안 도착하는 PCM은 재생하지 않는다.
+    // Close 이후 최종 이벤트를 기다리는 동안 도착하는 PCM은 재생하지 않는다.
     if (bPlayThisSession && Player && Session->GetState() == EJWNU_OpenAILiveState::Ready) { Player->QueuePCM(Bytes); }
     OnAudio.Broadcast(Bytes);
 }
@@ -101,17 +101,23 @@ void UJWNU_OpenAILiveComponent::StopAudio()
     if (Microphone) { Microphone->StopCapture(); }
     if (Player) { Player->StopPlayer(); }
 }
-void UJWNU_OpenAILiveComponent::StopLive()
+void UJWNU_OpenAILiveComponent::Close()
 {
     check(IsInGameThread());
     StopAudio();
     if (Session) { Session->Close(); }
 }
+void UJWNU_OpenAILiveComponent::Cancel()
+{
+    check(IsInGameThread());
+    StopAudio();
+    if (Session) { Session->Cancel(); }
+}
 void UJWNU_OpenAILiveComponent::EndPlay(const EEndPlayReason::Type Reason)
 {
     bInCallback = true;
     StopAudio();
-    if (Session) { Session->Abort(); }
+    if (Session) { Session->Cancel(); }
     if (Microphone) { Microphone->DestroyComponent(); Microphone = nullptr; }
     if (Player) { Player->DestroyComponent(); Player = nullptr; }
     Super::EndPlay(Reason);
@@ -122,7 +128,7 @@ void UJWNU_OpenAILiveComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
     // BeginPlay 전 명시적으로 시작했다가 컴포넌트를 제거해도 세션·장치를 남기지 않는다.
     bInCallback = true;
     StopAudio();
-    if (Session) { Session->Abort(); }
+    if (Session) { Session->Cancel(); }
     if (Microphone) { Microphone->DestroyComponent(); Microphone = nullptr; }
     if (Player) { Player->DestroyComponent(); Player = nullptr; }
     Super::OnComponentDestroyed(bDestroyingHierarchy);

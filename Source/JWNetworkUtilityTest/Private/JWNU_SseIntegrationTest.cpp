@@ -1,7 +1,11 @@
 // Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
 
 #include "JWNU_SseTestReceiver.h"
+#include "JWNU_SseRequest.h"
 #include "JWNU_BFL_SseClient.h"
+#include "JWNU_HttpRequest.h"
+#include "JWNU_GIS_ApiClientService.h"
+#include "UObject/StrongObjectPtr.h"
 #include "JWNU_BFL_ApiClientService.h"
 #include "JWNU_GIS_ApiHostProvider.h"
 #include "JWNU_GIS_ApiIdentityProvider.h"
@@ -37,6 +41,21 @@ inline UBlueprint* BuildReceiverBlueprint(FAutomationTestBase* Test)
 	UEdGraph* Graph = FBlueprintEditorUtils::CreateNewGraph(BP, TEXT("SseEventGraph"), UEdGraph::StaticClass(), UEdGraphSchema_K2::StaticClass());
 	FBlueprintEditorUtils::AddUbergraphPage(BP, Graph);
 	const auto* Schema = GetDefault<UEdGraphSchema_K2>();
+	for (bool bService : {false, true})
+	{
+		auto* StartEvent = NewObject<UK2Node_Event>(Graph);
+		StartEvent->EventReference.SetExternalMember(bService ? TEXT("StartServiceDefaults") : TEXT("StartDirectDefaults"), UJWNU_SseTestReceiver::StaticClass());
+		StartEvent->bOverrideFunction = true; Graph->AddNode(StartEvent); StartEvent->CreateNewGuid(); StartEvent->AllocateDefaultPins();
+		auto* StartCall = NewObject<UK2Node_CallFunction>(Graph);
+		StartCall->SetFromFunction((bService ? UJWNU_SseApiRequest::StaticClass() : UJWNU_SseRequest::StaticClass())->FindFunctionByName(TEXT("Start")));
+		Graph->AddNode(StartCall); StartCall->CreateNewGuid(); StartCall->AllocateDefaultPins();
+		Test->TestTrue(TEXT("SSE Start exec"), Schema->TryCreateConnection(StartEvent->FindPinChecked(UEdGraphSchema_K2::PN_Then), StartCall->FindPinChecked(UEdGraphSchema_K2::PN_Execute)));
+		Test->TestTrue(TEXT("SSE Start target"), Schema->TryCreateConnection(StartEvent->FindPinChecked(TEXT("Target")), StartCall->FindPinChecked(UEdGraphSchema_K2::PN_Self)));
+		Test->TestTrue(TEXT("SSE Start address"), Schema->TryCreateConnection(StartEvent->FindPinChecked(TEXT("Address")), StartCall->FindPinChecked(bService ? TEXT("Endpoint") : TEXT("URL"))));
+		if (bService) { Schema->TrySetDefaultValue(*StartCall->FindPinChecked(TEXT("bRequiresAuth")), TEXT("false")); }
+		Test->TestTrue(TEXT("SSE Options unconnected"), StartCall->FindPinChecked(TEXT("Options"))->LinkedTo.IsEmpty());
+		Test->TestTrue(TEXT("SSE QueryParams unconnected"), StartCall->FindPinChecked(TEXT("QueryParams"))->LinkedTo.IsEmpty());
+	}
 	auto* Event = NewObject<UK2Node_Event>(Graph);
 	Event->EventReference.SetExternalMember(GET_FUNCTION_NAME_CHECKED(UJWNU_SseTestReceiver, ReceiveEvent), UJWNU_SseTestReceiver::StaticClass());
 	Event->bOverrideFunction = true; Graph->AddNode(Event); Event->CreateNewGuid(); Event->AllocateDefaultPins();
@@ -64,34 +83,36 @@ inline UBlueprint* BuildReceiverBlueprint(FAutomationTestBase* Test)
 class FIntegrationCommand : public IAutomationLatentCommand
 {
 public:
-	explicit FIntegrationCommand(FAutomationTestBase* InTest) : Test(InTest) {}
+	explicit FIntegrationCommand(FAutomationTestBase* InTest, bool bInImmediate = false) : Test(InTest), bImmediate(bInImmediate) {}
 	virtual bool Update() override
 	{
 		if (!Instance) { Setup(); }
-		if (Stage >= 18) { Cleanup(); return true; }
+		if (Stage >= 21) { Cleanup(); return true; }
 		if (!Receiver) { StartStage(); }
 		if (Stage == 0 && Receiver->EventCount > 0 && !bCollectedDuringStream)
 		{
 			bCollectedDuringStream = true;
 			CollectGarbage(RF_NoFlags);
 		}
-		if ((Stage == 12 || Stage == 17) && Handle && Handle->IsRunning()
-			&& Handle->GetJob() && !Handle->GetJob()->IsRunning())
+		auto* Service = Instance->GetSubsystem<UJWNU_GIS_ApiClientService>();
+		const auto* RefreshJobs = Service ? FindFProperty<FMapProperty>(Service->GetClass(), TEXT("ActiveRefreshJobs"))
+			->ContainerPtrToValuePtr<TMap<EJWNU_ServiceType, TObjectPtr<UJWNU_HttpRequestJob>>>(Service) : nullptr;
+		if ((Stage == 12 || Stage == 17) && Request && Request->IsActive() && RefreshJobs && !RefreshJobs->IsEmpty())
 		{
 			if (Stage == 12 && !bCollectedDuringRefresh) { bCollectedDuringRefresh = true; CollectGarbage(RF_NoFlags); }
-			if (Stage == 17) { Handle->Cancel(); }
+			if (Stage == 17) { Request->Cancel(); }
 		}
-		if ((Stage == 5 || Stage == 6) && Receiver->EventCount > 0 && !Handle->IsCancelled())
+		if ((Stage == 5 || Stage == 6) && Receiver->EventCount > 0 && Request->IsActive())
 		{
 			if (Stage == 6) { FWorldDelegates::OnWorldCleanup.Broadcast(World, false, false); }
-			else { Handle->Cancel(); Handle->Cancel(); }
+			else { Request->Cancel(); Request->Cancel(); }
 		}
 		if (Receiver->TerminalCount == 0 && FPlatformTime::Seconds() - StageStarted < 12) { return false; }
 		if (FinishedAt == 0) { FinishedAt = FPlatformTime::Seconds(); return false; }
 		// 종료 이후 늦은 콜백이나 이중 통지를 검증한다.
 		if (FPlatformTime::Seconds() - FinishedAt < (Stage == 17 ? .6 : .15)) { return false; }
 		ValidateStage();
-		Receiver->RemoveFromRoot(); Receiver = nullptr; Handle = nullptr; FinishedAt = 0; ++Stage;
+		Receiver->RemoveFromRoot(); Receiver = nullptr; Request = nullptr; FinishedRequest.Reset(); FinishedAt = 0; ++Stage;
 		return false;
 	}
 private:
@@ -111,7 +132,7 @@ private:
 	}
 	void StartStage()
 	{
-		Receiver = NewObject<UJWNU_SseTestReceiver>(GetTransientPackage(), Stage == 0 || Stage == 1 ? Blueprint->GeneratedClass.Get() : UJWNU_SseTestReceiver::StaticClass());
+		Receiver = NewObject<UJWNU_SseTestReceiver>(GetTransientPackage(), Stage == 0 || Stage == 1 || Stage == 18 || Stage == 19 ? Blueprint->GeneratedClass.Get() : UJWNU_SseTestReceiver::StaticClass());
 		Receiver->AddToRoot(); StageStarted = FPlatformTime::Seconds(); ParsedErrors = 0;
 		Test->AddInfo(FString::Printf(TEXT("SSE integration stage %d"), Stage));
 		FJWNU_SseOptions Options; Options.Headers.Add(TEXT("X-JWNU-Test"), TEXT("echo-header"));
@@ -126,66 +147,107 @@ private:
 		if (Stage == 11) { Path = TEXT("/sse/events?mode=before_open"); Options.OpenTimeoutSeconds = .2f; }
 		if (Stage == 15) { Options.MaxQueuedBytes = 16; }
 		if (Stage == 16) { Path = TEXT("/sse/events?count=20&delay=0.05"); Options.TotalTimeoutSeconds = .3f; }
-		FJWNU_OnSseResponseBP Open; Open.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveOpened);
-		FJWNU_OnSseEventBP Event; Event.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveEvent);
-		FJWNU_OnSseResponseBP Complete; Complete.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveCompleted);
-		FJWNU_OnSseResponseBP Error; Error.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveError);
-		FJWNU_OnSseCancelledBP Cancel; Cancel.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveCancelled);
-		FJWNU_SseCallbacks Callbacks;
-		Callbacks.OnOpened.BindUObject(Receiver, &UJWNU_SseTestReceiver::ReceiveOpened);
-		Callbacks.OnCompleted.BindUObject(Receiver, &UJWNU_SseTestReceiver::ReceiveCompleted);
-		Callbacks.OnError.BindUObject(Receiver, &UJWNU_SseTestReceiver::ReceiveError);
-		Callbacks.OnCancelled.BindUObject(Receiver, &UJWNU_SseTestReceiver::ReceiveCancelled);
-		Callbacks.OnEvent.BindUObject(Receiver, &UJWNU_SseTestReceiver::ReceiveEvent);
-		if (Stage == 0)
-		{
-			Handle = UJWNU_BFL_SseClient::SendSseRequest(World, EJWNU_HttpMethod::Post, TEXT("{\"test\":true}"), {}, Options, Open, Event, Complete, Error, Cancel, BaseURL + Path, TEXT(""));
-			CollectGarbage(RF_NoFlags);
-		}
-		else if (Stage == 1)
-		{
-			Handle = UJWNU_BFL_SseClient::CallSseApi(World, EJWNU_HttpMethod::Get, TEXT(""), {}, Options, Open, Event, Complete, Error, Cancel, EJWNU_ServiceType::GameServer, Path, false);
-		}
-		else if (Stage == 2 || Stage == 10)
-		{
-			Handle = UJWNU_GIS_SseClient::CallSseApi_Template<FJWNU_SseTestPayload>(World, EJWNU_HttpMethod::Get, EJWNU_ServiceType::GameServer, Path, TEXT(""), {}, Options, Callbacks,
-				[this](const FJWNU_SseEvent&, const FJWNU_SseTestPayload& Data) { Receiver->RecordParsed(Data); },
-				[this](const FJWNU_SseEvent&, const FString&) { ++ParsedErrors; }, false);
-		}
-		else if (Stage == 12 || Stage == 17)
-		{
-			// 기존 일반 HTTP 경로로 로컬 테스트 인증 세션을 받고, 고의 401 이후 SSE 재개를 검사한다.
-			FOnHttpResponseBPEvent Response;
-			const auto Callback = FOnHttpRequestCompletedDelegate::CreateLambda([this, Options, Callbacks](int32 Status, const FString& Body)
-			{
-				FJWNU_RES_AuthRefresh Tokens;
-				if (Status != 200 || !FJsonObjectConverter::JsonObjectStringToUStruct(Body, &Tokens, 0, 0)) { Receiver->TerminalCount++; Test->AddError(TEXT("Cannot get local SSE auth fixture")); return; }
-				auto* Identity = Instance->GetSubsystem<UJWNU_GIS_ApiIdentityProvider>();
-				Identity->SetAccessTokenContainer(EJWNU_ServiceType::GameServer, {Tokens.AccessToken, Tokens.ExpiresAt});
-				Identity->SetRefreshTokenContainer(EJWNU_ServiceType::GameServer, {Tokens.RefreshToken, Tokens.RefreshTokenExpiresAt});
-				Identity->SetUserId(Tokens.UserId);
-				Handle = UJWNU_GIS_SseClient::CallSseApi_NoTemplate(World, EJWNU_HttpMethod::Get, EJWNU_ServiceType::GameServer, TEXT("/api/sse/events"), TEXT(""), {}, Options, Callbacks, true);
-			});
-			if (BootstrapJob) { BootstrapJob->RemoveFromRoot(); }
-			BootstrapJob = UJWNU_GIS_HttpClientHelper::SendRequest_RawResponse(World, EJWNU_HttpMethod::Post, BaseURL + TEXT("/sse/test-session"), TEXT(""), TEXT(""), {}, Callback);
-			BootstrapJob->AddToRoot();
-		}
-		else if (Stage == 13)
-		{
-			Handle = UJWNU_GIS_SseClient::SendSseRequest(World, EJWNU_HttpMethod::Get, BaseURL + Path, TEXT(""), TEXT(""), {}, Options, Callbacks);
-			Handle->Cancel();
-		}
-		else if (Stage == 14)
-		{
-			Options.MaxEventBytes = 16;
-			Handle = UJWNU_GIS_SseClient::SendSseRequest(World, EJWNU_HttpMethod::Get, BaseURL + Path, TEXT(""), TEXT(""), {}, Options, Callbacks);
-		}
-		else { Handle = UJWNU_GIS_SseClient::SendSseRequest(World, EJWNU_HttpMethod::Get, BaseURL + Path, TEXT(""), TEXT(""), {}, Options, Callbacks); }
-	}
+		if (Stage == 12 || Stage == 17)
+        {
+            BootstrapRequest.Reset(UJWNU_HttpRequest::CreateHttpRequest(World));
+            BootstrapRequest->OnCompletedNative.AddLambda([this, Options](const FJWNU_HttpResult& Response)
+            {
+                FJWNU_RES_AuthRefresh Tokens;
+                if (!FJsonObjectConverter::JsonObjectStringToUStruct(Response.ResponseBody, &Tokens, 0, 0))
+                { Receiver->TerminalCount++; Test->AddError(TEXT("Cannot get local SSE auth fixture")); return; }
+                auto* Identity = Instance->GetSubsystem<UJWNU_GIS_ApiIdentityProvider>();
+                Identity->SetAccessTokenContainer(EJWNU_ServiceType::GameServer, {Tokens.AccessToken, Tokens.ExpiresAt});
+                Identity->SetRefreshTokenContainer(EJWNU_ServiceType::GameServer, {Tokens.RefreshToken, Tokens.RefreshTokenExpiresAt});
+                Identity->SetUserId(Tokens.UserId);
+                if (bImmediate) { CallImmediate(TEXT("/api/sse/events"), Options, true); }
+                else
+                {
+                    auto* ServiceRequest = UJWNU_SseApiRequest::CreateSseApiRequest(World);
+                    BindRequest(ServiceRequest);
+                    Test->TestTrue(TEXT("Authenticated Start accepted"), ServiceRequest->Start(EJWNU_ServiceType::GameServer, EJWNU_HttpMethod::Get, TEXT("/api/sse/events"), TEXT(""), {}, Options, true));
+                }
+            });
+            BootstrapRequest->OnFailedNative.AddLambda([this](const FJWNU_HttpError&)
+            { Receiver->TerminalCount++; Test->AddError(TEXT("Cannot start local SSE auth fixture")); });
+            BootstrapRequest->Start(EJWNU_HttpMethod::Post, BaseURL + TEXT("/sse/test-session"), TEXT(""), {});
+        }
+        else if (bImmediate)
+        {
+            if (Stage == 14) { Options.MaxEventBytes = 16; }
+            CallImmediate(Path, Stage == 18 || Stage == 19 ? FJWNU_SseOptions() : Options, false);
+            if (Stage == 13) { Request->Cancel(); }
+            if (Stage == 20) { Instance->Shutdown(); bShutdown = true; }
+            if (Stage == 0) { CollectGarbage(RF_NoFlags); }
+        }
+        else if (Stage == 1 || Stage == 2 || Stage == 10 || Stage == 19)
+        {
+            auto* ServiceRequest = UJWNU_SseApiRequest::CreateSseApiRequest(World);
+            BindRequest(ServiceRequest);
+            if (Stage == 19) { Receiver->StartServiceDefaults(ServiceRequest, Path); }
+            else { Test->TestTrue(TEXT("Service Start accepted"), ServiceRequest->Start(EJWNU_ServiceType::GameServer, EJWNU_HttpMethod::Get, Path, TEXT(""), {}, Options, false)); }
+        }
+        else
+        {
+            auto* DirectRequest = UJWNU_SseRequest::CreateSseRequest(World);
+            BindRequest(DirectRequest);
+            if (Stage == 14) { Options.MaxEventBytes = 16; }
+            if (Stage == 18) { Receiver->StartDirectDefaults(DirectRequest, BaseURL + Path); }
+            else { Test->TestTrue(TEXT("Direct Start accepted"), DirectRequest->Start(Stage == 0 ? EJWNU_HttpMethod::Post : EJWNU_HttpMethod::Get,
+                BaseURL + Path, Stage == 0 ? TEXT("{\"test\":true}") : TEXT(""), {}, Options)); }
+            if (Stage == 13) { Request->Cancel(); }
+            if (Stage == 20) { Instance->Shutdown(); bShutdown = true; }
+            if (Stage == 0) { CollectGarbage(RF_NoFlags); }
+        }
+    }
+    void CallImmediate(const FString& Path, const FJWNU_SseOptions& Options, bool bRequiresAuth)
+    {
+        FJWNU_OnSseResponseBP Opened, Completed, Error;
+        FJWNU_OnSseEventBP Event;
+        FJWNU_OnSseCancelledBP Cancelled;
+        Opened.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveOpened);
+        Completed.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveCompleted);
+        Error.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveError);
+        Event.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveEvent);
+        Cancelled.BindDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveCancelled);
+        Request = UJWNU_BFL_SseClient::CallSseApi(World, Stage == 0 ? EJWNU_HttpMethod::Post : EJWNU_HttpMethod::Get,
+            Stage == 0 ? TEXT("{\"test\":true}") : TEXT(""), {}, Options, Opened, Event, Completed, Error, Cancelled,
+            EJWNU_ServiceType::GameServer, Path, bRequiresAuth);
+        Test->TestNotNull(TEXT("Immediate SSE returns control request"), Request);
+        if (!Request->IsActive()) { FinishedRequest.Reset(Request); }
+        Request->OnCompletedNative.AddLambda([this](const FJWNU_SseResponse&) { FinishedRequest.Reset(Request); });
+        Request->OnFailedNative.AddLambda([this](const FJWNU_SseResponse&) { FinishedRequest.Reset(Request); });
+    }
+    void BindRequest(UJWNU_SseRequestBase* InRequest)
+    {
+        Request = InRequest;
+        Test->TestNotNull(TEXT("Factory creates SSE request"), Request);
+        Test->TestFalse(TEXT("Factory does not start transmission"), Request->IsActive());
+        Request->OnOpened.AddDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveOpened);
+        Request->OnCompleted.AddDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveCompleted);
+        Request->OnFailed.AddDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveError);
+        Request->OnCompletedNative.AddLambda([this](const FJWNU_SseResponse&) { FinishedRequest.Reset(Request); });
+        Request->OnFailedNative.AddLambda([this](const FJWNU_SseResponse&) { FinishedRequest.Reset(Request); });
+        if (Stage == 2 || Stage == 10)
+        {
+            Request->OnEventNative.AddLambda([this](const FJWNU_SseEvent& Event)
+            {
+                FJWNU_SseTestPayload Payload;
+                if (FJsonObjectConverter::JsonObjectStringToUStruct(Event.Data, &Payload, 0, 0)) { Receiver->RecordParsed(Payload); }
+                else { ++ParsedErrors; }
+            });
+        }
+        else { Request->OnEvent.AddDynamic(Receiver, &UJWNU_SseTestReceiver::ReceiveEvent); }
+    }
 	void ValidateStage()
 	{
 		Test->TestEqual(TEXT("Exactly one terminal callback"), Receiver->TerminalCount, 1);
-		if (Handle) { Test->TestFalse(TEXT("Handle finished"), Handle->IsRunning()); }
+		if (Request) { Test->TestFalse(TEXT("Request finished"), Request->IsActive()); }
+		if (Request) { Test->TestEqual(TEXT("SSE common terminal state"), Request->GetState(), Receiver->bCancelled ? EJWNU_RequestState::Cancelled :
+            (Receiver->LastResponse.Error == EJWNU_SseError::None ? EJWNU_RequestState::Succeeded : EJWNU_RequestState::Failed)); }
+		if (auto* DirectRequest = Cast<UJWNU_SseRequest>(Request))
+		{ Test->TestFalse(TEXT("Direct request is single use"), DirectRequest->Start(EJWNU_HttpMethod::Get, BaseURL + TEXT("/sse/events"), TEXT(""), {}, {})); }
+		if (auto* ServiceRequest = Cast<UJWNU_SseApiRequest>(Request))
+		{ Test->TestFalse(TEXT("Service request is single use"), ServiceRequest->Start(EJWNU_ServiceType::GameServer, EJWNU_HttpMethod::Get, TEXT("/sse/events"), TEXT(""), {}, {}, false)); }
 		if (Stage == 3)
 		{
 			Test->TestEqual(TEXT("429 preserved"), Receiver->LastResponse.StatusCode, 429);
@@ -194,10 +256,10 @@ private:
 			Test->TestEqual(TEXT("No open on HTTP error"), Receiver->OpenCount, 0);
 		}
 		else if (Stage == 4) { Test->TestEqual(TEXT("Wrong MIME"), Receiver->LastResponse.Error, EJWNU_SseError::InvalidContentType); }
-		else if (Stage == 5 || Stage == 6 || Stage == 13 || Stage == 17)
+		else if (Stage == 5 || Stage == 6 || Stage == 13 || Stage == 17 || Stage == 20)
 		{
 			Test->TestTrue(TEXT("Cancellation signalled"), Receiver->bCancelled);
-			Test->TestEqual(TEXT("No late events"), Receiver->EventCount, Stage == 13 || Stage == 17 ? 0 : 1);
+			Test->TestEqual(TEXT("No late events"), Receiver->EventCount, Stage == 13 || Stage == 17 || Stage == 20 ? 0 : 1);
 		}
 		else if (Stage == 7 || Stage == 11 || Stage == 16) { Test->TestEqual(TEXT("Timeout signalled"), Receiver->LastResponse.Error, EJWNU_SseError::Timeout); }
 		else if (Stage == 8) { Test->TestEqual(TEXT("Disconnect signalled"), Receiver->LastResponse.Error, EJWNU_SseError::Network); }
@@ -214,14 +276,14 @@ private:
 				Test->TestEqual(TEXT("POST body echoed"), Receiver->LastPayload.Echo, FString(TEXT("{\"test\":true}")));
 				Test->TestEqual(TEXT("Custom header echoed"), Receiver->LastPayload.Header, FString(TEXT("echo-header")));
 			}
-			if (Stage == 10) { Test->TestEqual(TEXT("Typed parse error retained separately"), ParsedErrors, 1); }
+			if (Stage == 10) { Test->TestEqual(TEXT("Typed parse error retained separately"), bImmediate ? Receiver->ParseErrorCount : ParsedErrors, 1); }
 			if (Stage == 12) { Test->TestTrue(TEXT("GC exercised during refresh"), bCollectedDuringRefresh); }
 		}
 	}
 	void Cleanup()
 	{
-		if (BootstrapJob) { BootstrapJob->RemoveFromRoot(); }
-		Instance->Shutdown(); GEngine->DestroyWorldContext(World); World->DestroyWorld(false); Instance->RemoveFromRoot();
+		if (BootstrapRequest.IsValid()) { BootstrapRequest->Cancel(); BootstrapRequest.Reset(); }
+		if (!bShutdown) { Instance->Shutdown(); } GEngine->DestroyWorldContext(World); World->DestroyWorld(false); Instance->RemoveFromRoot();
 		Blueprint->RemoveFromRoot();
 		if (bHadTokenFile) { FFileHelper::SaveArrayToFile(TokenBackup, *TokenPath); }
 		else { IFileManager::Get().Delete(*TokenPath); }
@@ -231,10 +293,13 @@ private:
 	UWorld* World = nullptr;
 	UBlueprint* Blueprint = nullptr;
 	UJWNU_SseTestReceiver* Receiver = nullptr;
-	UJWNU_HttpRequestJobHandle* Handle = nullptr;
-	UJWNU_HttpRequestJob* BootstrapJob = nullptr;
+	UJWNU_SseRequestBase* Request = nullptr;
+	TStrongObjectPtr<UJWNU_SseRequestBase> FinishedRequest;
+	TStrongObjectPtr<UJWNU_HttpRequest> BootstrapRequest;
 	FString BaseURL, TokenPath;
 	TArray<uint8> TokenBackup;
+	bool bShutdown = false;
+	bool bImmediate = false;
 	bool bHadTokenFile = false;
 	bool bCollectedDuringStream = false;
 	bool bCollectedDuringRefresh = false;
@@ -252,5 +317,24 @@ bool FJWNU_SseIntegrationTest::RunTest(const FString& Parameters)
 	}
 	ADD_LATENT_AUTOMATION_COMMAND(JWNU::SseTest::FIntegrationCommand(this));
 	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FJWNU_SseImmediateTest, "JWNetworkUtility.SSE.Immediate", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FJWNU_SseImmediateTest::RunTest(const FString& Parameters)
+{
+    TStrongObjectPtr<UJWNU_SseTestReceiver> Receiver(NewObject<UJWNU_SseTestReceiver>());
+    FJWNU_OnSseResponseBP Error;
+    Error.BindDynamic(Receiver.Get(), &UJWNU_SseTestReceiver::ReceiveError);
+    TestNull(TEXT("Invalid world returns null"), UJWNU_BFL_SseClient::CallSseApi(nullptr, EJWNU_HttpMethod::Get,
+        TEXT(""), {}, {}, {}, {}, {}, Error, {}, EJWNU_ServiceType::GameServer, TEXT("/sse/events"), false));
+    TestEqual(TEXT("Invalid world callback once"), Receiver->TerminalCount, 1);
+    TestEqual(TEXT("Invalid world diagnostic"), Receiver->LastResponse.Error, EJWNU_SseError::InvalidRequest);
+    auto* Function = UJWNU_BFL_SseClient::StaticClass()->FindFunctionByName(TEXT("CallSseApi"));
+    TestTrue(TEXT("Immediate SSE BP node visible"), UEdGraphSchema_K2::CanUserKismetCallFunction(Function));
+    TestTrue(TEXT("Immediate SSE Options default"), Function->GetMetaData(TEXT("AutoCreateRefTerm")).Contains(TEXT("Options")));
+    if (!FParse::Param(FCommandLine::Get(), TEXT("JWNUSseIntegration")))
+    { AddInfo(TEXT("Integration skipped; start the FastAPI fixture and pass -JWNUSseIntegration.")); return true; }
+    ADD_LATENT_AUTOMATION_COMMAND(JWNU::SseTest::FIntegrationCommand(this, true));
+    return true;
 }
 #endif

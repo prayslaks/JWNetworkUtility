@@ -2,11 +2,17 @@
 
 # SSE HTTP 클라이언트
 
+> 부분 갱신 일자: 2026-09-26 — SSE를 Create → Bind → Start로 통일. 즉시 실행 BFL 제거, Job Handle 내부화, 취소를 OnFailed(Cancelled)로 전달.
+
 > 부분 갱신 일자: 2026-09-24 — uv 환경으로 수동 실행·자동 테스트 명령 통일.
 
 > 부분 갱신 일자: 2026-09-24 — TestServer 이동과 Uvicorn 실행 경로 반영.
 
 > 부분 갱신 일자: 2026-09-23 — HTTP 스트림, C++·BP 이벤트 API, JWT 갱신 연결 및 FastAPI 통합 테스트 추가.
+
+> 부분 갱신 일자: 2026-09-26 — Call SSE API 즉시 실행 노드 복원. 기존 콜백 핀을 유지하고 반환 타입을 SSE API Request로 제공한다.
+
+> 부분 갱신 일자: 2026-09-26 — SSE RequestBase가 공통 JWNU RequestBase를 상속해 GetState·OnFinished를 제공한다.
 
 ## 목적과 범위
 
@@ -14,66 +20,73 @@ HTTP 응답 하나의 본문을 점진적으로 받아 완성된 SSE 이벤트�
 
 ## 빠른 시작 — Blueprint
 
-1. GameInstance가 있는 게임 월드에서 `JWNU | SSE`의 **Send Sse Request** 노드를 사용한다.
-2. `URL`에 `http://127.0.0.1:5000/sse/events`, `Method`에 Get을 지정한다. 기본 테스트 스트림은 인증이 필요 없다.
-3. `On Event`에 커스텀 이벤트를 연결하고 `FJWNU_SseEvent`를 분해한다.
-4. `Data`를 기존 `Convert Json String To Struct`에 연결한다. 테스트 USTRUCT의 필드는 `Index`(정수), `Text`, `Echo`, `Header`(문자열)다.
-5. 변환 결과를 확인한 뒤 구조체를 사용한다. `On Completed`는 모든 이벤트 뒤의 HTTP 정상 종료, `On Error`는 HTTP/전송 오류, `On Cancelled`는 취소다.
-6. 반환한 `UJWNU_HttpRequestJobHandle`을 저장하면 `Cancel`, `IsRunning`, `IsCancelled`로 제어할 수 있다. 실행 중 참조는 서브시스템도 유지한다.
+1. GameInstance가 있는 월드에서 **Create SSE Request**를 호출하고 반환값을 변수에 저장한다. 생성은 전송하지 않는다.
+2. 요청의 `OnOpened`, `OnEvent`, `OnCompleted`, `OnFailed` 이벤트를 바인딩한다.
+3. `OnEvent`의 `FJWNU_SseEvent.Data`를 기존 `Convert Json String To Struct`로 변환한다. 테스트 데이터는 Index·Text·Echo·Header 필드를 사용한다.
+4. `Start`에 Method=Get, URL=`http://127.0.0.1:5000/sse/events`를 지정한다. QueryParams·Options는 미연결 시 기본값이며 API Key는 비워도 된다.
+5. `OnCompleted`는 HTTP 정상 EOF, `OnFailed`는 HTTP·전송·인증 오류 및 취소다. 취소 시 Error는 `Cancelled`다.
+6. 요청의 `Cancel`, `IsActive`, `GetResult`, `GetError`를 사용한다. 일회용이므로 재호출할 때 새 요청을 생성한다.
 
-서비스 호스트와 JWT를 사용하려면 **Call Sse Api**에서 `ServiceType`, `Endpoint`, `bRequiresAuth`를 지정한다. `bRequiresAuth=true`이면 등록 JWT를 사용하며 `Options.Headers`의 Authorization보다 우선한다. Provider 키는 직접 URL 호출의 `AuthToken`에 넣는다. 비밀 키를 배포 클라이언트 에셋이나 INI에 저장하지 않는다.
+Host·JWT를 사용하려면 **Create SSE API Request**로 생성·바인딩한 뒤 `Start`에서 ServiceType·Endpoint·RequiresAuth를 지정한다. RequiresAuth=true이면 등록 JWT가 Options.Headers의 Authorization보다 우선한다. 직접 URL 요청은 선택적 **API Key**를 Bearer 값으로 전달한다.
+
+### 즉시 실행 — Call SSE API
+
+**Call SSE API**에 Method·Body·QueryParams·Options·ServiceType·Endpoint·RequiresAuth와 콜백을 연결하면 바로 시작한다. 별도의 Create·Bind·Start는 필요 없다. QueryParams·Options·각 콜백은 미연결 상태로 둘 수 있다.
+
+- 기존 `OnOpened`, `OnEvent`, `OnCompleted`, `OnError`, `OnCancelled` 입력 핀을 유지한다. OnEvent.Data는 기존 JSON 변환 노드로 처리한다.
+- 정상 EOF는 OnCompleted, 오류는 OnError, 취소는 OnCancelled 중 하나로 한 번 전달한다. 취소 시 OnError를 함께 호출하지 않는다.
+- 반환 `UJWNU_SseApiRequest`는 선택적 Cancel·IsActive·GetResult·GetError용이다. Start를 다시 호출하지 않는다. 내부 요청이 Host·JWT 갱신과 GC·월드 종료 처리를 담당한다.
+- 잘못된 월드는 nullptr를 반환하고 OnError(InvalidRequest)를 한 번 호출한다. Host 누락 같은 시작 오류는 함수 반환 전에 전달될 수 있다.
+- 기존 Job Handle 반환 변수는 SSE API Request로 바꾸고 노드를 Refresh/Compile한다. 입력 핀은 유지하지만 기존 에셋을 자동 재작성하지는 않는다.
+
+Call SSE API는 정식 편의 노드이며 요청 객체 방식도 계속 제공한다. 직접 URL의 옛 Send SSE Request는 Create SSE Request → Bind → Start를 사용한다. 요청 객체 방식에서는 OnError·OnCancelled 대신 OnFailed의 오류 코드를 분기한다.
 
 ## C++ 사용
 
-공개 진입점은 [JWNU_GIS_SseClient.h](../Source/JWNetworkUtility/Public/JWNU_GIS_SseClient.h)다.
+요청 객체 진입점은 [JWNU_SseRequest.h](../Source/JWNetworkUtility/Public/JWNU_SseRequest.h), 즉시 실행은 [JWNU_BFL_SseClient.h](../Source/JWNetworkUtility/Public/JWNU_BFL_SseClient.h)의 CallSseApi다.
 
 ```cpp
-FJWNU_SseCallbacks Callbacks;
-Callbacks.OnEvent = FJWNU_OnSseEvent::CreateWeakLambda(this,
-    [this](const FJWNU_SseEvent& Event)
-    {
-        // Event.Data는 완성된 SSE 데이터 문자열이다.
-    });
-Callbacks.OnError = FJWNU_OnSseResponse::CreateWeakLambda(this,
-    [](const FJWNU_SseResponse& Error)
-    {
-        // Error.StatusCode, Error.Headers, Error.ErrorBody를 확인한다.
-    });
-
-UJWNU_HttpRequestJobHandle* Handle = UJWNU_GIS_SseClient::SendSseRequest(
-    this, EJWNU_HttpMethod::Post, URL, BearerToken, JsonBody,
-    {}, FJWNU_SseOptions(), Callbacks);
+UJWNU_SseRequest* Request = UJWNU_SseRequest::CreateSseRequest(this);
+if (!Request) { return; }
+// Start 전까지 UPROPERTY 참조로 보관한다.
+Request->OnEventNative.AddWeakLambda(this, [this](const FJWNU_SseEvent& Event)
+{
+    // Event.Data를 필요한 USTRUCT로 변환한다.
+});
+Request->OnFailedNative.AddWeakLambda(this, [](const FJWNU_SseResponse& Error)
+{
+    // Error.Error, StatusCode, Headers, ErrorBody를 확인한다.
+});
+Request->Start(EJWNU_HttpMethod::Post, URL, JsonBody, {}, FJWNU_SseOptions(), ApiKey);
 ```
 
-| API | 주소·인증 | 이벤트 |
-| --- | --- | --- |
-| `SendSseRequest` | URL·Bearer 직접 지정 | 원문 `FJWNU_SseEvent` |
-| `CallSseApi_NoTemplate` | 기존 Host/Identity Provider | 원문 `FJWNU_SseEvent` |
-| `CallSseApi_Template<T>` | 기존 Host/Identity Provider | 메타데이터 + `T`, 별도 파싱 오류 콜백 |
+| 생성 → 바인딩 → 실행 | 주소·인증 |
+| --- | --- |
+| `CreateSseRequest` → Bind → `Start` | 전체 URL·API Key |
+| `CreateSseApiRequest` → Bind → `Start` | ServiceType·Endpoint·등록 JWT |
 
-템플릿 함수는 `Callbacks.OnEvent` 대신 `OnParsed(Event, Value)` 또는 `OnParseError(Event, Message)`를 사용한다. 구조체에 `Code`나 `Message` 필드는 필요 없다. 파싱 실패는 그 이벤트만 실패하며 스트림을 자동으로 종료하지 않는다. `[DONE]`, 일반 텍스트, 이벤트마다 다른 JSON 스키마가 섞이면 원문 API에서 분기한 뒤 변환하는 편이 적합하다. 구조체 변환 성공은 필수 필드나 게임 명령의 유효성 검증을 대신하지 않는다.
+기존 즉시 실행 템플릿 함수도 제거했다. C++에서는 OnEventNative에서 `FJsonObjectConverter::JsonObjectStringToUStruct`로 Data를 변환하고 파싱 실패를 처리한다. 구조체에 Code·Message 필드는 필요 없다. `[DONE]`이나 일반 텍스트처럼 JSON이 아닌 이벤트는 먼저 분기한다. BP는 기존 wildcard JSON 변환 노드를 사용한다.
 
-BP에는 요청과 wildcard USTRUCT 파싱을 합친 새 K2Node를 추가하지 않았다. 기존 `ConvertJsonStringToStruct`를 재사용한다.
+SSE 요청은 공통 `UJWNU_RequestBase` 타입의 변수·배열·매크로에 저장할 수 있다. Cancel·IsActive는 부모에서 제공하며, GetState는 성공 EOF·실패·취소를 구분한다. OnCompleted·OnFailed 전달 뒤 OnFinished(Request, State)가 한 번 발생한다. OnOpened·OnEvent는 스트리밍 전용으로 유지한다. [공통 요청 가이드](RequestLifecycle.md).
 
 ## 처리 구조와 소유권
 
 ```mermaid
 flowchart LR
-    API["C++ / BP SSE 요청"] --> Client["GIS_SseClient / 기존 Handle"]
-    Client --> Job["SseRequestJob"]
-    Job --> HTTP["기존 공통 HTTP 요청 설정"]
-    HTTP --> Queue["HTTP 스레드 수신 큐"]
+    Request["C++ / BP SSE Request"] --> Client["GIS_SseClient"]
+    Client --> Handle["내부 Job Handle"]
+    Handle --> Job["SseRequestJob"]
+    Job --> Queue["HTTP 수신 큐"]
     Queue --> Parser["게임 스레드 SSE Parser"]
     Parser --> Event["OnEvent / JSON 변환"]
 ```
 
-- `UJWNU_SseRequestJob`은 기존 `UJWNU_HttpRequestJob`의 파생 클래스다. 메서드·URL·Bearer·본문 구성 함수를 공유하며 스트림 종료 정책은 별도로 관리한다. 일반 HTTP 콜백과 오류 정규화 계약은 유지한다.
-- HTTP 스레드는 공유 수신 큐만 다루며 UObject·BP에 접근하지 않는다. CoreTicker에서 큐를 순서대로 비우고 외부 콜백을 게임 스레드에서 실행한다.
-- `UJWNU_GIS_SseClient`가 실행 중 Handle을 UPROPERTY로 보관하고 Handle이 Job을 보관한다. 월드 정리·GameInstance 종료 시 해당 요청을 취소한다.
-- 기존 ApiClientService도 인증 갱신 Job을 완료 시까지 UPROPERTY로 보관한다. 갱신 대기 중 GC에도 콜백과 대기열이 유지된다.
-- 유효한 요청은 다음 Tick에 시작해 사용자가 Handle을 먼저 받을 수 있게 한다. 잘못된 월드로 시작하면 nullptr와 즉시 `OnError`를 반환한다.
-- `OnOpened` 뒤 여러 `OnEvent`, 마지막에 Completed/Error/Cancelled 중 하나만 전달한다. 개방 전 실패는 OnOpened가 없다. 취소하면 이미 큐에 쌓인 나머지 이벤트도 버린다.
-- `OnCompleted`는 HTTP 정상 EOF다. 모델의 답변 완료 여부는 Provider별 이벤트를 호출 측에서 해석한다. EOF의 미완성 프레임은 SSE 규칙에 따라 버린다.
+- Job·Job Handle은 BP 변수 타입이나 제어 노드로 노출하지 않는다. Handle은 JWT 갱신으로 교체되는 Job을 내부에서 추적한다.
+- 서브시스템이 활성 Request와 Handle을 보관한다. 월드·GameInstance 종료 시 Request를 취소한다. 콜백 중 GC·종료에도 처리 중인 Request·Handle·Job을 보호한다.
+- Create는 전송하지 않는다. 잘못된 월드에서는 nullptr다. Start 이후 실제 연결은 다음 Tick에 시작하며 Options·QueryParams에는 AutoCreateRefTerm을 적용한다.
+- `OnOpened` 뒤 여러 `OnEvent`, 마지막에 OnCompleted 또는 OnFailed를 한 번 전달한다. 개방 전 실패에는 OnOpened가 없다. 취소하면 큐에 남은 이벤트를 버린다.
+- OnCompleted는 HTTP 정상 EOF다. Provider의 답변 완료 여부는 이벤트를 받은 측에서 해석한다. EOF의 미완성 프레임은 버린다.
+- 스트림과 일반 HTTP는 요청 구성 코드를 공유한다. 일반 HTTP의 기존 오류 정규화·재시도 계약은 유지한다.
 
 ## 파싱 계약
 
@@ -81,7 +94,7 @@ UTF-8 바이트를 줄 경계까지 보관해 분할된 한글·이모지를 보
 
 `RetryMilliseconds`는 서버의 재연결 힌트이며 자동 재연결 명령이 아니다. 해당 시점의 값을 데이터 이벤트에 함께 전달한다. **SSE 전송 자체는 자동 재시도하지 않는다.** POST 중복 실행과 이미 전달한 이벤트의 중복을 방지하기 위해 재연결 및 `Last-Event-ID` 사용은 호출 측 정책으로 둔다. 요청할 때 `Options.Headers`로 Last-Event-ID를 전달할 수 있다.
 
-JWT 서비스 경로만 개방 전 401에 대해 기존 단일 갱신 큐를 사용하고 새 Job으로 한 번 재요청한다. 동일 Handle을 유지하며 갱신 대기 중 취소도 가능하다. 429는 상태 코드와 소문자 키의 `retry-after` 헤더를 OnError로 전달한다.
+JWT 서비스 경로만 개방 전 401에 대해 기존 단일 갱신 큐를 사용하고 새 Job으로 한 번 재요청한다. 동일 Request와 내부 Handle을 유지하며 갱신 대기 중 취소도 가능하다. 429는 상태 코드와 소문자 키의 `retry-after` 헤더를 OnFailed로 전달한다.
 
 ## 옵션과 오류
 
@@ -126,7 +139,7 @@ uv run --locked --project Plugins/JWNetworkUtility/TestServer python Plugins/JWN
 - 테스트 인증 발급 `/sse/test-session`은 `JWNU_SSE_TEST_FIXTURES=1`과 루프백 요청일 때만 활성화한다. 실행기가 이를 설정한다. 테스트는 기존 로컬 JWT 저장 파일을 백업하고 종료 후 복원한다.
 - 서버의 yield 경계는 TCP 수신 경계를 보장하지 않으므로 정확한 경계 검증은 Parser 단위 테스트가 담당한다.
 
-통합 테스트는 18개 시나리오로 직접/BP/템플릿 호출, POST·추가 헤더, 429, MIME 오류, 수신 중·시작 전·월드 정리·인증 갱신 대기 중 취소, 연결/유휴/전체 시간 제한, 전송 중단, 미완성 EOF, 이벤트 JSON 오류, 이벤트/큐 상한, JWT 401 갱신을 확인한다. 수신 중 및 인증 갱신 중 GC도 강제 실행한다. 고의 연결 중단·큐 초과·잘못된 JSON에서 엔진 경고가 발생할 수 있으며 Automation의 성공(경고 있음)도 통과로 집계한다.
+통합 테스트는 21개 시나리오로 직접/BP/서비스 요청·이벤트 구조체 변환·기본 옵션·GameInstance 종료, POST·추가 헤더, 429, MIME 오류, 수신 중·시작 전·월드 정리·인증 갱신 대기 중 취소, 연결/유휴/전체 시간 제한, 전송 중단, 미완성 EOF, 이벤트 JSON 오류, 이벤트/큐 상한, JWT 401 갱신을 확인한다. 수신 중 및 인증 갱신 중 GC도 강제 실행한다. 고의 연결 중단·큐 초과·잘못된 JSON에서 엔진 경고가 발생할 수 있으며 Automation의 성공(경고 있음)도 통과로 집계한다.
 
 검증 대상 엔진은 ProjectZK의 **UE 5.7 / Win64**다. 플러그인 descriptor의 기존 5.6 표기는 변경하지 않았으며, SSE 경로의 다른 엔진 버전 및 플랫폼은 별도 검증이 필요하다.
 
@@ -153,8 +166,10 @@ uv run --locked --project Plugins/JWNetworkUtility/TestServer python Plugins/JWN
 | [JWNU_SseTypes.h](../Source/JWNetworkUtility/Public/JWNU_SseTypes.h) | 이벤트·결과·옵션·델리게이트 |
 | [JWNU_SseParser.cpp](../Source/JWNetworkUtility/Private/JWNU_SseParser.cpp) | 증분 SSE 파서 |
 | [JWNU_SseRequestJob.cpp](../Source/JWNetworkUtility/Private/JWNU_SseRequestJob.cpp) | HTTP 스트림·큐·종료 |
-| [JWNU_GIS_SseClient.cpp](../Source/JWNetworkUtility/Private/JWNU_GIS_SseClient.cpp) | 공개 호출·인증·GC·월드 수명 |
-| [JWNU_BFL_SseClient.h](../Source/JWNetworkUtility/Public/JWNU_BFL_SseClient.h) | BP 노드 |
+| [JWNU_GIS_SseClient.cpp](../Source/JWNetworkUtility/Private/JWNU_GIS_SseClient.cpp) | 내부 전송·인증·GC·월드 수명 |
+| [JWNU_SseRequest.h](../Source/JWNetworkUtility/Public/JWNU_SseRequest.h) | 공개 요청 객체·이벤트·Start·Cancel |
 | [JWNU_SseIntegrationTest.cpp](../Source/JWNetworkUtilityTest/Private/JWNU_SseIntegrationTest.cpp) | 실제 HTTP와 BP 그래프 검증 |
 
 외부 근거: [SSE 표준](https://html.spec.whatwg.org/multipage/server-sent-events.html), [FastAPI StreamingResponse](https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse).
+
+2026-09-26 Call SSE API 복원 검증: UE 5.7 Editor 빌드 성공. `JWNUSse-20260926-152330`의 Parser·FastAPI·Immediate 3종이 모두 성공했다. 요청 객체와 즉시 실행 각각 21개 시나리오로 BP JSON 변환·POST·추가 헤더·오류 본문·시간 제한·취소·GC·월드/GameInstance 종료·JWT 갱신 및 갱신 중 취소를 확인했다. 잘못된 월드의 nullptr/OnError(InvalidRequest)와 노드 노출·Options 기본값 메타데이터도 확인했다. 외부 서비스나 실제 API 키를 사용하지 않았다.

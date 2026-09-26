@@ -4,26 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "JWNU_GIS_SseClient.h"
+#include "JWNU_SseTypes.h"
 #include "JWNU_BFL_SseClient.generated.h"
 
-/** 기존 JSON 변환 노드와 조합하는 BP SSE 진입점이다. */
+class UJWNU_SseApiRequest;
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FJWNU_OnSseResponseBP, const FJWNU_SseResponse&, Response);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FJWNU_OnSseEventBP, const FJWNU_SseEvent&, Event);
+DECLARE_DYNAMIC_DELEGATE(FJWNU_OnSseCancelledBP);
+
+/** 응답 콜백을 입력받아 SSE를 즉시 실행하는 편의 함수 라이브러리다. */
 UCLASS()
 class JWNETWORKUTILITY_API UJWNU_BFL_SseClient : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
-	/** 직접 URL과 Bearer 토큰으로 스트림을 요청하는 함수. */
-	UFUNCTION(BlueprintCallable, Category="JWNU|SSE", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="QueryParams,Options,OnOpened,OnEvent,OnCompleted,OnError,OnCancelled"))
-	static UJWNU_HttpRequestJobHandle* SendSseRequest(const UObject* WorldContextObject, EJWNU_HttpMethod Method,
-		const FString& Body, const TMap<FString, FString>& QueryParams, const FJWNU_SseOptions& Options,
-		const FJWNU_OnSseResponseBP& OnOpened, const FJWNU_OnSseEventBP& OnEvent,
-		const FJWNU_OnSseResponseBP& OnCompleted, const FJWNU_OnSseResponseBP& OnError,
-		const FJWNU_OnSseCancelledBP& OnCancelled, const FString& URL, const FString& AuthToken);
-
-	/** 서비스 호스트와 JWT 갱신으로 스트림을 요청하는 함수. */
-	UFUNCTION(BlueprintCallable, Category="JWNU|SSE", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="QueryParams,Options,OnOpened,OnEvent,OnCompleted,OnError,OnCancelled"))
-	static UJWNU_HttpRequestJobHandle* CallSseApi(const UObject* WorldContextObject, EJWNU_HttpMethod Method,
+	/** 서비스 Host·JWT로 즉시 시작하는 함수. 반환 요청은 선택적 취소·조회용이며 Start를 다시 호출하지 않는다. */
+	UFUNCTION(BlueprintCallable, Category="JWNU|SSE", meta=(WorldContext="WorldContextObject", DisplayName="Call SSE API", AutoCreateRefTerm="QueryParams,Options,OnOpened,OnEvent,OnCompleted,OnError,OnCancelled"))
+	static UJWNU_SseApiRequest* CallSseApi(const UObject* WorldContextObject, EJWNU_HttpMethod Method,
 		const FString& Body, const TMap<FString, FString>& QueryParams, const FJWNU_SseOptions& Options,
 		const FJWNU_OnSseResponseBP& OnOpened, const FJWNU_OnSseEventBP& OnEvent,
 		const FJWNU_OnSseResponseBP& OnCompleted, const FJWNU_OnSseResponseBP& OnError,

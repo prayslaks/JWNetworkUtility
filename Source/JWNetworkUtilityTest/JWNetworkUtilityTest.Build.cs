@@ -33,7 +33,8 @@ public class JWNetworkUtilityTest : ModuleRules
                 "Slate",
                 "SlateCore", 
                 "JWNetworkUtility",
-                "JWNetworkUtilityOpenAI"
+                "JWNetworkUtilityOpenAI",
+                "JWNetworkUtilityTypeSafe"
             }
         );
     }

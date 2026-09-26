@@ -25,7 +25,7 @@ struct JWNETWORKUTILITY_API FJWNU_SseEvent
 UENUM(BlueprintType)
 enum class EJWNU_SseError : uint8
 {
-	None, InvalidRequest, Http, Network, Timeout, InvalidContentType, BufferLimit, Authentication
+	None, InvalidRequest, Http, Network, Timeout, InvalidContentType, BufferLimit, Authentication, Cancelled
 };
 
 /** 연결 및 종료 알림의 HTTP 메타데이터와 오류를 담는다. */
@@ -71,11 +71,8 @@ struct JWNETWORKUTILITY_API FJWNU_SseOptions
 DECLARE_DELEGATE_OneParam(FJWNU_OnSseEvent, const FJWNU_SseEvent&);
 DECLARE_DELEGATE_OneParam(FJWNU_OnSseResponse, const FJWNU_SseResponse&);
 DECLARE_DELEGATE(FJWNU_OnSseCancelled);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FJWNU_OnSseEventBP, const FJWNU_SseEvent&, Event);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FJWNU_OnSseResponseBP, const FJWNU_SseResponse&, Response);
-DECLARE_DYNAMIC_DELEGATE(FJWNU_OnSseCancelledBP);
 
-/** C++와 BP 래퍼가 공유하는 게임 스레드 콜백 묶음이다. */
+/** 요청 객체와 내부 전송 Job이 공유하는 게임 스레드 콜백 묶음이다. */
 struct JWNETWORKUTILITY_API FJWNU_SseCallbacks
 {
 	FJWNU_OnSseResponse OnOpened;

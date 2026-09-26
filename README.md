@@ -1,5 +1,17 @@
 # JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-26 — HTTP·API·SSE·TypeSafe가 RequestBase의 Cancel·IsActive·GetState·OnFinished를 공유. Call TypeSafe API 및 환경변수 즉시 실행 함수 추가.
+
+> 부분 갱신 일자: 2026-09-26 — Call SSE API 즉시 실행 복원. 기존 콜백 핀과 선택적 SSE API Request 반환값을 제공한다.
+
+> 부분 갱신 일자: 2026-09-26 — Send HTTP Request도 즉시 실행 편의 노드로 복원. 응답·재시도 콜백 입력, API Key 인증, 선택적 HTTP Request 반환값을 제공한다.
+
+> 부분 갱신 일자: 2026-09-26 — 즉시 실행 Call API를 정식 편의 노드로 제공. 응답·재시도 콜백을 입력하고 바로 호출하며 반환 API Request는 선택적 취소·조회용이다. 별도의 Start는 필요 없다.
+
+> 부분 갱신 일자: 2026-09-26 — SSE 즉시 실행 노드 제거 및 내부 Job Handle BP 노출 제거. Create SSE Request·Create SSE API Request 추가. HTTP·API·OpenAI Live·TypeSafe는 Create → Bind → Start와 Cancel·IsActive 사용 규약을 따른다. [공통 요청 가이드](Docs/RequestLifecycle.md).
+
+> 부분 갱신 일자: 2026-09-26 — JWNetworkUtilityTypeSafe의 Jev Choice·Score·Noul C++/BP 호출과 로컬 자동 테스트 추가. [TypeSafe 가이드](Docs/TypeSafe.md).
+
 > 부분 갱신 일자: 2026-09-26 — 범용 JWNetworkUtilityAudio와 로컬 녹음·재생 UMG 패널 추가. [서버 없는 음성 테스트](Docs/Audio.md).
 
 > 부분 갱신 일자: 2026-09-25 — JWNetworkUtilityOpenAI 모듈과 GPT-Live 세션·로컬 오디오·BP 편의 컴포넌트 추가. [BP 빠른 시작](Docs/OpenAILive.md).
@@ -68,13 +80,16 @@ uv run uvicorn main:app --host 127.0.0.1 --port 5000 --reload
 - C++ template API (`CallApi_Template<T>`) and Blueprint Support
 - Blueprint wildcard struct parsing (`CustomThunk`): JSON ↔ USTRUCT Conversion
 - Pre-built request/response structs (`FJWNU_REQ_*`, `FJWNU_RES_*`) matching test server API
-- Request Job Handle (`UJWNU_HttpRequestJobHandle`): exposes `Cancel`, `IsRunning`, `IsCancelled` to C++ and Blueprint; handle remains valid across 401 token refresh cycles
+- Public request objects: HTTP / API / SSE / SSE API use Create → Bind → Start, Cancel and IsActive. Job and Job Handle are internal C++ transport types and are not exposed to Blueprint.
 
 ## Module Structure
 
 | Module | Type | Description |
 |---|---|---|
 | `JWNetworkUtility` | Runtime | Core plugin — HTTP Job, HTTP Client, API Client, Token Provider, Host Provider |
+| `JWNetworkUtilityTypeSafe` | Runtime | Jev Choice/Score/Noul typed HTTP evaluation, C++/BP requests |
+| `JWNetworkUtilityOpenAI` | Runtime | OpenAI Live sessions and BP audio integration |
+| `JWNetworkUtilityAudio` | Runtime | Provider-independent microphone capture and PCM playback |
 | `JWNetworkUtilityTest` | Runtime | Test/demo module — API test actor |
 
 ## Architecture
@@ -91,7 +106,7 @@ uv run uvicorn main:app --host 127.0.0.1 --port 5000 --reload
 | `UJWNU_GIS_ApiIdentityProvider` | GameInstanceSubsystem | Token + UserId/SessionId storage, DPAPI encryption |
 | `UJWNU_GIS_ApiHostProvider` | GameInstanceSubsystem | Host URLs from INI config |
 | `UJWNU_HttpRequestJob` | UObject | Single request lifecycle: retry, timeout, cancel |
-| `UJWNU_HttpRequestJobHandle` | UObject (BlueprintType) | Logical request handle: survives 401 refresh, exposes `Cancel`/`IsRunning`/`IsCancelled` |
+| `UJWNU_HttpRequestJobHandle` | UObject (internal) | Tracks transport Job replacement during JWT refresh; no Blueprint exposure |
 | `UJWNU_BFL_ApiClientService` | BlueprintFunctionLibrary | Blueprint-exposed API |
 | `UJWNU_BFL_AuthWidgetHelper` | BlueprintFunctionLibrary | Auth widget validation helpers (email, password) |
 

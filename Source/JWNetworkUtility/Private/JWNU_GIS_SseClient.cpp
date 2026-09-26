@@ -3,6 +3,8 @@
 #include "JWNU_GIS_SseClient.h"
 #include "JWNU_GIS_ApiClientService.h"
 #include "JWNU_SseRequestJob.h"
+#include "JWNU_SseRequest.h"
+#include "UObject/StrongObjectPtr.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GenericPlatform/GenericPlatformHttp.h"
@@ -20,8 +22,13 @@ void UJWNU_GIS_SseClient::Deinitialize()
 	bShuttingDown = true;
 	FTSTicker::GetCoreTicker().RemoveTicker(TickerHandle);
 	FWorldDelegates::OnWorldCleanup.Remove(CleanupHandle);
-	const auto Snapshot = ActiveHandles;
-	for (auto Handle : Snapshot) { if (Handle->IsRunning()) { Handle->Cancel(); } }
+	TArray<TStrongObjectPtr<UJWNU_SseRequestBase>> Requests;
+	for (auto Request : ActiveRequests) { Requests.Emplace(Request); }
+	for (const auto& Request : Requests) { Request->Cancel(); }
+	TArray<TStrongObjectPtr<UJWNU_HttpRequestJobHandle>> Snapshot;
+	for (auto Handle : ActiveHandles) { Snapshot.Emplace(Handle); }
+	for (const auto& Handle : Snapshot) { if (Handle->IsActive()) { Handle->Cancel(); } }
+	ActiveRequests.Reset();
 	PendingStarts.Reset(); ActiveHandles.Reset(); Worlds.Reset();
 	Super::Deinitialize();
 }
@@ -164,30 +171,45 @@ void UJWNU_GIS_SseClient::RefreshThenStart(UJWNU_HttpRequestJobHandle* Handle, E
 
 bool UJWNU_GIS_SseClient::Tick(float DeltaSeconds)
 {
-	const auto Snapshot = ActiveHandles;
-	for (auto Handle : Snapshot)
+	TArray<TStrongObjectPtr<UJWNU_SseRequestBase>> Requests;
+	for (auto Request : ActiveRequests) { Requests.Emplace(Request); }
+	for (const auto& Request : Requests)
+	{ if (!Request->OwnerWorld.IsValid() || Request->OwnerWorld->bIsTearingDown) { Request->Cancel(); } }
+	TArray<TStrongObjectPtr<UJWNU_HttpRequestJobHandle>> Snapshot;
+	for (auto Handle : ActiveHandles) { Snapshot.Emplace(Handle); }
+	for (const auto& Handle : Snapshot)
 	{
-		const auto* World = Worlds.Find(Handle);
+		const auto* World = Worlds.Find(Handle.Get());
 		if (!World || !World->IsValid() || World->Get()->bIsTearingDown) { Handle->Cancel(); }
 	}
 	auto Starts = MoveTemp(PendingStarts);
 	for (auto& Start : Starts) { Start(); }
-	for (auto Handle : Snapshot)
+	for (const auto& Handle : Snapshot)
 	{
-		if (auto* Job = Cast<UJWNU_SseRequestJob>(Handle->GetJob())) { Job->Pump(); }
+		// 콜백에서 인증 갱신·월드 종료·GC가 발생해도 현재 Pump의 Job을 보호한다.
+		TStrongObjectPtr<UJWNU_SseRequestJob> Job(Cast<UJWNU_SseRequestJob>(Handle->GetJob()));
+		if (Job.IsValid()) { Job->Pump(); }
 	}
 	for (int32 Index = ActiveHandles.Num() - 1; Index >= 0; --Index)
 	{
-		if (!ActiveHandles[Index]->IsRunning()) { Worlds.Remove(ActiveHandles[Index]); ActiveHandles.RemoveAt(Index); }
+		if (!ActiveHandles[Index]->IsActive()) { Worlds.Remove(ActiveHandles[Index]); ActiveHandles.RemoveAt(Index); }
 	}
+	ActiveRequests.RemoveAll([](const auto& Request) { return !Request->IsActive(); });
 	return true;
 }
 
 void UJWNU_GIS_SseClient::OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)
 {
-	const auto Snapshot = ActiveHandles;
-	for (auto Handle : Snapshot)
+	TArray<TStrongObjectPtr<UJWNU_SseRequestBase>> Snapshot;
+	for (auto Request : ActiveRequests) { Snapshot.Emplace(Request); }
+	for (const auto& Request : Snapshot)
 	{
-		if (Worlds.FindRef(Handle).Get() == World && Handle->IsRunning()) { Handle->Cancel(); }
+		if (Request->OwnerWorld.Get() == World) { Request->Cancel(); }
 	}
+}
+
+bool UJWNU_GIS_SseClient::TrackRequest(UJWNU_SseRequestBase* Request)
+{
+	if (bShuttingDown || !Request->OwnerWorld.IsValid() || Request->OwnerWorld->bIsTearingDown) { return false; }
+	ActiveRequests.AddUnique(Request); return true;
 }

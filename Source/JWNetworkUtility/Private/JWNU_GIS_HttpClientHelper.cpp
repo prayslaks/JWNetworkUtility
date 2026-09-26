@@ -6,12 +6,15 @@
 #include "JWNU_GIS_HttpRequestJobProcessor.h"
 #include "JWNU_HttpRequestJob.h"
 #include "Engine/Engine.h"
+#include "Engine/World.h"
 
 DEFINE_LOG_CATEGORY(LogJWNU_GIS_HttpClientHelper);
 
 void UJWNU_GIS_HttpClientHelper::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	RequestTicker = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UJWNU_GIS_HttpClientHelper::TickRequests));
+	RequestWorldCleanup = FWorldDelegates::OnWorldCleanup.AddUObject(this, &UJWNU_GIS_HttpClientHelper::CleanupRequestWorld);
 	
 	StatusCodeToCustomCodeMap.Emplace(400, TEXT("BAD_REQUEST"));
 	StatusCodeToCustomCodeMap.Emplace(401, TEXT("UNAUTHORIZED"));

@@ -16,7 +16,10 @@
 #include "JWNU_GIS_ApiHostProvider.h"
 #include "JWNU_HttpRequestJobHandle.h"
 #include "Engine/Engine.h"
+#include "Containers/Ticker.h"
 #include "JWNU_GIS_ApiClientService.generated.h"
+
+class UJWNU_ApiRequest;
 
 /**
  * 클래스 전용 로그 카테고리 선언
@@ -31,8 +34,11 @@ class JWNETWORKUTILITY_API UJWNU_GIS_ApiClientService : public UGameInstanceSubs
 {
 	GENERATED_BODY()
 	friend class UJWNU_GIS_SseClient;
+	friend class UJWNU_ApiRequest;
 	
 public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
 	/**
 	 * 외부에서 게임 인스턴스 API 서브시스템을 반환하는 함수. (Native CPP)
 	 * @param WorldContextObject 월드 컨텍스트 오브젝트
@@ -93,6 +99,14 @@ public:
 		const bool bRequiresAuth = true);
 	
 private:
+	bool TrackRequest(UJWNU_ApiRequest* Request);
+	bool TickRequests(float DeltaSeconds);
+	void CleanupRequestWorld(UWorld* World, bool bSessionEnded, bool bCleanupResources);
+	/** Start 이후 종료 이벤트까지 요청을 GC로부터 보관하는 필드. */
+	UPROPERTY(Transient) TArray<TObjectPtr<UJWNU_ApiRequest>> ActiveRequests;
+	FTSTicker::FDelegateHandle RequestTicker;
+	FDelegateHandle RequestWorldCleanup;
+	bool bStoppingRequests = false;
 	
 	/**
 	 * 동일한 이름의 정적 함수에 의해 호출되어, 실제로 처리하는 비정적 함수.

@@ -1,5 +1,23 @@
 # CLAUDE.md — JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-26 — HTTP·API·SSE·TypeSafe가 RequestBase의 Cancel·IsActive·GetState·OnFinished를 공유. Call TypeSafe API 및 환경변수 즉시 실행 함수 추가.
+
+> 부분 갱신 일자: 2026-09-26 — Call SSE API 즉시 실행 복원. 기존 콜백 핀과 선택적 SSE API Request 반환값을 제공한다.
+
+> 부분 갱신 일자: 2026-09-26 — Send HTTP Request도 즉시 실행 편의 노드로 복원. 응답·재시도 콜백 입력, API Key 인증, 선택적 HTTP Request 반환값을 제공한다.
+
+> 부분 갱신 일자: 2026-09-26 — 즉시 실행 Call API를 정식 편의 노드로 제공. 응답·재시도 콜백을 입력하고 바로 호출하며 반환 API Request는 선택적 취소·조회용이다. 별도의 Start는 필요 없다.
+
+> 부분 갱신 일자: 2026-09-26 — HTTP는 요청 객체와 즉시 실행 Send HTTP Request를, SSE는 Request 객체를 사용한다. Job·Job Handle은 내부 C++ 타입이며 SSE BFL의 CallSseApi는 즉시 실행 함수로 제공하며 이전 즉시 실행 SSE 템플릿은 제거했다. SSE는 Create SSE Request / Create SSE API Request → Bind → Start, Cancel·IsActive를 사용한다.
+
+> 부분 갱신 일자: 2026-09-26 — `UJWNU_HttpRequest`의 Create HTTP Request → Bind → Start 추가. 절대 URL·선택적 Bearer API Key를 사용하고 원문 응답을 반환한다. `UJWNU_GIS_HttpClientHelper`가 활성 요청을 보관·정리하며 API 테스트는 HTTP 포함 3종이다.
+
+> 부분 갱신 일자: 2026-09-26 — Deprecated 호환 함수 10개와 삭제된 Evaluate의 핀 리다이렉트를 제거. 이전 함수 노드는 현재 생성·바인딩·Start 규약으로 교체한다.
+
+> 부분 갱신 일자: 2026-09-26 — 일반 API 요청 객체와 공급자별 노드 명명 통일. 신규 공개 API와 BP 예제는 [Docs/RequestLifecycle.md](Docs/RequestLifecycle.md)의 Create → Bind → Start, Cancel·IsActive 규약을 따른다. 이전 이름의 호환 함수는 제거했다.
+
+> 부분 갱신 일자: 2026-09-26 — TypeSafe Jev 모듈·공용 유한 JSON HTTP Job 추가. 정본: [Docs/TypeSafe.md](Docs/TypeSafe.md).
+
 > 부분 갱신 일자: 2026-09-26 — 오디오 모듈 분리와 UMG 테스트 Actor·패널 추가. 정본: [Docs/Audio.md](Docs/Audio.md).
 
 > 부분 갱신 일자: 2026-09-25 — OpenAI Runtime 모듈과 GPT-Live 테스트 추가. 정본: [Docs/OpenAILive.md](Docs/OpenAILive.md).
@@ -48,9 +66,11 @@ Endpoints: `/health`, `/auth/register/*`, `/auth/login`, `/auth/refresh`, `/auth
 
 FastAPI owns the ASGI app and routes; Uvicorn owns the server process. `main.py` has no standalone CLI. Optional `.env` beside `main.py` configures token TTLs (`ACCESS_TOKEN_EXPIRE_SECONDS=60`, `REFRESH_TOKEN_EXPIRE_SECONDS=360`), SMTP and logging. Environment variables override `.env`. Use one worker because test sessions are in memory; reload resets them.
 
-SSE endpoints: `/sse/events` (public), `/api/sse/events` (JWT), GET/POST. `run_sse_tests.py --engine <UE-root> --project <uproject>` runs the local server and Unreal automation. `UJWNU_GIS_SseClient` provides `SendSseRequest`, `CallSseApi_NoTemplate`, `CallSseApi_Template<T>`; `UJWNU_BFL_SseClient` exposes direct/service Blueprint nodes. Existing JSON conversion nodes handle event Data. The SSE job subclasses the HTTP job and shares request construction; it does not automatically replay streams. The original planned custom K2Node below remains unimplemented and is not required for SSE.
+SSE endpoints: `/sse/events` (public), `/api/sse/events` (JWT), GET/POST. `run_sse_tests.py --engine <UE-root> --project <uproject>` runs the local server and Unreal automation. `UJWNU_SseRequest` and `UJWNU_SseApiRequest` expose Create → Bind → Start with OnOpened/OnEvent/OnCompleted/OnFailed; Cancel emits OnFailed(Cancelled). `UJWNU_GIS_SseClient` manages internal Jobs, handles and authentication. Existing JSON conversion nodes handle event Data. The SSE job subclasses the HTTP job and shares request construction; it does not automatically replay streams. The original planned custom K2Node below remains unimplemented and is not required for SSE.
 
 ## Module Structure
+
+`JWNetworkUtilityTypeSafe` is a provider-specific Runtime module depending on core JWNU only. `UJWNU_TypeSafeRequest` exposes single-use C++/BP requests; `UJWNU_GIS_TypeSafe` retains active requests and cancels them on world/GameInstance cleanup. `FJWNU_TypeSafeCodec` validates Choice/Score/Noul JSON, retaining fractional scores and Noul probabilities. Core `UJWNU_JsonHttpJob` reuses request construction but has independent bounded buffering, wall-clock deadlines, raw error bodies, and 429/529 backoff with Retry-After. It does not use game JWT refresh or custom-response normalization. Environment credentials require the exact official endpoint; keyless HTTP is limited to loopback fixtures. `run_typesafe_tests.py` runs Codec and FastAPI tests (25 integration scenarios). See `Docs/TypeSafe.md` for BP setup and contracts.
 
 `JWNetworkUtilityAudio` owns provider-independent `UJWNU_MicrophoneCaptureComponent`, `UJWNU_PCMPlayerComponent`, PCM/error/device types and conversion. It has no JWNU network or OpenAI dependency. `JWNetworkUtilityOpenAI` depends on Audio and translates audio errors to Live errors; its 16/24kHz restriction stays at the session layer. `AJWNU_AudioTestActor` and `UJWNU_AudioTestWidget` in Test provide a ten-second local recorder and paced playback panel. Use `ShowTestPanel` from Level BP; callers choose input mode/cursor. `run_audio_tests.py` runs `JWNetworkUtility.Audio` without a server or hardware; Live now has one integration test, with PCM tests moved to Audio. Class redirects are in plugin Config; independent audio OnError BP pins now use AudioError and require refresh.
 
@@ -96,14 +116,14 @@ An editor module `JWNetworkUtilityEditor` was designed for a custom K2Node (`UJW
 ┌─────────────────────────────────────────────────────┐
 │  Blueprint Layer                                     │
 │  UJWNU_BFL_ApiClientService (BlueprintFunctionLib)   │
-│    - CallApi → Handle*, SendHttpRequest → Handle*    │
+│    - CreateApiRequest → Bind → Start    │
 │    - ConvertJsonStringToStruct / ConvertStructTo     │
 │      JsonString (CustomThunk wildcard)               │
 │    - GetUserId, SetUserId, ClearSession              │
 ├─────────────────────────────────────────────────────┤
 │  Handle Layer                                        │
 │  UJWNU_HttpRequestJobHandle (UObject, BlueprintType) │
-│    - Cancel, IsRunning, IsCancelled                  │
+│    - Cancel, IsActive, IsCancelled                  │
 │    - BindJob (internal: Job rebind on 401 refresh)   │
 │    - WaitingForRefresh state management              │
 ├─────────────────────────────────────────────────────┤
@@ -147,7 +167,7 @@ An editor module `JWNetworkUtilityEditor` was designed for a custom K2Node (`UJW
 | `UJWNU_GIS_CustomCodeHelper` | GameInstanceSubsystem | HTTP status → localized FText (Korean default) |
 | `UJWNU_GIS_SteamWorks` | GameInstanceSubsystem | Steam auth ticket |
 | `UJWNU_HttpRequestJob` | UObject | Single request lifecycle: retry, timeout, cancel |
-| `UJWNU_HttpRequestJobHandle` | UObject (BlueprintType) | Logical request handle: survives 401 refresh, exposes Cancel/IsRunning/IsCancelled |
+| `UJWNU_HttpRequestJobHandle` | UObject (internal) | Tracks Job replacement during 401 refresh; no Blueprint exposure |
 | `UJWNU_BFL_ApiClientService` | BlueprintFunctionLibrary | Blueprint-exposed API |
 
 ### Class List (JWNetworkUtilityTest)
@@ -219,7 +239,7 @@ UJWNU_HttpRequestJobHandle* Handle = UJWNU_GIS_ApiClientService::CallApi_Templat
     TEXT("/api/data"), TEXT(""), TMap<FString,FString>(),
     [](const FMyStruct& Response) { /* typed result */ }
 );
-// Handle->Cancel(), Handle->IsRunning(), Handle->IsCancelled()
+// Handle->Cancel(), Handle->IsActive(), Handle->IsCancelled()
 ```
 
 ### Token & Identity Security
@@ -242,19 +262,19 @@ UJWNU_HttpRequestJobHandle* Handle = UJWNU_GIS_ApiClientService::CallApi_Templat
 
 **Return chain:**
 ```
-BFL (SendHttpRequest)   → Handle* (BFL creates Handle, binds Job)
-BFL (CallApi)           → Handle* (forwarded from ApiClientService)
+HttpRequest            → internal HTTP Job (raw response)
+ApiRequest             → Create → Bind → Start (wraps ApiClientService)
 ApiClientService        → Handle* (creates Handle, rebinds Job on 401)
 HttpClientHelper        → Job*    (pass-through)
 HttpRequestJobProcessor → Job*    (creates Job)
 ```
 
 **401 refresh integration:**
-1. 401 detected → `Handle->MarkWaitingForRefresh()` → `IsRunning()` stays true
+1. 401 detected → `Handle->MarkWaitingForRefresh()` → `IsActive()` stays true
 2. Refresh success → `Handle->ClearWaitingForRefresh()` → new Job created → `Handle->BindJob(newJob)`
 3. `Handle->Cancel()` during refresh → `IsCancelled()` true → retry skipped in `OnTokenReady`
 
-**Blueprint usage:** `SendHttpRequest`/`CallApi` nodes return a `UJWNU_HttpRequestJobHandle*` output pin. Call `Cancel`, `IsRunning`, `IsCancelled` on the handle.
+**Blueprint usage:** Create HTTP Request / Create API Request / Create SSE Request / Create SSE API Request → bind events → Start. Keep the Request object, use Cancel/IsActive/GetResult/GetError. Job Handle is internal C++ only. The old immediate BFL calls are removed.
 
 ### Blueprint Wildcard Struct Parsing
 

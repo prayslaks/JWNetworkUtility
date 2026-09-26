@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
+// Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
 
 #pragma once
 
@@ -17,7 +17,7 @@ JWNETWORKUTILITY_API DECLARE_LOG_CATEGORY_EXTERN(LogJWNU_HttpRequestJob, Log, Al
 /**
  * 하나의 HTTP 요청을 Job 단위로 관리하는 클래스. 타임아웃, 재시도, 취소 등의 기능을 제공한다.
  */
-UCLASS()
+UCLASS(NotBlueprintType, NotBlueprintable)
 class JWNETWORKUTILITY_API UJWNU_HttpRequestJob : public UObject
 {
 	GENERATED_BODY()

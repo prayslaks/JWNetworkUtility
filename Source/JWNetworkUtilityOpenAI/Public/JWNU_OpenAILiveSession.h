@@ -20,13 +20,13 @@ class JWNETWORKUTILITYOPENAI_API UJWNU_OpenAILiveSession : public UObject
     GENERATED_BODY()
 public:
     /** 이벤트를 바인딩한 뒤 Start를 호출할 Idle 세션을 생성하는 함수. */
-    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live", meta=(WorldContext="WorldContextObject"))
-    static UJWNU_OpenAILiveSession* CreateLiveSession(const UObject* WorldContextObject);
-    /** API 키 또는 직접 제공한 토큰으로 연결을 접수하는 함수. true는 Ready가 아니다. */
-    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live")
-    bool Start(const FJWNU_OpenAILiveOptions& Options, const FString& ApiKey);
-    /** 공식 OpenAI 주소에 한해 프로세스 OPENAI_API_KEY를 읽어 연결하는 함수. */
-    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live")
+    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live", meta=(WorldContext="WorldContextObject", DisplayName="Create OpenAI Live Session"))
+    static UJWNU_OpenAILiveSession* CreateOpenAILiveSession(const UObject* WorldContextObject);
+    /** API 키 또는 직접 제공한 토큰으로 연결을 접수하는 함수. 미연결 Options는 기본값이며 true는 Ready가 아니다. */
+    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live", meta=(AutoCreateRefTerm="Options"))
+    bool Start(const FJWNU_OpenAILiveOptions& Options, UPARAM(DisplayName="API Key") const FString& ApiKey);
+    /** 공식 주소에 OPENAI_API_KEY로 연결하는 함수. 미연결 Options는 기본값을 사용한다. */
+    UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live", meta=(AutoCreateRefTerm="Options"))
     bool StartFromEnvironment(const FJWNU_OpenAILiveOptions& Options);
     /** Ready 상태에서 PCM16 mono 샘플을 전송하는 함수. 최대 100ms이며 실제 시간에 맞춰 호출한다. */
     UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live")
@@ -45,7 +45,7 @@ public:
     bool Close();
     /** 월드 정리·긴급 중단 시 즉시 전송 계층을 닫는 함수. 최종 사용량은 보장하지 않는다. */
     UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live")
-    void Abort();
+    void Cancel();
     UFUNCTION(BlueprintPure, Category="JWNU|OpenAI|Live") EJWNU_OpenAILiveState GetState() const { return State; }
     UFUNCTION(BlueprintPure, Category="JWNU|OpenAI|Live") bool IsActive() const;
     UFUNCTION(BlueprintPure, Category="JWNU|OpenAI|Live") int32 GetSampleRate() const { return Settings.SampleRate; }

@@ -20,7 +20,7 @@ void UJWNU_GIS_OpenAI::Deinitialize()
     FWorldDelegates::OnWorldCleanup.Remove(Cleanup);
     TArray<TStrongObjectPtr<UJWNU_OpenAILiveSession>> Snapshot;
     for (auto Session : Active) { Snapshot.Emplace(Session); }
-    for (const auto& Session : Snapshot) { Session->Abort(); }
+    for (const auto& Session : Snapshot) { Session->Cancel(); }
     Active.Reset();
     Super::Deinitialize();
 }
@@ -36,7 +36,7 @@ bool UJWNU_GIS_OpenAI::Tick(float DeltaSeconds)
     for (auto Session : Active) { Snapshot.Emplace(Session); }
     for (const auto& Session : Snapshot)
     {
-        if (!Session->OwnerWorld.IsValid() || Session->OwnerWorld->bIsTearingDown) { Session->Abort(); }
+        if (!Session->OwnerWorld.IsValid() || Session->OwnerWorld->bIsTearingDown) { Session->Cancel(); }
         else { Session->Pump(); }
     }
     Active.RemoveAll([](const auto& Session) { return !Session->IsActive(); });
@@ -48,6 +48,6 @@ void UJWNU_GIS_OpenAI::WorldCleanup(UWorld* World, bool bSessionEnded, bool bCle
     for (auto Session : Active) { Snapshot.Emplace(Session); }
     for (const auto& Session : Snapshot)
     {
-        if (Session->OwnerWorld.Get() == World) { Session->Abort(); }
+        if (Session->OwnerWorld.Get() == World) { Session->Cancel(); }
     }
 }

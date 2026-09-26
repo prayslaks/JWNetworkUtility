@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
+// Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
 
 #pragma once
 
@@ -6,9 +6,12 @@
 #include "JWNetworkUtilityTypes.h"
 #include "JWNetworkUtilityDelegates.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "JWNU_HttpRequestJobHandle.h"
+
 #include "Engine/Engine.h"
 #include "JWNU_BFL_ApiClientService.generated.h"
+
+class UJWNU_ApiRequest;
+class UJWNU_HttpRequest;
 
 /**
  * JWNetworkUtility의 각종 기능을 지원하는 블루프린트 함수 라이브러리.
@@ -19,53 +22,20 @@ class JWNETWORKUTILITY_API UJWNU_BFL_ApiClientService : public UBlueprintFunctio
 	GENERATED_BODY()
 	
 public:
-	
-	/**
-	 * [ Blueprint Function Library ] \n Send HTTP Request \n HTTP 리퀘스트를 전송하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @param InMethod 사용할 HTTP 메서드
-	 * @param InURL 호출할 API 엔드포인트  
-	 * @param InAuthToken 사용할 인증 엑세스 JWT 토큰 
-	 * @param InContentBody 콘텐츠 바디 
-	 * @param InQueryParams 쿼리 패러미터
-	 * @param InOnHttpResponse 리스폰스 바디를 패러미터로 받는 블루프린트 이벤트
-	 * @param InOnHttpRequestJobRetry 리퀘스트 재시도 때 호출되는 블루프린트 이벤트
-	 */
-	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="InQueryParams, InOnHttpRequestJobRetry"))
-	static UJWNU_HttpRequestJobHandle* SendHttpRequest(
-		const UObject* WorldContextObject,
-		const EJWNU_HttpMethod InMethod,
-		const FString& InURL,
-		const FString& InAuthToken,
-		const FString& InContentBody,
-		const TMap<FString, FString>& InQueryParams,
-		const FOnHttpResponseBPEvent& InOnHttpResponse,
+	/** 콜백을 먼저 연결하고 전체 URL로 HTTP를 즉시 전송하는 함수. 반환 요청은 선택적 취소·조회용이다. */
+	UFUNCTION(BlueprintCallable, Category="JWNU|HTTP", meta=(WorldContext="WorldContextObject", DisplayName="Send HTTP Request", AutoCreateRefTerm="InQueryParams,InOnHttpRequestJobRetry"))
+	static UJWNU_HttpRequest* SendHttpRequest(const UObject* WorldContextObject, EJWNU_HttpMethod InMethod,
+		const FString& InURL, UPARAM(DisplayName="API Key") const FString& ApiKey, const FString& InContentBody,
+		const TMap<FString, FString>& InQueryParams, const FOnHttpResponseBPEvent& InOnHttpResponse,
 		const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry);
 
-	/**
-	 * [ Blueprint Function Library ] \n Call API \n API를 호출하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @param InServiceType 사용할 서비스 타입
-	 * @param InMethod 사용할 HTTP 메서드
-	 * @param InEndpoint API 엔드포인트
-	 * @param InContentBody 콘텐츠 바디
-	 * @param InQueryParams 쿼리 패러미터
-	 * @param InOnHttpResponse 리스폰스 바디를 패러미터로 받는 블루프린트 이벤트
-	 * @param InOnHttpRequestJobRetry 리퀘스트 재시도 때 호출되는 블루프린트 이벤트
-	 * @param bRequiresAuth 인증 토큰 요구 여부
-	 */
-	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="InQueryParams, InOnHttpRequestJobRetry"))
-	static UJWNU_HttpRequestJobHandle* CallApi(
-		const UObject* WorldContextObject,
-		const EJWNU_ServiceType InServiceType,
-		const EJWNU_HttpMethod InMethod,
-		const FString& InEndpoint,
-		const FString& InContentBody,
-		const TMap<FString, FString>& InQueryParams,
-		const FOnHttpResponseBPEvent& InOnHttpResponse,
-		const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry,
-		const bool bRequiresAuth);
-	
+	/** 콜백을 먼저 연결하고 API를 즉시 호출하는 함수. 반환 요청은 선택적 취소·조회용이며 Start를 다시 호출하지 않는다. */
+	UFUNCTION(BlueprintCallable, Category="JWNU|API", meta=(WorldContext="WorldContextObject", DisplayName="Call API", AutoCreateRefTerm="InQueryParams,InOnHttpRequestJobRetry"))
+	static UJWNU_ApiRequest* CallApi(const UObject* WorldContextObject, EJWNU_ServiceType InServiceType,
+		EJWNU_HttpMethod InMethod, const FString& InEndpoint, const FString& InContentBody,
+		const TMap<FString, FString>& InQueryParams, const FOnHttpResponseBPEvent& InOnHttpResponse,
+		const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry, bool bRequiresAuth = true);
+
 	/**
 	 * [ Blueprint Function Library ] \n Load Refresh Token Container from WINDOWS \n 윈도우에 암호화되어 저장된 JWT 인증 리프레시 토큰 컨테이너를 로드하는 함수.
 	 * @param WorldContextObject 월드 컨텍스트 오브젝트

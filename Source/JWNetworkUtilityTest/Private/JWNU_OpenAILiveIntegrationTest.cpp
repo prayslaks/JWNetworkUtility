@@ -12,6 +12,7 @@
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
 #include "UObject/GarbageCollection.h"
+#include "UObject/StrongObjectPtr.h"
 
 #if WITH_EDITOR && WITH_DEV_AUTOMATION_TESTS
 #include "Kismet2/KismetEditorUtilities.h"
@@ -38,6 +39,21 @@ inline UBlueprint* BuildReceiver(FAutomationTestBase* Test)
     Record->SetFromFunction(UJWNU_OpenAILiveTestReceiver::StaticClass()->FindFunctionByName(TEXT("Record")));
     Graph->AddNode(Record); Record->CreateNewGuid(); Record->AllocateDefaultPins();
     const auto* Schema = GetDefault<UEdGraphSchema_K2>();
+    for (int32 Variant = 0; Variant < 4; ++Variant)
+    {
+        const TCHAR* EventNames[] = {TEXT("StartSessionDefaults"), TEXT("StartSessionEnvironmentDefaults"), TEXT("StartComponentDefaults"), TEXT("StartComponentEnvironmentDefaults")};
+        auto* StartEvent = NewObject<UK2Node_Event>(Graph);
+        StartEvent->EventReference.SetExternalMember(EventNames[Variant], UJWNU_OpenAILiveTestReceiver::StaticClass());
+        StartEvent->bOverrideFunction = true; Graph->AddNode(StartEvent); StartEvent->CreateNewGuid(); StartEvent->AllocateDefaultPins();
+        auto* TargetClass = Variant < 2 ? UJWNU_OpenAILiveSession::StaticClass() : UJWNU_OpenAILiveComponent::StaticClass();
+        auto* StartCall = NewObject<UK2Node_CallFunction>(Graph);
+        StartCall->SetFromFunction(TargetClass->FindFunctionByName(Variant % 2 == 0 ? TEXT("Start") : TEXT("StartFromEnvironment")));
+        Graph->AddNode(StartCall); StartCall->CreateNewGuid(); StartCall->AllocateDefaultPins();
+        Test->TestTrue(TEXT("Live default Options exec"), Schema->TryCreateConnection(StartEvent->FindPinChecked(UEdGraphSchema_K2::PN_Then), StartCall->FindPinChecked(UEdGraphSchema_K2::PN_Execute)));
+        Test->TestTrue(TEXT("Live default Options target"), Schema->TryCreateConnection(StartEvent->FindPinChecked(TEXT("Target")), StartCall->FindPinChecked(UEdGraphSchema_K2::PN_Self)));
+        Test->TestTrue(TEXT("Live Options intentionally unconnected"), StartCall->FindPinChecked(TEXT("Options"))->LinkedTo.IsEmpty());
+        Test->TestFalse(TEXT("Live Options default is used"), StartCall->FindPinChecked(TEXT("Options"))->bDefaultValueIsIgnored);
+    }
     Test->TestTrue(TEXT("BP transcript wire"), Schema->TryCreateConnection(Event->FindPinChecked(TEXT("Value")), Record->FindPinChecked(TEXT("Value"))));
     Test->TestTrue(TEXT("BP exec wire"), Schema->TryCreateConnection(Event->FindPinChecked(UEdGraphSchema_K2::PN_Then), Record->FindPinChecked(UEdGraphSchema_K2::PN_Execute)));
     FKismetEditorUtilities::CompileBlueprint(BP);
@@ -58,6 +74,23 @@ public:
             Instance = NewObject<UGameInstance>(GEngine); Instance->AddToRoot(); Instance->InitializeStandalone();
             World = Instance->GetWorld();
             BP = BuildReceiver(Test); BP->AddToRoot();
+            {
+                TStrongObjectPtr<UJWNU_OpenAILiveTestReceiver> Defaults(NewObject<UJWNU_OpenAILiveTestReceiver>(GetTransientPackage(), BP->GeneratedClass.Get()));
+                auto* DefaultSession = UJWNU_OpenAILiveSession::CreateOpenAILiveSession(World);
+                DefaultSession->OnError.AddDynamic(Defaults.Get(), &UJWNU_OpenAILiveTestReceiver::Error);
+                Defaults->StartSessionDefaults(DefaultSession);
+                Test->TestEqual(TEXT("Default session Options pass configuration validation"), Defaults->LastError.Code, FString(TEXT("credentials")));
+                Test->TestEqual(TEXT("Default session BP call executed"), Defaults->ErrorCount, 1);
+                auto* Owner = World->SpawnActor<AActor>();
+                auto* DefaultComponent = NewObject<UJWNU_OpenAILiveComponent>(Owner);
+                DefaultComponent->bUseMicrophone = false; DefaultComponent->bPlayAudio = false; DefaultComponent->RegisterComponent();
+                DefaultComponent->OnError.AddDynamic(Defaults.Get(), &UJWNU_OpenAILiveTestReceiver::Error);
+                Defaults->StartComponentDefaults(DefaultComponent);
+                Test->TestEqual(TEXT("Default component Options pass configuration validation"), Defaults->LastError.Code, FString(TEXT("credentials")));
+                Test->TestEqual(TEXT("Default component BP call executed"), Defaults->ErrorCount, 2);
+                DefaultComponent->DestroyComponent(); Owner->Destroy();
+                // 빈 API Key로 설정 검증까지만 확인하므로 외부 연결과 장치 캡처는 발생하지 않는다.
+            }
             Payload.SetNumZeroed(960);
             Payload[0] = 0x00; Payload[1] = 0x80; Payload[2] = 0xff; Payload[3] = 0x7f;
             auto* AudioActor = World->SpawnActor<AActor>();
@@ -142,12 +175,12 @@ private:
             Component->OnAudio.AddDynamic(Receiver, &UJWNU_OpenAILiveTestReceiver::Audio);
             Component->OnError.AddDynamic(Receiver, &UJWNU_OpenAILiveTestReceiver::Error);
             Component->OnClosed.AddDynamic(Receiver, &UJWNU_OpenAILiveTestReceiver::Closed);
-            Test->TestTrue(TEXT("Component starts"), Component->StartLive(Options, TEXT("")));
+            Test->TestTrue(TEXT("Component starts"), Component->Start(Options, TEXT("")));
             Session = Component->GetSession();
         }
         else
         {
-            Session = UJWNU_OpenAILiveSession::CreateLiveSession(World);
+            Session = UJWNU_OpenAILiveSession::CreateOpenAILiveSession(World);
             Session->OnReady.AddDynamic(Receiver, &UJWNU_OpenAILiveTestReceiver::Ready);
             Session->OnTranscript.AddDynamic(Receiver, &UJWNU_OpenAILiveTestReceiver::Transcript);
             Session->OnAudio.AddDynamic(Receiver, &UJWNU_OpenAILiveTestReceiver::Audio);
@@ -159,7 +192,7 @@ private:
         {
             ++NativeReady;
             if (Stage == 8) { FWorldDelegates::OnWorldCleanup.Broadcast(World, false, false); CollectGarbage(RF_NoFlags); }
-            if (Stage == 11) { Session->Abort(); CollectGarbage(RF_NoFlags); }
+            if (Stage == 11) { Session->Cancel(); CollectGarbage(RF_NoFlags); }
             if (Stage == 12) { Component->DestroyComponent(); }
             if (Stage == 15) { Instance->Shutdown(); bShutdown = true; }
         });
@@ -213,7 +246,7 @@ private:
     }
     void Cleanup()
     {
-        if (Session) { Session->Abort(); }
+        if (Session) { Session->Cancel(); }
         if (Actor) { Actor->Destroy(); }
         if (!bShutdown) { Instance->Shutdown(); }
         if (Receiver) { Receiver->RemoveFromRoot(); }

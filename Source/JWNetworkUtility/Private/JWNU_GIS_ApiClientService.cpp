@@ -4,6 +4,7 @@
 #include "JWNU_GIS_ApiHostProvider.h"
 #include "Engine/GameInstance.h"
 #include "JWNU_HttpRequestJobHandle.h"
+#include "UObject/StrongObjectPtr.h"
 
 DEFINE_LOG_CATEGORY(LogJWNU_GIS_ApiClientService);
 
@@ -56,6 +57,7 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 
 	// Handle 생성
 	UJWNU_HttpRequestJobHandle* Handle = NewObject<UJWNU_HttpRequestJobHandle>(Self);
+	TStrongObjectPtr<UJWNU_HttpRequestJobHandle> KeepHandle(Handle);
 
 	// 호스트 프로바이더에서 호스트 획득
 	FString ProvidedHost;
@@ -114,13 +116,13 @@ UJWNU_HttpRequestJobHandle* UJWNU_GIS_ApiClientService::CallApi_NoTemplate(
 		Job.RequestInfo.URL = ConstructedURL;
 		Job.RequestInfo.ContentBody = InContentBody;
 		Job.RequestInfo.QueryParams = InQueryParams;
-		Job.OnTokenReady = [Self, InMethod, InServiceType, ConstructedURL, InContentBody, InQueryParams, OnHttpResponse, OnHttpRequestJobRetry, Handle](const FString& NewAccessToken)
+		Job.OnTokenReady = [Self, InMethod, InServiceType, ConstructedURL, InContentBody, InQueryParams, OnHttpResponse, OnHttpRequestJobRetry, Handle, KeepHandle](const FString& NewAccessToken)
 		{
 			if (Handle->IsCancelled()) { Handle->ClearWaitingForRefresh(); return; }
 			Handle->ClearWaitingForRefresh();
 			Self->CallApi_NoTemplate_Execution(InMethod, InServiceType, ConstructedURL, NewAccessToken, InContentBody, InQueryParams, OnHttpResponse, Handle, OnHttpRequestJobRetry, false);
 		};
-		Job.OnTokenFailed = [OnHttpResponse, Handle](const FString& ErrorCode, const FString& ErrorMessage)
+		Job.OnTokenFailed = [OnHttpResponse, Handle, KeepHandle](const FString& ErrorCode, const FString& ErrorMessage)
 		{
 			Handle->ClearWaitingForRefresh();
 			const FString FakeResponseBody = FString::Printf(TEXT("{\"success\": false, \"code\": \"%s\", \"message\": \"%s\"}"), *ErrorCode, *ErrorMessage);
@@ -159,6 +161,7 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate_Execution(
 		const auto CallbackManage401 = FOnHttpRequestCompletedDelegate::CreateWeakLambda(this,
 			[this, PendingRequest, OnHttpResponse, OnHttpRequestJobRetry, InHandle](const int32 StatusCode, const FString& ResponseBody)
 			{
+				TStrongObjectPtr<UJWNU_HttpRequestJobHandle> KeepHandle(InHandle);
 				if (StatusCode == 401)
 				{
 					PRINT_LOG(LogJWNU_GIS_ApiClientService, Display, TEXT("401 detected, queuing job and triggering token refresh..."));
@@ -166,13 +169,13 @@ void UJWNU_GIS_ApiClientService::CallApi_NoTemplate_Execution(
 					InHandle->MarkWaitingForRefresh();
 					FJWNU_PendingJob Job;
 					Job.RequestInfo = PendingRequest;
-					Job.OnTokenReady = [this, PendingRequest, OnHttpResponse, OnHttpRequestJobRetry, InHandle](const FString& NewAccessToken)
+					Job.OnTokenReady = [this, PendingRequest, OnHttpResponse, OnHttpRequestJobRetry, InHandle, KeepHandle](const FString& NewAccessToken)
 					{
 						if (InHandle->IsCancelled()) { InHandle->ClearWaitingForRefresh(); return; }
 						InHandle->ClearWaitingForRefresh();
 						CallApi_NoTemplate_Execution(PendingRequest.Method, PendingRequest.ServiceType, PendingRequest.URL, NewAccessToken, PendingRequest.ContentBody, PendingRequest.QueryParams, OnHttpResponse, InHandle, OnHttpRequestJobRetry, false);
 					};
-					Job.OnTokenFailed = [OnHttpResponse, InHandle](const FString& ErrorCode, const FString& ErrorMessage)
+					Job.OnTokenFailed = [OnHttpResponse, InHandle, KeepHandle](const FString& ErrorCode, const FString& ErrorMessage)
 					{
 						InHandle->ClearWaitingForRefresh();
 						const FString FakeResponseBody = FString::Printf(TEXT("{\"success\": false, \"code\": \"%s\", \"message\": \"%s\"}"), *ErrorCode, *ErrorMessage);

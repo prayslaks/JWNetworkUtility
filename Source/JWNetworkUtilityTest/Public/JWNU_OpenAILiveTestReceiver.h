@@ -6,12 +6,23 @@
 #include "JWNU_OpenAILiveTypes.h"
 #include "JWNU_OpenAILiveTestReceiver.generated.h"
 
+class UJWNU_OpenAILiveSession;
+class UJWNU_OpenAILiveComponent;
+
 /** 자동 생성한 BP 그래프의 실제 이벤트 수신을 기록한다. */
 UCLASS(Blueprintable)
 class UJWNU_OpenAILiveTestReceiver : public UObject
 {
     GENERATED_BODY()
 public:
+    /** Options 미연결 세션 Start를 BP에서 검증하는 함수. */
+    UFUNCTION(BlueprintImplementableEvent, Category="Live Test") void StartSessionDefaults(UJWNU_OpenAILiveSession* Target);
+    /** Options 미연결 환경변수 세션 Start의 BP 컴파일을 검증하는 함수. */
+    UFUNCTION(BlueprintImplementableEvent, Category="Live Test") void StartSessionEnvironmentDefaults(UJWNU_OpenAILiveSession* Target);
+    /** Options 미연결 컴포넌트 Start를 BP에서 검증하는 함수. */
+    UFUNCTION(BlueprintImplementableEvent, Category="Live Test") void StartComponentDefaults(UJWNU_OpenAILiveComponent* Target);
+    /** Options 미연결 환경변수 컴포넌트 Start의 BP 컴파일을 검증하는 함수. */
+    UFUNCTION(BlueprintImplementableEvent, Category="Live Test") void StartComponentEnvironmentDefaults(UJWNU_OpenAILiveComponent* Target);
     TArray<FJWNU_OpenAILiveTranscript> Transcripts;
     int32 ReadyCount = 0, ClosedCount = 0, ErrorCount = 0, AudioCount = 0;
     FJWNU_OpenAILiveClose LastClose;
