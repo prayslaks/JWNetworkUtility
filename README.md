@@ -1,5 +1,9 @@
 # JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-26 — OpenAI 전사 모델을 문자열로 전환(기본 gpt-live-transcribe, gpt-transcribe 추가). 모델별 필드 허용 여부는 서버가 판정한다.
+
+> 부분 갱신 일자: 2026-09-26 — OpenAI 모듈에 gpt-realtime-whisper·gpt-live-transcribe 실시간 전사 세션·BP 마이크 컴포넌트 추가. [전사 사용 가이드](Docs/OpenAITranscription.md).
+
 > 부분 갱신 일자: 2026-09-26 — HTTP·API·SSE·TypeSafe가 RequestBase의 Cancel·IsActive·GetState·OnFinished를 공유. Call TypeSafe API 및 환경변수 즉시 실행 함수 추가.
 
 > 부분 갱신 일자: 2026-09-26 — Call SSE API 즉시 실행 복원. 기존 콜백 핀과 선택적 SSE API Request 반환값을 제공한다.
@@ -88,7 +92,7 @@ uv run uvicorn main:app --host 127.0.0.1 --port 5000 --reload
 |---|---|---|
 | `JWNetworkUtility` | Runtime | Core plugin — HTTP Job, HTTP Client, API Client, Token Provider, Host Provider |
 | `JWNetworkUtilityTypeSafe` | Runtime | Jev Choice/Score/Noul typed HTTP evaluation, C++/BP requests |
-| `JWNetworkUtilityOpenAI` | Runtime | OpenAI Live sessions and BP audio integration |
+| `JWNetworkUtilityOpenAI` | Runtime | OpenAI Live conversations, Realtime transcription (model selected by name), and BP microphone integration |
 | `JWNetworkUtilityAudio` | Runtime | Provider-independent microphone capture and PCM playback |
 | `JWNetworkUtilityTest` | Runtime | Test/demo module — API test actor |
 

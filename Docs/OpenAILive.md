@@ -2,6 +2,8 @@
 
 # OpenAI GPT-Live — C++ / Blueprint
 
+> 부분 갱신 일자: 2026-09-26 — 같은 OpenAI 모듈의 [실시간 전사](OpenAITranscription.md) 지원 추가. gpt-realtime-whisper·gpt-live-transcribe는 별도 TranscriptionSession/Component를 사용한다.
+
 > 부분 갱신 일자: 2026-09-26 — Deprecated 호환 함수 10개와 삭제된 Evaluate의 핀 리다이렉트를 제거. 이전 함수 노드는 현재 생성·바인딩·Start 규약으로 교체한다.
 
 > 부분 갱신 일자: 2026-09-26 — 세션·컴포넌트 Start 계열의 Options 미연결 시 기본 구조체 참조를 자동 생성.

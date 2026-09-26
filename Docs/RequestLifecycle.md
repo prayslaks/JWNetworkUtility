@@ -2,6 +2,8 @@
 
 # HTTP·API·OpenAI Live·TypeSafe 요청 사용 규약
 
+> 부분 갱신 일자: 2026-09-26 — OpenAI 전사 세션도 Create → Bind → Start, Cancel·IsActive 규약 적용. [전사 수명과 발화 확정](OpenAITranscription.md).
+
 > 부분 갱신 일자: 2026-09-26 — 즉시 실행 Call API를 정식 편의 노드로 복원. 응답 콜백을 입력받아 즉시 시작하며 선택적 제어 반환값은 API Request다.
 
 > 부분 갱신 일자: 2026-09-26 — HTTP·SSE 즉시 실행 노드를 제거하고 SSE/SSE API 요청 객체 추가. Job·Job Handle은 내부 전송용으로 제한.
@@ -52,6 +54,8 @@ Blueprint 매크로·배열의 입력 타입을 **JWNU Request Base Object Refer
 기존 구체 요청 변수는 그대로 사용할 수 있다. 공통화할 변수·매크로만 부모 타입으로 변경한다. 부모로 이동한 Cancel·IsActive 호출 노드는 에디터 재시작 후 Refresh/Compile하고, 저장된 에셋은 별도 확인한다. 이번 작업은 BP 에셋을 자동 재작성하지 않는다.
 
 ## 공통 순서
+
+OpenAI 전사는 **Create OpenAI Transcription Session → Bind → Start**를 사용한다. `UJWNU_OpenAITranscriptionSession`은 Live처럼 RequestBase를 상속하지 않는 별도 세션이다. `OnTranscript`의 부분/최종 결과와 `OnCommitted`의 발화 ID를 처리하고, 정상 `Close`는 제출한 최종 전사까지 기다리며 `Cancel`은 즉시 끝낸다. 세션은 `IsActive`, ActorComponent 편의 래퍼는 `IsSessionActive`를 사용한다.
 
 요청 객체 방식은 **생성 → 변수 저장 → 성공·실패 이벤트 바인딩 → Start**를 사용한다. 생성은 전송하지 않는다. 핸들은 일회용이다. 다시 실행할 때는 새 요청·세션을 만든다. 일반 API는 즉시 실행 **Call API**, 직접 HTTP는 **Send HTTP Request** 방식도 사용할 수 있다. 공개 함수와 이벤트는 게임 스레드에서 사용한다.
 

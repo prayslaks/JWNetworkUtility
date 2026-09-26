@@ -18,9 +18,12 @@ def main(suite="sse"):
     """HTTP·SSE·WebSocket 공급자 테스트가 서버·UE 프로세스 수명 관리를 공유한다."""
     websocket = suite == "websocket"
     live = suite == "live"
+    transcription = suite == "transcription"
     typesafe = suite == "typesafe"
     api = suite == "api"
     label = "API" if api else ("TypeSafe" if typesafe else ("OpenAI.Live" if live else ("WebSocket" if websocket else "SSE")))
+    if transcription:
+        label = "OpenAI.Transcription"
     parser = argparse.ArgumentParser(description=f"Local FastAPI + Unreal {label} integration tests")
     parser.add_argument("--engine", type=Path, required=True, help="UE 설치 루트")
     parser.add_argument("--project", type=Path, required=True, help="호스트 .uproject")
@@ -37,6 +40,8 @@ def main(suite="sse"):
     health_context = ssl.create_default_context(cafile=str(args.tls_cert.resolve())) if tls else None
     project = args.project.resolve()
     prefix = "JWNUApi-" if api else ("JWNUTypeSafe-" if typesafe else ("JWNUOpenAILive-" if live else ("JWNUWebSocket-" if websocket else "JWNUSse-")))
+    if transcription:
+        prefix = "JWNUOpenAITranscription-"
     output = project.parent / "Saved" / "Automation" / (prefix + time.strftime("%Y%m%d-%H%M%S"))
     output.mkdir(parents=True, exist_ok=True)
     # 이미 실행 중인 다른 서버를 테스트 대상으로 오인하지 않는다.
@@ -81,6 +86,8 @@ def main(suite="sse"):
                     command.append("-JWNUWebSocketExpectTlsFailure")
                 else:
                     command.append(f"-ini:Engine:[SSL]:OverrideCertificateBundlePath={args.tls_cert.resolve()}")
+            if transcription:
+                command.extend(["-JWNUTranscriptionIntegration", f"-JWNUTranscriptionTestURL={socket_base}"])
             print(f"{label} test report: {output}", flush=True)
             with (output / "console.log").open("w", encoding="utf-8") as unreal_log:
                 result = subprocess.run(command, stdout=unreal_log, stderr=subprocess.STDOUT,
@@ -91,6 +98,8 @@ def main(suite="sse"):
             report = json.loads(index.read_text(encoding="utf-8-sig"))
             passed = report.get("succeeded", 0) + report.get("succeededWithWarnings", 0)
             expected = 6 if api else (1 if live else (2 if websocket else 3))
+            if transcription:
+                expected = 2
             if report.get("failed", 0) or report.get("notRun", 0) or report.get("inProcess", 0) or passed != expected:
                 raise RuntimeError(f"Automation did not pass; see {index}")
             print(f"Passed: {passed}; failed: {report.get('failed', 0)}; with warnings: {report.get('succeededWithWarnings', 0)}", flush=True)
