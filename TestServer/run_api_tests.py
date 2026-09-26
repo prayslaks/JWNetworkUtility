@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
+# Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT
 
 """로컬 서버와 일반 API 요청·공통 노드 명명 테스트를 실행한다."""
 from run_sse_tests import main

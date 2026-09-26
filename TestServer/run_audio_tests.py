@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
+# Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT
 
 """네트워크·마이크 장치 없이 범용 오디오와 UMG 녹음/재생 경로를 검증한다."""
 import argparse

@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
+# Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT
 
 """Realtime 전사 모의 서버. 키·음성 장치·OpenAI 호출 없이 프로토콜을 검증한다."""
 import asyncio

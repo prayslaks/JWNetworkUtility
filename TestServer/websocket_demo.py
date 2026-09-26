@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
+# Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT
 
 """실행 중인 테스트 서버에 텍스트·바이너리를 보내고 정상 종료하는 예제."""
 

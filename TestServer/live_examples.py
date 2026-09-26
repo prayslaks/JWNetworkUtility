@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Prayslaks. All rights reserved. Unauthorized copying, modification, or distribution of this file, via any medium is strictly prohibited. Proprietary and confidential.
+# Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT
 
 """GPT-Live 프로토콜 모의 서버. OpenAI를 호출하지 않으며 녹음을 저장하지 않는다."""
 import asyncio
