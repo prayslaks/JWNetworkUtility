@@ -13,9 +13,7 @@
 class UJWNU_ApiRequest;
 class UJWNU_HttpRequest;
 
-/**
- * JWNetworkUtility의 각종 기능을 지원하는 블루프린트 함수 라이브러리.
- */
+/** JWNetworkUtility의 각종 기능을 지원하는 블루프린트 함수 라이브러리. */
 UCLASS()
 class JWNETWORKUTILITY_API UJWNU_BFL_ApiClientService : public UBlueprintFunctionLibrary
 {
@@ -36,14 +34,7 @@ public:
 		const TMap<FString, FString>& InQueryParams, const FOnHttpResponseBPEvent& InOnHttpResponse,
 		const FOnHttpRequestJobRetryBPEvent& InOnHttpRequestJobRetry, bool bRequiresAuth = true);
 
-	/**
-	 * [ Blueprint Function Library ] \n Load Refresh Token Container from WINDOWS \n 윈도우에 암호화되어 저장된 JWT 인증 리프레시 토큰 컨테이너를 로드하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @param InServiceType Target Service Type \n 특정 서비스 타입
-	 * @param OutTokenGetResult Directing Load Result \n 토큰 로드 결과를 나타내는 열거형
-	 * @param OutRefreshTokenContainer Loaded Refresh Token Container \n 로드한 리프레시 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별로 암호화 저장된 리프레시 토큰을 복호화해 읽는 함수. 로드 결과를 BP 실행 핀으로 전달한다. */
 	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", ExpandEnumAsExecs="OutTokenGetResult", BlueprintOutRef="OutRefreshTokenContainer"))
 	static void LoadRefreshTokenContainer(
 		const UObject* WorldContextObject,
@@ -51,13 +42,7 @@ public:
 		EJWNU_TokenGetResult& OutTokenGetResult,
 		FJWNU_RefreshTokenContainer& OutRefreshTokenContainer);
 
-	/**
-	 * [ Blueprint Function Library ] \n Save Refresh Token Container to WINDOWS \n JWT 인증 리프레시 토큰 컨테이너를 윈도우에 암호화하여 저장하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutTokenSetResult Directing Save Result \n 토큰 저장 결과를 나타내는 열거형
-	 * @param InRefreshTokenContainer Targeting Refresh Token Container \n 저장할 리프레시 토큰 컨테이너
-	 */
+	/** 리프레시 토큰 컨테이너를 Windows DPAPI로 암호화 저장하고 저장 결과를 BP 실행 핀으로 전달하는 함수. */
 	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", ExpandEnumAsExecs="OutTokenSetResult"))
 	static void SaveRefreshTokenContainer(
 		const UObject* WorldContextObject,
@@ -65,13 +50,7 @@ public:
 		EJWNU_TokenSetResult& OutTokenSetResult,
 		const FJWNU_RefreshTokenContainer& InRefreshTokenContainer);
 	
-	/**
-	 * [ Blueprint Function Library ] \n Get Access Token Container \n JWT 인증 엑세스 토큰 컨테이너를 획득하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutTokenGetResult Directing Get Result \n 획득 결과를 나타내는 열거형
-	 * @param OutAccessTokenContainer Extracted Access Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 엑세스 토큰 컨테이너
-	 */
+	/** 서비스별 메모리 액세스 토큰과 조회 결과를 반환하는 함수. 조회 성공이 토큰 유효성을 보장하지 않는다. */
 	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", ExpandEnumAsExecs="OutTokenGetResult", BlueprintOutRef="OutAccessTokenContainer"))
 	static void GetAccessTokenContainer(
 		const UObject* WorldContextObject, 
@@ -79,13 +58,7 @@ public:
 		EJWNU_TokenGetResult& OutTokenGetResult, 
 		FJWNU_AccessTokenContainer& OutAccessTokenContainer);
 
-	/**
-	 * [ Blueprint Function Library ] \n Set Access Token Container \n JWT 인증 엑세스 토큰 컨테이너를 설정하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutTokenSetResult 설정 결과를 나타내는 열거형
-	 * @param InAccessTokenContainer New Access Token Container \n 새로운 JWT 인증 토큰 컨테이너
-	 */
+	/** 서비스별 액세스 토큰과 만료 시각을 메모리에 교체하는 함수. */
 	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject", ExpandEnumAsExecs="OutTokenSetResult"))
 	static void SetAccessTokenContainer(
 		const UObject* WorldContextObject,
@@ -93,50 +66,26 @@ public:
 		EJWNU_TokenSetResult& OutTokenSetResult,
 		const FJWNU_AccessTokenContainer& InAccessTokenContainer);
 
-	/**
-	 * [ Blueprint Function Library ] \n Get Host \n 목표 호스트 주소를 획득하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutHost Host Address \n 호스트 주소
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별 호스트 조회 성공 여부와 주소를 반환하는 함수. 등록된 주소가 비어 있어도 true일 수 있다. */
 	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject"))
 	static bool GetHost(
 		const UObject* WorldContextObject, 
 		const EJWNU_ServiceType InServiceType, 
 		FString& OutHost);
 
-	/**
-	 * [ Blueprint Function Library ] \n Get User Id \n 현재 로그인된 사용자 ID를 획득하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @return UserId 문자열
-	 */
+	/** 현재 GameInstance 메모리에 보관된 로그인 사용자 식별자를 반환하는 함수. */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject"))
 	static FString GetUserId(const UObject* WorldContextObject);
 
-	/**
-	 * [ Blueprint Function Library ] \n Set User Id \n 사용자 ID를 설정하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @param InUserId 설정할 UserId
-	 */
+	/** 현재 GameInstance 메모리의 로그인 사용자 식별자를 설정하는 함수. */
 	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject"))
 	static void SetUserId(const UObject* WorldContextObject, const FString& InUserId);
 
-	/**
-	 * [ Blueprint Function Library ] \n Clear Session \n 특정 서비스 타입의 인증 정보를 정리하는 함수. (AccessToken 초기화, UserId 유지)
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @param InServiceType 정리할 서비스 타입
-	 */
+	/** 지정 서비스의 액세스 토큰을 비우는 함수. 사용자 식별자와 저장된 리프레시 토큰은 유지한다. */
 	UFUNCTION(BlueprintCallable, Category="JWNU Blueprint Function Library", meta=(WorldContext="WorldContextObject"))
 	static void ClearSession(const UObject* WorldContextObject, const EJWNU_ServiceType InServiceType);
 
-	/**
-	 * [ Blueprint Function Library ] \n Convert JSON Object String to Unreal Struct \n 입력한 JSON 바디 문자열을 와일드카드로 지정한 언리얼 구조체로 파싱을 시도하는 노드 정의.
-	 * @param JsonString 파싱하길 원하는 JSON 바디 문자열
-	 * @param OutConvertResult 파싱 결과를 나타내는 열거형
-	 * @param OutStruct 파싱하길 원하는 언리얼 구조체 와일드 카드
-	 * @return 파싱 성공 여부
-	 */
+	/** JSON 객체를 연결된 BP 구조체로 변환하고 성공 여부와 상세 변환 결과를 반환하는 함수. */
 	UFUNCTION(BlueprintCallable, CustomThunk, Category="JWNU Blueprint Function Library", meta=(CustomStructureParam="OutStruct"))
 	static bool ConvertJsonStringToStruct(const FString& JsonString, EJWNU_ConvertJsonToStructResult& OutConvertResult, int32& OutStruct);
 	static bool Generic_ConvertJsonStringToStruct(const FString& JsonString, EJWNU_ConvertJsonToStructResult& OutConvertResult, const FProperty* StructProperty, void* StructPtr);
@@ -160,13 +109,7 @@ public:
 		*static_cast<bool*>(RESULT_PARAM) = Generic_ConvertJsonStringToStruct(JsonString, *OutConvertResultPtr, StructProperty, StructPtr);
 	}
 
-	/**
-	 * [ Blueprint Function Library ] \n Convert Unreal Struct to JSON Object String \n 와일드카드로 지정한 언리얼 구조체를 JSON 문자열로 변환을 시도하는 노드 정의.
-	 * @param InStruct 변환하길 원하는 언리얼 구조체 와일드 카드
-	 * @param OutConvertResult 변환 결과를 나타내는 열거형
-	 * @param OutJsonString 변환된 JSON 문자열
-	 * @return 변환 성공 여부
-	 */
+	/** 연결된 BP 구조체를 JSON 문자열로 변환하고 성공 여부와 상세 변환 결과를 반환하는 함수. */
 	UFUNCTION(BlueprintCallable, CustomThunk, Category="JWNU Blueprint Function Library", meta=(CustomStructureParam="InStruct"))
 	static bool ConvertStructToJsonString(const int32& InStruct, EJWNU_ConvertStructToJsonResult& OutConvertResult, FString& OutJsonString);
 	static bool Generic_ConvertStructToJsonString(const FProperty* StructProperty, const void* StructPtr, EJWNU_ConvertStructToJsonResult& OutConvertResult, FString& OutJsonString);

@@ -8,16 +8,10 @@
 #include "Engine/Engine.h"
 #include "JWNU_GIS_ApiIdentityProvider.generated.h"
 
-/**
- * 클래스 전용의 로그 카테고리 선언
- */
+/** 클래스 전용의 로그 카테고리 선언 */
 JWNETWORKUTILITY_API DECLARE_LOG_CATEGORY_EXTERN(LogJWNU_GIS_ApiIdentityProvider, Log, All);
 
-/**
- * 인증 JWT 엑세스 토큰, 리프레시 토큰, UserId를 관리하는 게임인스턴스 서브시스템.
- * 서비스 타입별로 다른 엑세스 토큰을 TMap으로 관리하며, 리프레시 토큰을 암호화-복호화한다.
- * UserId는 단일 FString(메모리 전용, 로그인/리프레시 응답에서 수신)으로 관리한다.
- */
+/** 서비스별 액세스 토큰과 로그인 사용자 ID를 메모리에 보관하고 Windows DPAPI 기반 리프레시 토큰 저장·복원을 제공한다. */
 UCLASS()
 class JWNETWORKUTILITY_API UJWNU_GIS_ApiIdentityProvider : public UGameInstanceSubsystem
 {
@@ -27,155 +21,72 @@ public:
 
 	// 프로그래밍 팁 : meta=(BlueprintOutRef="OutRef1, OutRef2, ...")를 사용하면 블루프린트 활용도를 높일 수 있다
 
-	/**
-	 * Overriding for initializing token container map \n 토큰 컨테이너 맵을 초기화하는 로직 오버라이드.
-	 */
+	/** 서비스별 기본 액세스 토큰 컨테이너를 초기화하는 함수. */
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
-	/**
-	 * 외부에서 HTTP 클라이언트 헬퍼 서브시스템을 획득하기 위해 호출하는 함수.
-	 * @param WorldContextObject 월드 컨텍스트 오브젝트
-	 * @return UJWNU_GIS_ApiIdentityProvider 게임인스턴스 서브시스템
-	 */
+	/** 월드의 GameInstance에서 인증 정보 서브시스템을 반환하는 함수. 유효한 월드가 없으면 null이다. */
 	static UJWNU_GIS_ApiIdentityProvider* Get(const UObject* WorldContextObject);
 
-	/**
-	 * Get Access Token Container \n JWT 인증 엑세스 토큰 컨테이너를 획득하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutTokenGetResult Directing Get Result \n 획득 결과를 나타내는 열거형
-	 * @param OutAccessTokenContainer Extracted Access Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 엑세스 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별 액세스 토큰 컨테이너를 조회하는 함수. true는 항목 존재 여부이며 토큰 내용·만료 유효성을 보장하지 않는다. */
 	UFUNCTION(BlueprintCallable, Category="JWNetworkUtility|Authorization", meta=(BlueprintOutRef="OutTokenGetResult, OutAccessTokenContainer"))
 	bool GetAccessTokenContainer(const EJWNU_ServiceType InServiceType, EJWNU_TokenGetResult& OutTokenGetResult, FJWNU_AccessTokenContainer& OutAccessTokenContainer) const;
 
-	/**
-	 * Get Access Token Container \n JWT 인증 엑세스 토큰 컨테이너를 획득하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutAccessTokenContainer Extracted Access Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 엑세스 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별 액세스 토큰 컨테이너를 조회하는 함수. true는 항목 존재 여부이며 토큰 내용·만료 유효성을 보장하지 않는다. */
 	bool GetAccessTokenContainer(const EJWNU_ServiceType InServiceType, FJWNU_AccessTokenContainer& OutAccessTokenContainer) const;
 
-	/**
-	 * Set Access Token Container \n JWT 인증 엑세스 토큰 컨테이너를 설정하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutTokenSetResult 설정 결과를 나타내는 열거형
-	 * @param InAccessTokenContainer New Access Token Container \n 새로운 JWT 인증 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별 액세스 토큰 컨테이너를 메모리에 추가하거나 교체하는 함수. */
 	UFUNCTION(BlueprintCallable, Category="JWNetworkUtility|Authorization", meta=(BlueprintOutRef="OutTokenSetResult"))
 	bool SetAccessTokenContainer(const EJWNU_ServiceType InServiceType, EJWNU_TokenSetResult& OutTokenSetResult, const FJWNU_AccessTokenContainer& InAccessTokenContainer);
 
-	/**
-	 * Set Access Token Container \n JWT 인증 엑세스 토큰 컨테이너를 설정하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param InTokenContainer New Access Token Container \n 새로운 JWT 인증 토큰 컨테이너
-	 * @return
-	 */
+	/** 서비스별 액세스 토큰 컨테이너를 메모리에 추가하거나 교체하는 함수. */
 	bool SetAccessTokenContainer(const EJWNU_ServiceType InServiceType, const FJWNU_AccessTokenContainer& InTokenContainer);
 
-	/**
-	 * Load Refresh Token Container from WINDOWS \n 윈도우를 통해 JWT 인증 리프레시 토큰 컨테이너를 로드하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutTokenGetResult Directing Load Result \n 토큰 추출 결과를 나타내는 열거형
-	 * @param OutRefreshTokenContainer Loaded Refresh Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 리프레시 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별 저장 파일을 읽고 복호화해 리프레시 토큰 컨테이너를 반환하는 함수. 서버 인증 유효성은 별도로 확인한다. */
 	UFUNCTION(BlueprintCallable, Category="JWNetworkUtility|Authorization", meta=(BlueprintOutRef="OutTokenGetResult, OutRefreshTokenContainer"))
 	bool GetRefreshTokenContainer(const EJWNU_ServiceType InServiceType, EJWNU_TokenGetResult& OutTokenGetResult, FJWNU_RefreshTokenContainer& OutRefreshTokenContainer) const;
 
-	/**
-	 * [ For CPP ] \n Load Refresh Token Container from WINDOWS \n 윈도우를 통해 JWT 인증 리프레시 토큰 컨테이너를 로드하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutRefreshTokenContainer Loaded Refresh Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 리프레시 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별 저장 파일을 읽고 복호화해 리프레시 토큰 컨테이너를 반환하는 함수. 서버 인증 유효성은 별도로 확인한다. */
 	static bool GetRefreshTokenContainer(const EJWNU_ServiceType InServiceType, FJWNU_RefreshTokenContainer& OutRefreshTokenContainer);
 
-	/**
-	 * Save Refresh Token Container to WINDOWS \n 윈도우를 통해 JWT 인증 리프레시 토큰 컨테이너를 저장하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutTokenSetResult Directing Save Result \n 토큰 추출 결과를 나타내는 열거형
-	 * @param InRefreshTokenContainer Targeting Refresh Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 리프레시 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별 리프레시 토큰을 Windows DPAPI로 암호화 저장하고 성공 여부를 반환하는 함수. */
 	UFUNCTION(BlueprintCallable, Category="JWNetworkUtility|Authorization", meta=(BlueprintOutRef="OutTokenSetResult"))
 	bool SetRefreshTokenContainer(const EJWNU_ServiceType InServiceType, EJWNU_TokenSetResult& OutTokenSetResult, const FJWNU_RefreshTokenContainer& InRefreshTokenContainer);
 
-	/**
-	 * [ For CPP ] \n Save Refresh Token Container to WINDOWS \n 윈도우를 통해 JWT 인증 리프레시 토큰 컨테이너를 저장하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param InRefreshTokenContainer Targeting Refresh Token Container \n 특정 서비스 타입과 매핑되는 JWT 인증 리프레시 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별 리프레시 토큰을 Windows DPAPI로 암호화 저장하고 성공 여부를 반환하는 함수. */
 	static bool SetRefreshTokenContainer(const EJWNU_ServiceType InServiceType, const FJWNU_RefreshTokenContainer& InRefreshTokenContainer);
 
 	// ──────── UserId ────────
 
-	/**
-	 * 현재 로그인된 사용자 ID를 반환한다. (메모리 전용, 로그인/리프레시 응답에서 수신)
-	 * @return UserId 문자열
-	 */
+	/** 메모리에만 보관한 현재 로그인 사용자 식별자를 반환하는 함수. */
 	FString GetUserId() const;
 
-	/**
-	 * 사용자 ID를 설정한다. (메모리 전용)
-	 * @param InUserId 설정할 UserId
-	 */
+	/** 로그인·토큰 갱신 응답에서 받은 사용자 식별자를 메모리에 설정하는 함수. */
 	void SetUserId(const FString& InUserId);
 
 	// ──────── 세션 정리 ────────
 
-	/**
-	 * 특정 서비스 타입의 인증 정보를 정리한다. (AccessToken 초기화, UserId 유지)
-	 * @param InServiceType 정리할 서비스 타입
-	 */
+	/** 지정 서비스의 액세스 토큰을 비우는 함수. 사용자 식별자와 저장된 리프레시 토큰은 유지한다. */
 	void ClearSession(EJWNU_ServiceType InServiceType);
 
 private:
 
-	/**
-	 * 특정 서비스 타입의 리프레시 토큰 컨테이너를 암호화하여 저장하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param InRefreshTokenContainer Targeting Refresh Token Container \n 저장할 리프레시 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 리프레시 토큰 컨테이너를 JSON으로 직렬화하고 암호화해 서비스별 파일에 저장하는 함수. */
 	static bool SaveRefreshTokenContainer(const EJWNU_ServiceType InServiceType, const FJWNU_RefreshTokenContainer& InRefreshTokenContainer);
 
-	/**
-	 * 특정 서비스 타입의 리프레시 토큰 컨테이너를 복호화하여 반환하는 함수.
-	 * @param InServiceType Targeting Service Type \n 특정 서비스 타입
-	 * @param OutRefreshTokenContainer Targeting Refresh Token Container \n 로드할 리프레시 토큰 컨테이너
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** 서비스별 저장 파일을 복호화하고 JSON을 리프레시 토큰 컨테이너로 복원하는 함수. */
 	static bool LoadRefreshTokenContainer(const EJWNU_ServiceType InServiceType, FJWNU_RefreshTokenContainer& OutRefreshTokenContainer);
 
-	/**
-	 * 입력 토큰을 암호화하여 반환하는 함수.
-	 * @param InToken Targeting Token \n 암호화할 토큰
-	 * @param OutEncryptedData Data After Encryption \n 암호화된 토큰 데이터
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** Windows DPAPI와 장치 기반 추가 엔트로피로 문자열을 암호화하는 함수. */
 	static bool EncryptToken(const FString& InToken, TArray<uint8>& OutEncryptedData);
 
-	/**
-	 * 암호화된 토큰 데이터를 복호화하여 반환하는 함수.
-	 * @param InEncryptedData Targeting Encrypted Token Data \n 암호화되어 있는 토큰 데이터
-	 * @param OutToken Token After Decryption \n 복호화된 토큰 데이터
-	 * @return Success or Fail \n 성공 여부
-	 */
+	/** Windows DPAPI와 저장 시 사용한 장치 기반 추가 엔트로피로 문자열을 복호화하는 함수. */
 	static bool DecryptToken(const TArray<uint8>& InEncryptedData, FString& OutToken);
 
-	/**
-	 * 특정 서비스 타입과 JWT 인증 토큰 컨테이너를 매핑하는 맵.
-	 */
+	/** 특정 서비스 타입과 JWT 인증 토큰 컨테이너를 매핑하는 맵. */
 	UPROPERTY()
 	TMap<EJWNU_ServiceType, FJWNU_AccessTokenContainer> ServiceTypeToTokenContainerMap;
 
-	/**
-	 * 현재 로그인된 사용자 ID. (메모리 전용)
-	 */
+	/** 현재 로그인된 사용자 ID. (메모리 전용) */
 	FString UserId;
 
 };

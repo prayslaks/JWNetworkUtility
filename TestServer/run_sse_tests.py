@@ -99,7 +99,7 @@ def main(suite="sse"):
             passed = report.get("succeeded", 0) + report.get("succeededWithWarnings", 0)
             expected = 6 if api else (1 if live else (2 if websocket else 3))
             if transcription:
-                expected = 2
+                expected = 5
             if report.get("failed", 0) or report.get("notRun", 0) or report.get("inProcess", 0) or passed != expected:
                 raise RuntimeError(f"Automation did not pass; see {index}")
             print(f"Passed: {passed}; failed: {report.get('failed', 0)}; with warnings: {report.get('succeededWithWarnings', 0)}", flush=True)

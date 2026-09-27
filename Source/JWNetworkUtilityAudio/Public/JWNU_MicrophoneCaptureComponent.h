@@ -21,10 +21,13 @@ public:
     UFUNCTION(BlueprintCallable, Category="JWNU|Audio") static TArray<FJWNU_AudioCaptureDevice> GetCaptureDevices();
     /** 녹음을 중단하고 미전송 버퍼를 버리는 함수. */
     UFUNCTION(BlueprintCallable, Category="JWNU|Audio") void StopCapture();
+    /** 마이크 캡처가 현재 실행 중인지 반환하는 함수. */
     UFUNCTION(BlueprintPure, Category="JWNU|Audio") bool IsCapturing() const;
     /** 최근 PCM 청크의 RMS 음량을 0~1로 반환하는 함수. */
     UFUNCTION(BlueprintPure, Category="JWNU|Audio") float GetInputLevel() const { return InputLevel; }
+    /** 지정 표본율의 PCM16 LE mono 청크를 게임 스레드에 전달하는 이벤트 필드. */
     UPROPERTY(BlueprintAssignable, Category="JWNU|Audio") FJWNU_PCMReceivedBP OnPCM;
+    /** 캡처 장치·입력 버퍼 오류를 알리는 이벤트 필드. */
     UPROPERTY(BlueprintAssignable, Category="JWNU|Audio") FJWNU_AudioErrorBP OnError;
     FJWNU_PCMReceivedNative OnPCMNative;
     FJWNU_AudioErrorNative OnErrorNative;

@@ -11,6 +11,7 @@
  */
 DECLARE_LOG_CATEGORY_EXTERN(LogJWNU_Actor_ApiTest, Log, All);
 
+/** HTTP 헬퍼와 API 호출 경로를 타이머로 실행해 로컬 테스트 서버 응답을 확인하는 예제 액터다. */
 UCLASS()
 class JWNETWORKUTILITYTEST_API AJWNU_Actor_ApiTest : public AActor
 {

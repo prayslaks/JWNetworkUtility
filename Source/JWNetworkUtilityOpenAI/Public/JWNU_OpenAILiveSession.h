@@ -46,16 +46,26 @@ public:
     /** 월드 정리·긴급 중단 시 즉시 전송 계층을 닫는 함수. 최종 사용량은 보장하지 않는다. */
     UFUNCTION(BlueprintCallable, Category="JWNU|OpenAI|Live")
     void Cancel();
+    /** 연결·시작 확인·오디오 처리·종료의 현재 세션 상태를 반환하는 함수. */
     UFUNCTION(BlueprintPure, Category="JWNU|OpenAI|Live") EJWNU_OpenAILiveState GetState() const { return State; }
+    /** 연결 시작부터 정상 종료 대기까지 진행 중인 세션인지 반환하는 함수. */
     UFUNCTION(BlueprintPure, Category="JWNU|OpenAI|Live") bool IsActive() const;
+    /** 입력·출력 PCM에 사용하는 설정 표본율(Hz)을 반환하는 함수. */
     UFUNCTION(BlueprintPure, Category="JWNU|OpenAI|Live") int32 GetSampleRate() const { return Settings.SampleRate; }
 
+    /** 서버의 session.started 확인을 마쳐 오디오 입력이 가능한 시점을 알리는 이벤트 필드. */
     UPROPERTY(BlueprintAssignable, Category="JWNU|OpenAI|Live") FJWNU_LiveReadyBP OnReady;
+    /** 사용자 입력 또는 모델 출력의 자막 추가분과 시간 범위를 전달하는 이벤트 필드. */
     UPROPERTY(BlueprintAssignable, Category="JWNU|OpenAI|Live") FJWNU_LiveTranscriptBP OnTranscript;
+    /** 세션 표본율의 PCM16 LE mono 출력 청크를 전달하는 이벤트 필드. */
     UPROPERTY(BlueprintAssignable, Category="JWNU|OpenAI|Live") FJWNU_LiveAudioBP OnAudio;
+    /** 공급자·전송 오류를 알리는 이벤트 필드. bFatal로 세션 종료 여부를 구분한다. */
     UPROPERTY(BlueprintAssignable, Category="JWNU|OpenAI|Live") FJWNU_LiveErrorBP OnError;
+    /** 세션 종료 정보와 최종 사용량 수신 여부를 전달하는 이벤트 필드. */
     UPROPERTY(BlueprintAssignable, Category="JWNU|OpenAI|Live") FJWNU_LiveClosedBP OnClosed;
+    /** 서버가 보고한 사용 시간을 초 단위로 전달하는 이벤트 필드. */
     UPROPERTY(BlueprintAssignable, Category="JWNU|OpenAI|Live") FJWNU_LiveUsageBP OnUsage;
+    /** 수신 이벤트의 타입과 원문 JSON을 관찰할 수 있게 전달하는 이벤트 필드. */
     UPROPERTY(BlueprintAssignable, Category="JWNU|OpenAI|Live") FJWNU_LiveRawBP OnRawEvent;
     FJWNU_LiveReadyNative OnReadyNative;
     FJWNU_LiveTranscriptNative OnTranscriptNative;
@@ -76,6 +86,7 @@ private:
     void Finish(bool bFailed);
     void ReleaseSocket();
     void Pump();
+    /** 대화 세션의 송수신과 종료 협상을 담당하는 WebSocket 연결 필드. */
     UPROPERTY(Transient) TObjectPtr<UJWNU_WebSocketConnection> Socket;
     TWeakObjectPtr<UJWNU_GIS_OpenAI> OwnerClient;
     TWeakObjectPtr<UWorld> OwnerWorld;

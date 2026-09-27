@@ -1,5 +1,7 @@
 # JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-27 — `UJWNU_GptLiveTranscriptor`의 PCM 청크화·누적 자막·최종문 정렬·C++/BP API와 subsystem 수명 관리 추가. [전사 가이드](Docs/OpenAITranscription.md).
+
 > 부분 갱신 일자: 2026-09-26 — OpenAI 전사 모델을 문자열로 전환(기본 gpt-live-transcribe, gpt-transcribe 추가). 모델별 필드 허용 여부는 서버가 판정한다.
 
 > 부분 갱신 일자: 2026-09-26 — OpenAI 모듈에 gpt-realtime-whisper·gpt-live-transcribe 실시간 전사 세션·BP 마이크 컴포넌트 추가. [전사 사용 가이드](Docs/OpenAITranscription.md).

@@ -30,17 +30,25 @@ public:
 	/** 정상 종료 협상을 시작하는 함수. 연결 중에도 취소할 수 있다. */
 	UFUNCTION(BlueprintCallable, Category="JWNU|WebSocket")
 	bool Close(int32 Code = 1000, const FString& Reason = TEXT(""));
+	/** 연결 준비·접속·종료·실패를 구분하는 현재 상태를 반환하는 함수. */
 	UFUNCTION(BlueprintPure, Category="JWNU|WebSocket")
 	EJWNU_WebSocketState GetState() const { return State; }
+	/** 송신 가능한 Connected 상태인지 반환하는 함수. */
 	UFUNCTION(BlueprintPure, Category="JWNU|WebSocket")
 	bool IsConnected() const { return State == EJWNU_WebSocketState::Connected; }
+	/** 연결 시도·접속·종료 협상 중인지 반환하는 함수. 종료 또는 실패한 핸들은 false다. */
 	UFUNCTION(BlueprintPure, Category="JWNU|WebSocket")
 	bool IsActive() const;
 
+	/** WebSocket 연결 협상이 완료되어 송신할 수 있음을 알리는 이벤트 필드. */
 	UPROPERTY(BlueprintAssignable, Category="JWNU|WebSocket") FJWNU_WebSocketConnectedBP OnConnected;
+	/** UTF-8 조각을 조립한 전체 텍스트 메시지를 게임 스레드에 전달하는 이벤트 필드. */
 	UPROPERTY(BlueprintAssignable, Category="JWNU|WebSocket") FJWNU_WebSocketTextBP OnTextMessage;
+	/** 조각을 조립한 전체 바이너리 메시지를 게임 스레드에 전달하는 이벤트 필드. */
 	UPROPERTY(BlueprintAssignable, Category="JWNU|WebSocket") FJWNU_WebSocketBinaryBP OnBinaryMessage;
+	/** 설정·연결·시간 초과·버퍼 제한 실패를 알리는 이벤트 필드. */
 	UPROPERTY(BlueprintAssignable, Category="JWNU|WebSocket") FJWNU_WebSocketErrorBP OnError;
+	/** 정상·비정상 종료의 코드와 원인 및 로컬 요청 여부를 알리는 이벤트 필드. */
 	UPROPERTY(BlueprintAssignable, Category="JWNU|WebSocket") FJWNU_WebSocketClosedBP OnClosed;
 
 	FSimpleMulticastDelegate OnConnectedNative;

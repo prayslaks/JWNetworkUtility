@@ -2,6 +2,8 @@
 
 # OpenAI 실시간 전사 — C++ / Blueprint
 
+> 부분 갱신 일자: 2026-09-27 — 캡처 독립 UJWNU_GptLiveTranscriptor를 추가. mono float PCM·누적 부분문·정렬된 최종문·활성 수명 관리 제공.
+
 > 부분 갱신 일자: 2026-09-26 — gpt-realtime-whisper·gpt-live-transcribe 세션, 마이크 컴포넌트와 로컬 검증 추가.
 
 > 부분 갱신 일자: 2026-09-26 — 모델을 enum에서 문자열로 전환. 기본값 `gpt-live-transcribe`, `gpt-transcribe` 추가. 모델별 필드 허용 여부의 클라이언트 거절을 제거하고 서버 판정에 맡긴다.
@@ -12,7 +14,27 @@
 
 `UJWNU_OpenAITranscriptionComponent`는 범용 `UJWNU_MicrophoneCaptureComponent`의 PCM을 장치 독립 `UJWNU_OpenAITranscriptionSession`에 전달한다. 세션은 하위 JWNU WebSocket을 사용하며 `UJWNU_GIS_OpenAI`가 활성 세션의 GC 보관·시간 제한·월드/GameInstance 종료를 관리한다. 별도 모듈·마켓플레이스 의존성·게임 RPC는 추가하지 않는다.
 
-## Blueprint 빠른 시작
+## 캡처 독립 GPT 전사기
+
+`UJWNU_GptLiveTranscriptor`는 외부 PCM을 받아 누적 자막과 입력 순서의 최종문을 제공하는 상위 계층이다. 아래의 원시 세션·마이크 컴포넌트 API도 그대로 사용할 수 있다. ProjectZK·RSR·Silero 의존성은 없으며, 캡처·VAD·게임 명령·키 저장은 호출자가 제공한다.
+
+1. **Create Gpt Live Transcriptor**에 월드 맥락을 전달하고 반환값을 변수에 보관한다.
+2. **On Ready**, **On Transcript**, **On Finished**, **On Error**를 바인딩한 뒤 **Start(Options, API Key)** 또는 **Start From Environment(Options)**를 호출한다.
+3. **On Ready** 이후 **Append Audio**로 mono float 24kHz PCM을 보낸다. 표본율 변환은 호출자가 맡는다. 구현이 PCM16 LE로 변환해 최대 100ms씩 전송한다.
+4. 외부 VAD/버튼에서 **Commit Utterance**를 호출한다. 100ms보다 짧은 발화는 무음 패딩한다. 다음 발화 입력을 계속할 수 있다.
+5. **Finish**는 남은 입력을 확정하고 모든 최종문 처리 후 **On Finished**를 알린다. 같은 객체를 다시 Start할 수 있다. **Cancel**은 결과·Finished 알림 없이 즉시 정리한다. 활성 상태 Start는 false와 진단 로그로 거절하며 현재 세션은 유지한다.
+
+C++는 `JWNU_GptLiveTranscriptor.h`를 include하고 `OnReadyNative`, `OnTranscriptNative`, `OnFinishedNative`, `OnErrorNative`에 바인딩한다. 모든 공개 호출·이벤트는 게임 스레드 전용이다. 설정 오류는 Start 안에서 즉시 발생할 수 있다. 환경변수 호출은 기본 공식 Endpoint만 허용하며, Start 자체는 로컬 설정이나 환경 키를 자동으로 찾지 않는다.
+
+`FJWNU_GptLiveTranscript`는 `UtteranceId`, `Text`, `bFinal`을 가진다. **부분문도 누적된 전체 Text**이므로 UI는 해당 발화 자막을 교체한다. delta를 별도로 더하지 않는다. 최종문은 ack의 PreviousItemId 연속성을 확인하고 입력 순서대로 전달한다. 부분문은 ack 이전에도 즉시 전달한다. 게임 세션 ID와 이전 세션 자막 보관은 호스트 책임이다.
+
+미확정 발화는 30초, 결과 맵은 33개, 발화 텍스트는 16,384자로 제한한다. commit ack/최종문은 제출 후 60초 내에 받아야 한다. Start/Close 제한은 Options를 따른다. 개별 발화 실패도 순서 누락을 피하도록 전체 전사기를 중단하고 OnError를 발생시킨다. 원시 세션의 비치명적 발화 오류 계약과 구분한다.
+
+`UJWNU_GIS_OpenAI`가 활성 객체를 GC로부터 보관하고 실제 시간 기준 deadline을 검사한다. 호출자가 Tick/Poll을 구현할 필요가 없다. 월드/GameInstance 종료는 Cancel하며 완료·취소된 객체는 다음 subsystem Tick에 보관 목록에서 해제한다. 다음 Start에도 쓰려면 BP 변수/UPROPERTY에 보관한다. 콜백에서 Cancel/재시작하면 이전 실행의 후속 BP 이벤트와 대기 최종문은 차단된다. 준비 중 Finish는 취소 후 Finished 한 번, 비활성/종료 대기 중 중복 Finish는 무시한다.
+
+진단 카테고리는 `LogJWNU_GptLiveTranscriptor`다. `GPT.Start/Ready/CommitRequest/CommitAck/Final/Closed`로 단계를 확인하고 `Log LogJWNU_GptLiveTranscriptor Verbose`로 청크·부분문·순서 대기를 확인한다. 로그는 객체·Generation·Item·문자/표본 수를 기록하며 입력 텍스트·PCM·키는 출력하지 않는다. 오류 설명은 공급자 메시지를 포함할 수 있다.
+
+## Blueprint 빠른 시작 — 마이크 컴포넌트
 
 1. Editor 타깃 빌드 후 에디터를 재시작한다.
 2. 로컬 플레이어 Actor BP에 **JWNU Open AI Transcription Component**를 추가한다. BeginPlay 자동 연결과 복제는 없다.
@@ -53,7 +75,7 @@
 
 PCM은 **signed PCM16 little-endian, mono, 24kHz**로 고정한다. 범용 마이크 컴포넌트가 장치 표본율을 변환한다. 네트워크 세션만 사용하면 호출자가 이 형식과 실제 음성 속도를 맞춰야 한다.
 
-## 이벤트 처리
+## 이벤트 처리 — 원시 세션·마이크 컴포넌트
 
 | 이벤트 | 사용법 |
 | --- | --- |
@@ -64,7 +86,7 @@ PCM은 **signed PCM16 little-endian, mono, 24kHz**로 고정한다. 범용 마�
 | OnClosed(Info) | Reason과 bFinalized 확인. 세션당 한 번 |
 | OnRawEvent(Type, Json) | 정상 수신 이벤트와 확장 필드 관찰. 최종 이벤트의 usage 등은 원문에서 읽을 수 있음 |
 
-부분 자막은 Commit 이전에도 도착할 수 있다. 발화별 최종 결과 순서는 보장되지 않으므로 최종 문자열을 전역 문자열 뒤에 단순 추가하지 않는다. `PreviousItemId`로 정렬하고 각 ItemId의 최종 문자열을 교체한다. 이 모듈은 무제한 자막 누적 맵을 보관하지 않으며 UI/호스트가 필요한 기록을 소유한다. `ClearInputAudio`는 현재 미확정 오디오를 버리므로 대응하는 부분 자막 표시도 호출자가 지운다.
+부분 자막은 Commit 이전에도 도착할 수 있다. 발화별 최종 결과 순서는 보장되지 않으므로 최종 문자열을 전역 문자열 뒤에 단순 추가하지 않는다. `PreviousItemId`로 정렬하고 각 ItemId의 최종 문자열을 교체한다. 원시 세션은 자막 누적 맵을 보관하지 않으며 UI/호스트가 필요한 기록을 소유한다. 누적·정렬을 맡기려면 상위 GptLiveTranscriptor를 사용한다. `ClearInputAudio`는 현재 미확정 오디오를 버리므로 대응하는 부분 자막 표시도 호출자가 지운다.
 
 현재 오디오 전용 세션은 content index 0을 받는다. 단어별 타임스탬프·화자 분리·신뢰도 점수·자동 게임 명령 실행은 제공하지 않는다. 원문 이벤트와 자막에 사용자 발화가 포함되므로 필요한 곳에만 저장한다.
 
@@ -126,7 +148,7 @@ Options.Endpoint를 `ws://127.0.0.1:5000/realtime?intent=transcription`로 설�
 uv run --locked --project Plugins/JWNetworkUtility/TestServer python Plugins/JWNetworkUtility/TestServer/run_transcription_tests.py --engine "C:/Program Files/Epic Games/UE_5.7" --project "C:/Users/prays/Documents/Unreal Projects/ProjectZK/ProjectZK.uproject"
 ```
 
-실행기는 로컬 FastAPI와 별도 UnrealEditor-Cmd의 수명을 관리한다. `JWNetworkUtility.OpenAI.Transcription.Codec`는 필드 전송·모델 이름 통과·형식 검증을, `.FastAPI`는 세 모델의 실제 WebSocket·서버 측 모델별 필드 거절·컴파일한 BP·GC·월드/컴포넌트/GI 정리·설정/타임아웃/오류·최종 결과 순서·콜백 중 Close를 검증한다. 보고서는 호스트 `Saved/Automation/JWNUOpenAITranscription-<timestamp>`에 기록된다. 실패 fixture는 `JWNU_SSE_TEST_FIXTURES=1`에서만 활성화한다.
+실행기는 로컬 FastAPI와 별도 UnrealEditor-Cmd의 수명을 관리한다. `JWNetworkUtility.OpenAI.Transcription.Codec`는 필드 전송·모델 이름 통과·형식 검증을, `.FastAPI`는 세 모델의 실제 WebSocket·서버 측 모델별 필드 거절·컴파일한 BP·GC·월드/컴포넌트/GI 정리·설정/타임아웃/오류·최종 결과 순서·콜백 중 Close를 검증한다. 추가 `.GptLiveTranscriptor.StreamingResults/Lifetime/FastAPI`는 PCM·부분문·최종문 정렬·시간 제한·콜백 중 취소와 독립 BP 호환 이벤트·GC 보관·동일 객체 재시작을 검증한다. 전사 실행기는 총 5개 테스트를 실행한다. 보고서는 호스트 `Saved/Automation/JWNUOpenAITranscription-<timestamp>`에 기록된다. 실패 fixture는 `JWNU_SSE_TEST_FIXTURES=1`에서만 활성화한다.
 
 실제 계정 접근 권한·두 모델의 실제 인식 품질·물리 마이크·Server 타깃 빌드와 패키징은 이 모의 테스트가 검증하지 않는다.
 
@@ -134,8 +156,11 @@ uv run --locked --project Plugins/JWNetworkUtility/TestServer python Plugins/JWN
 
 2026-09-26 모델 문자열 전환 후 재검증: ProjectZKEditor·ProjectZK 빌드 통과. Codec과 통합 21개 시나리오 통과(`Saved/Automation/JWNUOpenAITranscription-20260926-195845/index.json`). 시나리오 1·2·18은 각각 gpt-live-transcribe·gpt-transcribe 정상 흐름과 Whisper+prompt의 서버 거절을 검증한다. 동일한 경로 정규화 경고 1건 외 실패는 없다.
 
+2026-09-27 GPT 전사기 이관 검증: 호스트 Editor·Game Development 빌드 성공. 전사 5종(기존 Codec·FastAPI 및 새 StreamingResults·Lifetime·FastAPI)과 호스트 회귀 9종, 총 14개 통과. 플러그인 단독 WebSocket 경로의 GC 보관·동적 이벤트·정상 종료 후 재시작·콜백 중 취소까지 확인했다. 호스트 보고서: `Saved/Automation/SpeechPluginRefactor/index.json`. 3개 테스트에 기존 설정 경로 정규화 경고가 있으며 실패는 없다. 실제 마이크·유료 API는 호출하지 않았다.
+
 ## 구현과 확장
 
+- 누적·정렬 API: `Public/JWNU_GptLiveTranscriptor.h`, 결과 타입 `JWNU_GptLiveTranscriptorTypes.h`, 구현 `Private/JWNU_GptLiveTranscriptor.cpp`.
 - 공개 API: `Source/JWNetworkUtilityOpenAI/Public/JWNU_OpenAITranscriptionTypes.h`, `JWNU_OpenAITranscriptionSession.h`, `JWNU_OpenAITranscriptionComponent.h`.
 - 형식 검증·송신 스키마: `Private/JWNU_OpenAITranscriptionJson.h`. 확인된 모델 이름: `JWNU::OpenAITranscription::Models`(Types 헤더).
 - 수명·입력: `Private/JWNU_OpenAITranscriptionSession.cpp`, 수신: `JWNU_OpenAITranscriptionSession_Events.cpp`.

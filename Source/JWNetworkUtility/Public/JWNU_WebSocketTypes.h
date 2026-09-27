@@ -18,7 +18,9 @@ USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_WebSocketError
 {
 	GENERATED_BODY()
+	/** 설정·연결·시간 초과·버퍼 상한 중 실패 원인을 구분하는 필드. */
 	UPROPERTY(BlueprintReadOnly, Category="JWNU|WebSocket") EJWNU_WebSocketError Code = EJWNU_WebSocketError::None;
+	/** 연결 실패를 설명하는 진단 메시지 필드. */
 	UPROPERTY(BlueprintReadOnly, Category="JWNU|WebSocket") FString Message;
 };
 
@@ -27,9 +29,13 @@ USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_WebSocketCloseInfo
 {
 	GENERATED_BODY()
+	/** WebSocket 종료 코드 필드. 비정상 단절은 로컬에서 1006으로 합성할 수 있다. */
 	UPROPERTY(BlueprintReadOnly, Category="JWNU|WebSocket") int32 Code = 1000;
+	/** 서버 또는 로컬 종료 처리에서 제공한 원인 문자열 필드. */
 	UPROPERTY(BlueprintReadOnly, Category="JWNU|WebSocket") FString Reason;
+	/** 정상 종료 협상으로 연결이 닫혔는지 나타내는 필드. */
 	UPROPERTY(BlueprintReadOnly, Category="JWNU|WebSocket") bool bWasClean = false;
+	/** Close 요청이나 월드 정리 등 로컬에서 시작한 종료인지 나타내는 필드. */
 	UPROPERTY(BlueprintReadOnly, Category="JWNU|WebSocket") bool bWasLocal = false;
 };
 
@@ -42,9 +48,11 @@ struct JWNETWORKUTILITY_API FJWNU_WebSocketOptions
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNU|WebSocket") TMap<FString, FString> Headers;
 	/** 서버와 협상할 서브프로토콜 목록 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNU|WebSocket") TArray<FString> Protocols;
+	/** 연결 협상 제한 시간(초) 필드. 0이면 연결 시간 제한을 적용하지 않는다. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNU|WebSocket", meta=(ClampMin="0")) float ConnectTimeoutSeconds = 15.f;
 	/** 종료 응답 대기 상한이며 응답이 없으면 비정상 종료로 정리하는 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNU|WebSocket", meta=(ClampMin="0.1")) float CloseTimeoutSeconds = 3.f;
+	/** 송신·수신하는 단일 메시지의 최대 바이트 수 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNU|WebSocket", meta=(ClampMin="1")) int32 MaxMessageBytes = 1048576;
 	/** 래퍼의 수신 큐 상한이며 엔진 내부 버퍼와 별개인 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNU|WebSocket", meta=(ClampMin="1")) int32 MaxQueuedBytes = 4194304;

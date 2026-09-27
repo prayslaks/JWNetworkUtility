@@ -50,6 +50,7 @@ private:
 	void OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources);
 	/** 공개 요청 객체를 종료까지 보관하는 필드. */
 	UPROPERTY(Transient) TArray<TObjectPtr<UJWNU_SseRequestBase>> ActiveRequests;
+	/** 활성 SSE 핸들을 GC로부터 보관하고 종료 후 제거하는 필드. */
 	UPROPERTY() TArray<TObjectPtr<UJWNU_HttpRequestJobHandle>> ActiveHandles;
 	TMap<TWeakObjectPtr<UJWNU_HttpRequestJobHandle>, TWeakObjectPtr<UWorld>> Worlds;
 	TArray<TFunction<void()>> PendingStarts;

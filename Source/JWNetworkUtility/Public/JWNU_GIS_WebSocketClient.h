@@ -24,6 +24,7 @@ private:
 	bool Track(UJWNU_WebSocketConnection* Connection);
 	bool Tick(float DeltaSeconds);
 	void OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources);
+	/** 활성 연결의 GC 수명을 유지하며 Tick과 월드 종료 시 정리할 목록 필드. */
 	UPROPERTY() TArray<TObjectPtr<UJWNU_WebSocketConnection>> ActiveConnections;
 	FTSTicker::FDelegateHandle TickerHandle;
 	FDelegateHandle CleanupHandle;

@@ -9,11 +9,7 @@
 // ==================== JWNU HTTP Client Helpers & Jobs ====================
 
 
-/**
- * HTTP 상태코드 열거형.
- * int32 HTTP 상태코드를 Blueprint에서 Switch/비교할 수 있도록 매핑한다.
- * 비HTTP 상태(네트워크 에러, 타임아웃, 파싱 에러)도 포함한다.
- */
+/** HTTP 응답 코드와 네트워크·시간 초과·파싱 오류를 BP 분기용 값으로 구분한다. */
 UENUM(BlueprintType)
 enum class EJWNU_HttpStatusCode : uint8
 {
@@ -62,12 +58,7 @@ enum class EJWNU_HttpStatusCode : uint8
 	OtherSuccess            UMETA(DisplayName = "Other 2XX Success"),
 };
 
-/**
- * int32 HTTP 상태 코드를 EJWNU_HttpStatusCode 열거형으로 변환한다.
- * 비HTTP 상태(NetworkError, Timeout, ParseError)는 호출자가 컨텍스트에 따라 직접 설정해야 한다.
- * @param StatusCode HTTP 상태 코드 (int32)
- * @return 대응하는 EJWNU_HttpStatusCode 열거값. 미등록 코드는 UnknownError 반환.
- */
+/** HTTP 정수를 BP 열거값으로 변환하는 함수. 0은 NetworkError, 그 밖의 미등록 2xx는 OtherSuccess, 나머지는 UnknownError다. */
 inline EJWNU_HttpStatusCode JWNU_IntToHttpStatusCode(const int32 StatusCode)
 {
 	switch (StatusCode)
@@ -111,9 +102,7 @@ inline EJWNU_HttpStatusCode JWNU_IntToHttpStatusCode(const int32 StatusCode)
 	}
 }
 
-/**
- * HTTP 메서드 열거형.
- */
+/** HTTP 메서드 열거형. */
 UENUM(BlueprintType)
 enum class EJWNU_HttpMethod : uint8
 {
@@ -123,53 +112,37 @@ enum class EJWNU_HttpMethod : uint8
 	Delete,
 };
 
-/**
- * HTTP 리퀘스트 설정 구조체.
- */
+/** HTTP 리퀘스트 설정 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_RequestConfig
 {
 	GENERATED_BODY()
 
-	/**
-	 * 최대 재시도 횟수. (1이면 재시도 없이 1회만 시도)
-	 */
+	/** 최초 요청을 포함한 최대 시도 횟수 필드. 1이면 재시도하지 않는다. */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	int32 MaxRetries;
 
-	/**
-	 * 재시도 간 대기 시간 (초).
-	 */
+	/** 재시도 간 대기 시간 (초). */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	float RetryDelaySeconds;
 
-	/**
-	 * 요청 타임아웃 시간 (초).
-	 */
+	/** 요청 타임아웃 시간 (초). */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	float TimeoutSeconds;
 
-	/**
-	 * 5xx 서버 에러 시 재시도 여부.
-	 */
+	/** 5xx 서버 에러 시 재시도 여부. */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	bool bRetryOn5XX;
 
-	/**
-	 * 타임아웃 시 재시도 여부.
-	 */
+	/** 타임아웃 시 재시도 여부. */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	bool bRetryOnTimeout;
 
-	/**
-	 * 네트워크 에러 시 재시도 여부.
-	 */
+	/** 네트워크 에러 시 재시도 여부. */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility|Config")
 	bool bRetryOnNetworkError;
 
-	/**
-	 * 기본 생성자.
-	 */
+	/** 기본 생성자. */
 	FJWNU_RequestConfig()
 	{
 		MaxRetries = 3;
@@ -181,9 +154,7 @@ struct JWNETWORKUTILITY_API FJWNU_RequestConfig
 	}
 };
 
-/**
- * 401 발생 시 원래 요청을 재시도하기 위한 정보를 담는 구조체.
- */
+/** 401 발생 시 원래 요청을 재시도하기 위한 정보를 담는 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_PendingApiRequest
 {
@@ -196,10 +167,7 @@ struct JWNETWORKUTILITY_API FJWNU_PendingApiRequest
 	TMap<FString, FString> QueryParams;
 };
 
-/**
- * 토큰 리프레시 대기열에 적재되는 잡 구조체.
- * 리프레시 완료 시 OnTokenReady, 실패 시 OnTokenFailed가 호출된다.
- */
+/** 토큰 리프레시 대기열에 적재되는 잡 구조체. 리프레시 완료 시 OnTokenReady, 실패 시 OnTokenFailed가 호출된다. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_PendingJob
 {
@@ -214,9 +182,7 @@ struct JWNETWORKUTILITY_API FJWNU_PendingJob
 // ==================== JWNU API Client Services ====================
 
 
-/**
- * API 호출 시 서비스 타입 지정에 사용되는 열거형.
- */
+/** API 호출 시 서비스 타입 지정에 사용되는 열거형. */
 UENUM(BlueprintType)
 enum class EJWNU_ServiceType : uint8
 {
@@ -224,41 +190,28 @@ enum class EJWNU_ServiceType : uint8
 	AuthServer,
 };
 
-/**
- * 엑세스 토큰 값과 해당 토큰의 만료 시간을 저장하는 언리얼 구조체.
- */
+/** 엑세스 토큰 값과 해당 토큰의 만료 시간을 저장하는 언리얼 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_AccessTokenContainer
 {
 	GENERATED_BODY()
 
-	/**
-	 * 인증 JWT 엑세스 토큰 값. 거의 대부분의 API에 Authorization으로 활용하며 서버에 의해 만료 시간이 관리된다.
-	 */
+	/** 인증 JWT 엑세스 토큰 값. 거의 대부분의 API에 Authorization으로 활용하며 서버에 의해 만료 시간이 관리된다. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString AccessToken;
 	
-	/**
-	 * 엑세스 토큰의 만료 예정 시간을 유닉스 타임스탬프를 활용해, 클라이언트 단에서 판단할 수 있도록 한다.
-	 * 단, 30초 정도의 버퍼 타임을 통해서 엑세스 토큰이 왠만하면 살아남을 수 있도록 관리한다.
-	 */
+	/** 서버가 발급한 Unix 만료 시각(초) 필드. ApiClientService는 만료 30초 전부터 갱신 대상으로 판단한다. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	int64 ExpiresAt;
 
-	/**
-	 * 기본 생성자.
-	 */
+	/** TRASH_TOKEN과 만료 시각 -1로 미설정 컨테이너를 초기화한다. */
 	FJWNU_AccessTokenContainer()
 	{
 		AccessToken = TEXT("TRASH_TOKEN");
 		ExpiresAt = -1;
 	}
 	
-	/**
-	 * 새로운 엑세스 토큰 컨테이너를 만들 때 사용하는 생성자.
-	 * @param InAccessToken 엑세스 토큰
-	 * @param InExpiresAt 만료 예정 시간
-	 */
+	/** 액세스 토큰과 Unix 만료 시각을 보관하는 컨테이너를 만드는 함수. */
 	FJWNU_AccessTokenContainer(const FString& InAccessToken, const int64 InExpiresAt)
 	{
 		AccessToken = InAccessToken;
@@ -266,40 +219,28 @@ struct JWNETWORKUTILITY_API FJWNU_AccessTokenContainer
 	}
 };
 
-/**
- * 리프레시 토큰 값과 해당 토큰의 만료 시간을 저장하는 언리얼 구조체.
- */
+/** 리프레시 토큰 값과 해당 토큰의 만료 시간을 저장하는 언리얼 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_RefreshTokenContainer
 {
 	GENERATED_BODY()
 	
-	/**
-	 * 인증 Opaque 리프레시 토큰 값. 리프레시 API에 Authorization으로 활용하며 서버에 의해 만료 시간이 관리된다.
-	 */
+	/** 인증 Opaque 리프레시 토큰 값. 리프레시 API에 Authorization으로 활용하며 서버에 의해 만료 시간이 관리된다. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString RefreshToken;
 
-	/**
-	 * 리프레시 토큰의 만료 예정 시간을 유닉스 타임스탬프를 활용해, 클라이언트 단에서 판단할 수 있도록 한다.
-	 */
+	/** 리프레시 토큰의 만료 예정 시간을 유닉스 타임스탬프를 활용해, 클라이언트 단에서 판단할 수 있도록 한다. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	int64 ExpiresAt;
 	
-	/**
-	 * 기본 생성자.
-	 */
+	/** TRASH_TOKEN과 만료 시각 -1로 미설정 컨테이너를 초기화한다. */
 	FJWNU_RefreshTokenContainer()
 	{
 		RefreshToken = TEXT("TRASH_TOKEN");
 		ExpiresAt = -1;
 	}
 	
-	/**
-	 * 새로운 리프레시 토큰 컨테이너를 만들 때 사용하는 생성자.
-	 * @param InRefreshToken 리프레시 토큰
-	 * @param InExpiresAt 만료 예정 시간
-	 */
+	/** 리프레시 토큰과 Unix 만료 시각을 보관하는 컨테이너를 만드는 함수. */
 	FJWNU_RefreshTokenContainer(const FString& InRefreshToken, const int64 InExpiresAt)
 	{
 		RefreshToken = InRefreshToken;
@@ -307,9 +248,7 @@ struct JWNETWORKUTILITY_API FJWNU_RefreshTokenContainer
 	}
 };
 
-/**
- * 토큰 로드 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다.
- */
+/** 토큰 로드 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다. */
 UENUM(BlueprintType)
 enum class EJWNU_TokenGetResult : uint8
 {
@@ -318,9 +257,7 @@ enum class EJWNU_TokenGetResult : uint8
 	Empty = 2,	
 };
 
-/**
- * 토큰 저장 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다.
- */
+/** 토큰 저장 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다. */
 UENUM(BlueprintType)
 enum class EJWNU_TokenSetResult : uint8
 {
@@ -328,9 +265,7 @@ enum class EJWNU_TokenSetResult : uint8
 	Fail = 1,
 };
 
-/**
- * 호스트 획득 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다.
- */
+/** 호스트 획득 시도의 결과를 지정하는 열거형. 블루프린트 지원에 활용된다. */
 UENUM(BlueprintType)
 enum class EJWNU_HostGetResult : uint8
 {
@@ -339,9 +274,7 @@ enum class EJWNU_HostGetResult : uint8
 	Empty = 2,	
 };
 
-/**
- * 문자열로된 JSON 객체를 언리얼 구조체로 변환한 결과를 나타내는 구조체.
- */
+/** JSON 문자열을 언리얼 구조체로 변환한 결과와 실패 원인을 구분하는 열거형이다. */
 UENUM(BlueprintType)
 enum class EJWNU_ConvertJsonToStructResult : uint8
 {
@@ -351,9 +284,7 @@ enum class EJWNU_ConvertJsonToStructResult : uint8
 	NoMatch = 3,
 };
 
-/**
- * 언리얼 구조체를 JSON 문자열로 변환한 결과를 나타내는 열거형.
- */
+/** 언리얼 구조체를 JSON 문자열로 변환한 결과를 나타내는 열거형. */
 UENUM(BlueprintType)
 enum class EJWNU_ConvertStructToJsonResult : uint8
 {
@@ -366,9 +297,7 @@ enum class EJWNU_ConvertStructToJsonResult : uint8
 // ==================== JWNU Auth Widget Helper ====================
 
 
-/**
- * 회원가입용 이메일 검증 열거형.
- */
+/** 회원가입용 이메일 검증 열거형. */
 UENUM(BlueprintType)
 enum class EJWNU_RegisterEmailValidation : uint8
 {
@@ -376,9 +305,7 @@ enum class EJWNU_RegisterEmailValidation : uint8
 	Unsatisfied
 };
 
-/**
- * 회원가입용 1차 비밀번호 검증 열거형.
- */
+/** 회원가입용 1차 비밀번호 검증 열거형. */
 UENUM(BlueprintType)
 enum class EJWNU_RegisterPrimaryPasswordValidation : uint8
 {
@@ -386,9 +313,7 @@ enum class EJWNU_RegisterPrimaryPasswordValidation : uint8
 	Satisfied,
 };
 
-/**
- * 회원가입용 2차 비밀번호 검증 열거형.
- */
+/** 회원가입용 2차 비밀번호 검증 열거형. */
 UENUM(BlueprintType)
 enum class EJWNU_RegisterSecondaryPasswordValidation : uint8
 {
@@ -397,9 +322,7 @@ enum class EJWNU_RegisterSecondaryPasswordValidation : uint8
 	Satisfied,
 };
 
-/**
- * 로그인용 이메일 검증 열거형.
- */
+/** 로그인용 이메일 검증 열거형. */
 UENUM(BlueprintType)
 enum class EJWNU_LoginEmailValidation : uint8
 {
@@ -407,9 +330,7 @@ enum class EJWNU_LoginEmailValidation : uint8
 	Unsatisfied
 };
 
-/**
- * 로그인용 비밀번호 검증 열거형.
- */
+/** 로그인용 비밀번호 검증 열거형. */
 UENUM(BlueprintType)
 enum class EJWNU_LoginPasswordValidation : uint8
 {
@@ -421,143 +342,134 @@ enum class EJWNU_LoginPasswordValidation : uint8
 // ==================== JW Test Server API Request & Response ====================
 
 
-/**
- * JW 커스텀 스타일 서버의 이메일 인증 API 요청 구조체.
- */
+/** JW 커스텀 스타일 서버의 이메일 인증 API 요청 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_REQ_AuthRegisterSendCode
 {
 	GENERATED_BODY()
 	
+	/** 인증 코드를 전송할 이메일 주소 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Email;
 };
 
-/**
- * JW 커스텀 스타일 서버의 인증코드 제출 API 요청 구조체.
- */
+/** JW 커스텀 스타일 서버의 인증코드 제출 API 요청 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_REQ_AuthRegisterVerifyCode
 {
 	GENERATED_BODY()
 	
+	/** 인증 코드와 함께 검증할 이메일 주소 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Email;
 	
+	/** 사용자가 이메일로 받은 인증 코드 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Code;
 };
 
-/**
- * JW 커스텀 스타일 서버의 회원가입 API 요청 구조체.
- */
+/** JW 커스텀 스타일 서버의 회원가입 API 요청 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_REQ_AuthRegister
 {
 	GENERATED_BODY()
 	
+	/** 가입할 계정의 이메일 주소 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Email;
 	
+	/** 가입 요청에 전달할 비밀번호 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Password;
 	
+	/** 가입 요청의 이메일 인증 코드 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Code;
 };
 
-/**
- * JW 커스텀 스타일 서버의 로그인 API 요청 구조체.
- */
+/** JW 커스텀 스타일 서버의 로그인 API 요청 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_REQ_AuthLogin
 {
 	GENERATED_BODY()
 	
+	/** 로그인할 계정의 이메일 주소 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Email;
 	
+	/** 로그인 인증에 사용할 비밀번호 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Password;
 };
 
-/**
- * JW 커스텀 스타일 서버의 로그아웃 API 요청 구조체.
- */
+/** JW 커스텀 스타일 서버의 로그아웃 API 요청 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_REQ_AuthLogout
 {
 	GENERATED_BODY()
 	
+	/** 로그아웃할 사용자의 서버 식별자 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString UserId;
 	
+	/** 로그아웃 대상 서비스를 지정하는 서버 이름 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString TargetServer;
 	
+	/** 무효화할 세션의 리프레시 토큰 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString RefreshToken;
 };
 
-/**
- * JW 커스텀 스타일 서버의 리프레시 API 요청 구조체
- */
+/** JW 커스텀 스타일 서버의 리프레시 API 요청 구조체 */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_REQ_AuthRefresh
 {
 	GENERATED_BODY()
 	
+	/** 토큰을 갱신할 사용자의 서버 식별자 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString UserId;
 	
+	/** 갱신할 토큰의 대상 서버 이름 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString TargetServer;
 	
+	/** 새 토큰 발급에 제출할 리프레시 토큰 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString RefreshToken;
 };
 
-/**
- * JW 커스텀 스타일 서버의 데이터 API 요청 구조체.
- */
+/** JW 커스텀 스타일 서버의 데이터 API 요청 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_REQ_Data
 {
 	GENERATED_BODY()
 	
+	/** 테스트 서버에 저장하거나 수정할 데이터 문자열 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Data;
 };
 
-/**
- * JW 커스텀 스타일 서버의 기본 API 응답 구조체.
- */
+/** JW 커스텀 스타일 서버의 기본 API 응답 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_RES_Base
 {
 	GENERATED_BODY()
 
-	/**
-	 * 비즈니스 로직의 성공 여부를 나타내는 불 필드. 
-	 */
+	/** 비즈니스 로직의 성공 여부를 나타내는 불 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	bool Success;
 
-	/**
-	 * 네트워크, 파싱, 비즈니스 상태를 나타내는 커스텀 코드 문자열 필드.
-	 */
+	/** 네트워크, 파싱, 비즈니스 상태를 나타내는 커스텀 코드 문자열 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Code;
 
-	/**
-	 * 네트워크, 파싱, 비즈니스 결과를 나타내는 메시지 문자열 필드.
-	 */
+	/** 네트워크, 파싱, 비즈니스 결과를 나타내는 메시지 문자열 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Message;
 
-	/**
-	 * 기본 생성자
-	 */
+	/** 기본 생성자 */
 	FJWNU_RES_Base()
 	{
 		Success = false;
@@ -566,47 +478,33 @@ struct JWNETWORKUTILITY_API FJWNU_RES_Base
 	}
 };
 
-/**
- * JW 커스텀 스타일 서버의 토큰 리프레시 API 응답 구조체.
- */
+/** JW 커스텀 스타일 서버의 토큰 리프레시 API 응답 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_RES_AuthRefresh : public FJWNU_RES_Base
 {
 	GENERATED_BODY()
 
-	/**
-	 * 새로 발급된 엑세스 토큰.
-	 */
+	/** 새로 발급된 엑세스 토큰. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString AccessToken;
 
-	/**
-	 * 새로 발급된 엑세스 토큰의 만료 시한을 나타내는 유닉스 타임스탬프.
-	 */
+	/** 새로 발급된 엑세스 토큰의 만료 시한을 나타내는 유닉스 타임스탬프. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	int64 ExpiresAt;
 	
-	/**
-	 * 새로 발급된 리프레시 토큰.
-	 */
+	/** 새로 발급된 리프레시 토큰. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString RefreshToken;
 
-	/**
-	 * 새로 발급된 리프레시 토큰의 만료 시한을 나타내는 유닉스 타임스탬프.
-	 */
+	/** 새로 발급된 리프레시 토큰의 만료 시한을 나타내는 유닉스 타임스탬프. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	int64 RefreshTokenExpiresAt;
 
-	/**
-	 * 서버가 반환한 사용자 ID.
-	 */
+	/** 서버가 반환한 사용자 ID. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString UserId;
 
-	/**
-	 * 기본 생성자
-	 */
+	/** 기본 생성자 */
 	FJWNU_RES_AuthRefresh()
 	{
 		AccessToken = TEXT("");
@@ -617,14 +515,13 @@ struct JWNETWORKUTILITY_API FJWNU_RES_AuthRefresh : public FJWNU_RES_Base
 	}
 };
 
-/**
- * JW 커스텀 스타일 서버의 데이터 API 응답 구조체.
- */
+/** JW 커스텀 스타일 서버의 데이터 API 응답 구조체. */
 USTRUCT(BlueprintType)
 struct JWNETWORKUTILITY_API FJWNU_RES_Data : public FJWNU_RES_Base
 {
 	GENERATED_BODY()
 	
+	/** 테스트 서버가 반환한 데이터 문자열 필드. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="JWNetworkUtility")
 	FString Data;
 };
