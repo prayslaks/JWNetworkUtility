@@ -2,6 +2,8 @@
 
 # OpenAI 실시간 전사 — C++ / Blueprint
 
+> 부분 갱신 일자: 2026-09-27 — 전사 결과에 원본 Delta를 추가하고 전체 Text 기반 UI 연결 계약을 명시.
+
 > 부분 갱신 일자: 2026-09-27 — 캡처 독립 UJWNU_GptLiveTranscriptor를 추가. mono float PCM·누적 부분문·정렬된 최종문·활성 수명 관리 제공.
 
 > 부분 갱신 일자: 2026-09-26 — gpt-realtime-whisper·gpt-live-transcribe 세션, 마이크 컴포넌트와 로컬 검증 추가.
@@ -26,7 +28,7 @@
 
 C++는 `JWNU_GptLiveTranscriptor.h`를 include하고 `OnReadyNative`, `OnTranscriptNative`, `OnFinishedNative`, `OnErrorNative`에 바인딩한다. 모든 공개 호출·이벤트는 게임 스레드 전용이다. 설정 오류는 Start 안에서 즉시 발생할 수 있다. 환경변수 호출은 기본 공식 Endpoint만 허용하며, Start 자체는 로컬 설정이나 환경 키를 자동으로 찾지 않는다.
 
-`FJWNU_GptLiveTranscript`는 `UtteranceId`, `Text`, `bFinal`을 가진다. **부분문도 누적된 전체 Text**이므로 UI는 해당 발화 자막을 교체한다. delta를 별도로 더하지 않는다. 최종문은 ack의 PreviousItemId 연속성을 확인하고 입력 순서대로 전달한다. 부분문은 ack 이전에도 즉시 전달한다. 게임 세션 ID와 이전 세션 자막 보관은 호스트 책임이다.
+`FJWNU_GptLiveTranscript`는 `UtteranceId`, `Text`, `Delta`, `bFinal`을 가진다. **부분문도 누적된 전체 Text**이므로 UI는 해당 발화 자막을 교체한다. Delta는 이번 부분 이벤트의 원본 추가 청크(공백 포함)이며 최종 결과에서는 빈 문자열이다. 추가 청크 연출에 활용할 수 있지만 전체 Text에 다시 더하지 않는다. 최종문은 ack의 PreviousItemId 연속성을 확인하고 입력 순서대로 전달한다. 부분문은 ack 이전에도 즉시 전달한다. 게임 세션 ID와 이전 세션 자막 보관은 호스트 책임이다.
 
 미확정 발화는 30초, 결과 맵은 33개, 발화 텍스트는 16,384자로 제한한다. commit ack/최종문은 제출 후 60초 내에 받아야 한다. Start/Close 제한은 Options를 따른다. 개별 발화 실패도 순서 누락을 피하도록 전체 전사기를 중단하고 OnError를 발생시킨다. 원시 세션의 비치명적 발화 오류 계약과 구분한다.
 

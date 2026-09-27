@@ -196,6 +196,7 @@ void UJWNU_GptLiveTranscriptor::Transcript(const FJWNU_OpenAITranscript& Update)
 	FJWNU_GptLiveTranscript Result;
 	Result.UtteranceId = Update.ItemId;
 	Result.Text = Item.Text;
+	Result.Delta = Update.Delta;
 	EmitTranscript(Result);
 }
 

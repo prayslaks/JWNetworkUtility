@@ -19,6 +19,8 @@ bool FJWNU_GptLiveStreamingTest::RunTest(const FString& Parameters)
 	Update.Delta = TEXT(" 전투"); Gpt->Transcript(Update);
 	TestEqual(TEXT("Deltas arrive before commit acknowledgement"), Results.Num(), 2);
 	TestEqual(TEXT("Partial output is accumulated text"), Results.Last().Text, FString(TEXT("자유 전투")));
+	TestEqual(TEXT("First delta retains original chunk"), Results[0].Delta, FString(TEXT("자유")));
+	TestEqual(TEXT("Second delta is not accumulated and keeps whitespace"), Results[1].Delta, FString(TEXT(" 전투")));
 	Gpt->AwaitingCommits.Add(FPlatformTime::Seconds() + 60);
 	FJWNU_OpenAITranscriptionCommit Commit; Commit.ItemId = TEXT("first"); Gpt->Committed(Commit);
 	Gpt->AwaitingCommits.Add(FPlatformTime::Seconds() + 60);
@@ -29,6 +31,7 @@ bool FJWNU_GptLiveStreamingTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Both finals flush in input order"), Results.Num(), 4);
 	TestEqual(TEXT("Final replaces provisional text"), Results[2].Text, FString(TEXT("자유 전투 하지 마")));
 	TestEqual(TEXT("Second final retains identity"), Results[3].UtteranceId, FString(TEXT("second")));
+	TestTrue(TEXT("Finals never repeat a previous delta"), Results[2].Delta.IsEmpty() && Results[3].Delta.IsEmpty());
 	TestEqual(TEXT("Completed records are released"), Gpt->Items.Num(), 0);
 	Gpt->Cancel(); Gpt->Transcript(Update);
 	TestEqual(TEXT("Cancelled session suppresses late result"), Results.Num(), 4);

@@ -14,6 +14,8 @@ struct JWNETWORKUTILITYOPENAI_API FJWNU_GptLiveTranscript
 	UPROPERTY(BlueprintReadOnly, Category="JWNU|OpenAI|Transcription") FString UtteranceId;
 	/** delta 누적 스냅샷이며 최종 수신 시 최종문으로 교체된다. */
 	UPROPERTY(BlueprintReadOnly, Category="JWNU|OpenAI|Transcription") FString Text;
+	/** 이번 부분 이벤트의 원본 추가 청크. 최종 결과에서는 비며, 전체 Text에 다시 더하지 않는다. */
+	UPROPERTY(BlueprintReadOnly, Category="JWNU|OpenAI|Transcription") FString Delta;
 	/** false는 즉시 전달하는 부분문, true는 입력 순서대로 전달하는 최종문이다. */
 	UPROPERTY(BlueprintReadOnly, Category="JWNU|OpenAI|Transcription") bool bFinal = false;
 };
