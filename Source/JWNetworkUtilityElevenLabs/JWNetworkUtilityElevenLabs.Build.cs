@@ -1,0 +1,13 @@
+// Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT
+
+using UnrealBuildTool;
+
+public class JWNetworkUtilityElevenLabs : ModuleRules
+{
+    public JWNetworkUtilityElevenLabs(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "JWNetworkUtilityAudio" });
+        PrivateDependencyModuleNames.AddRange(new[] { "JWNetworkUtility", "Json", "JsonUtilities", "HTTP" });
+    }
+}

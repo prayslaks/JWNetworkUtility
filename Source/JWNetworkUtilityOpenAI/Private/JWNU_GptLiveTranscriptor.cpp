@@ -61,7 +61,9 @@ bool UJWNU_GptLiveTranscriptor::StartInternal(const FJWNU_OpenAITranscriptionOpt
 		bReady = true;
 		UE_LOG(LogJWNU_GptLiveTranscriptor, Log, TEXT("[GPT.Ready] Backend=%s Generation=%u"), *GetName(), Epoch);
 		TStrongObjectPtr<UJWNU_GptLiveTranscriptor> KeepAlive(this);
-		OnReadyNative.Broadcast();
+		OnTranscriptionReadyNative.Broadcast();
+		if (Generation == Epoch) OnTranscriptionReady.Broadcast();
+		if (Generation == Epoch) OnReadyNative.Broadcast();
 		if (Generation == Epoch) OnReady.Broadcast();
 	});
 	Session->OnTranscriptNative.AddWeakLambda(this, [this, Epoch](const FJWNU_OpenAITranscript& Value)
@@ -266,7 +268,9 @@ void UJWNU_GptLiveTranscriptor::Fail(const FString& Message)
 	UE_LOG(LogJWNU_GptLiveTranscriptor, Warning, TEXT("[GPT.Error] Backend=%s Generation=%u Ready=%d Closing=%d Samples=%d PendingCommits=%d PendingFinals=%d Items=%d Reason=%s"), *GetName(), Generation, bReady, bClosing, BufferedSamples, AwaitingCommits.Num(), CommitOrder.Num(), Items.Num(), *Message);
 	Cancel();
 	const uint32 Epoch = Generation;
-	OnErrorNative.Broadcast(Message);
+	OnTranscriptionErrorNative.Broadcast(Message);
+	if (Generation == Epoch) OnTranscriptionError.Broadcast(Message);
+	if (Generation == Epoch) OnErrorNative.Broadcast(Message);
 	if (Generation == Epoch) OnError.Broadcast(Message);
 }
 
@@ -295,7 +299,14 @@ void UJWNU_GptLiveTranscriptor::EmitTranscript(const FJWNU_GptLiveTranscript& Re
 {
 	TStrongObjectPtr<UJWNU_GptLiveTranscriptor> KeepAlive(this);
 	const uint32 Epoch = Generation;
-	OnTranscriptNative.Broadcast(Result);
+	FJWNU_TranscriptUpdate Update;
+	Update.SegmentId = Result.UtteranceId;
+	Update.Text = Result.Text;
+	Update.Delta = Result.Delta;
+	Update.bFinal = Result.bFinal;
+	OnTranscriptionUpdateNative.Broadcast(Update);
+	if (Generation == Epoch) OnTranscriptionUpdate.Broadcast(Update);
+	if (Generation == Epoch) OnTranscriptNative.Broadcast(Result);
 	// 네이티브 수신자가 취소하거나 재시작했으면 이전 실행의 BP 이벤트를 전달하지 않는다.
 	if (Generation == Epoch) OnTranscript.Broadcast(Result);
 }
@@ -304,6 +315,8 @@ void UJWNU_GptLiveTranscriptor::EmitFinished()
 {
 	TStrongObjectPtr<UJWNU_GptLiveTranscriptor> KeepAlive(this);
 	const uint32 Epoch = Generation;
-	OnFinishedNative.Broadcast();
+	OnTranscriptionFinishedNative.Broadcast();
+	if (Generation == Epoch) OnTranscriptionFinished.Broadcast();
+	if (Generation == Epoch) OnFinishedNative.Broadcast();
 	if (Generation == Epoch) OnFinished.Broadcast();
 }

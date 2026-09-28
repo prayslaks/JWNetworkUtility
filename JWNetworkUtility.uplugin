@@ -31,6 +31,12 @@
 			"PlatformAllowList": [ "Win64" ]
 		},
 		{
+			"Name": "JWNetworkUtilityElevenLabs",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64" ]
+		},
+		{
 			"Name": "JWNetworkUtilityOpenAI",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",

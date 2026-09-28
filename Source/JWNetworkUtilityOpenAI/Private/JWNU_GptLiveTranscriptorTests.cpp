@@ -13,6 +13,8 @@ bool FJWNU_GptLiveStreamingTest::RunTest(const FString& Parameters)
 	UJWNU_GptLiveTranscriptor* Gpt = NewObject<UJWNU_GptLiveTranscriptor>();
 	Gpt->bReady = true;
 	TArray<FJWNU_GptLiveTranscript> Results;
+	TArray<FJWNU_TranscriptUpdate> CommonResults;
+	Gpt->OnTranscriptionUpdateNative.AddLambda([&CommonResults](const FJWNU_TranscriptUpdate& Value) { CommonResults.Add(Value); });
 	Gpt->OnTranscriptNative.AddLambda([&Results](const FJWNU_GptLiveTranscript& Value) { Results.Add(Value); });
 	FJWNU_OpenAITranscript Update;
 	Update.ItemId = TEXT("first"); Update.Delta = TEXT("자유"); Gpt->Transcript(Update);
@@ -33,6 +35,12 @@ bool FJWNU_GptLiveStreamingTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Second final retains identity"), Results[3].UtteranceId, FString(TEXT("second")));
 	TestTrue(TEXT("Finals never repeat a previous delta"), Results[2].Delta.IsEmpty() && Results[3].Delta.IsEmpty());
 	TestEqual(TEXT("Completed records are released"), Gpt->Items.Num(), 0);
+	TestEqual(TEXT("Common and legacy events stay in sync"), CommonResults.Num(), Results.Num());
+	if (CommonResults.Num() == 4)
+	{
+		TestEqual(TEXT("Common Delta remains original"), CommonResults[1].Delta, FString(TEXT(" 전투")));
+		TestEqual(TEXT("Common Final retains identity"), CommonResults[2].SegmentId, Results[2].UtteranceId);
+	}
 	Gpt->Cancel(); Gpt->Transcript(Update);
 	TestEqual(TEXT("Cancelled session suppresses late result"), Results.Num(), 4);
 	const TArray<uint8> Bytes = UJWNU_GptLiveTranscriptor::EncodePCM({-2.0f, 0.0f, 2.0f}, 0, 3);

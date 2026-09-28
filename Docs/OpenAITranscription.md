@@ -2,6 +2,10 @@
 
 # OpenAI 실시간 전사 — C++ / Blueprint
 
+> 부분 갱신 일자: 2026-09-28 — `UJWNU_Transcriptor` 기반과 공통 OnTranscription 이벤트 추가. 기존 GPT 이벤트는 호환 유지.
+
+공통 결과·경계 계약은 [Scribe 및 공통 계약 가이드](ScribeTranscription.md)를 따른다. GPT는 ExternalCommit에 고정하며 기존 원격 프로토콜은 바뀌지 않는다. 공통/기존 결과 이벤트를 같은 소비자에 중복 바인딩하지 않는다.
+
 > 부분 갱신 일자: 2026-09-27 — 전사 결과에 원본 Delta를 추가하고 전체 Text 기반 UI 연결 계약을 명시.
 
 > 부분 갱신 일자: 2026-09-27 — 캡처 독립 UJWNU_GptLiveTranscriptor를 추가. mono float PCM·누적 부분문·정렬된 최종문·활성 수명 관리 제공.

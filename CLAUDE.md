@@ -1,5 +1,7 @@
 # CLAUDE.md — JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-28 — Audio 모듈 공통 전사 계약과 JWNetworkUtilityElevenLabs 모듈 추가. [Scribe·공통 전사 가이드](Docs/ScribeTranscription.md).
+
 > 부분 갱신 일자: 2026-09-27 — `UJWNU_GptLiveTranscriptor`의 PCM 청크화·누적 자막·최종문 정렬·C++/BP API와 subsystem 수명 관리 추가. [전사 가이드](Docs/OpenAITranscription.md).
 
 > 부분 갱신 일자: 2026-09-26 — HTTP·API·SSE·TypeSafe가 RequestBase의 Cancel·IsActive·GetState·OnFinished를 공유. Call TypeSafe API 및 환경변수 즉시 실행 함수 추가.
