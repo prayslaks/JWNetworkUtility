@@ -19,9 +19,9 @@ def main(suite="sse"):
     websocket = suite == "websocket"
     live = suite == "live"
     transcription = suite == "transcription"
-    typesafe = suite == "typesafe"
+    systemone = suite == "systemone"
     api = suite == "api"
-    label = "API" if api else ("TypeSafe" if typesafe else ("OpenAI.Live" if live else ("WebSocket" if websocket else "SSE")))
+    label = "API" if api else ("SystemOne" if systemone else ("OpenAI.Live" if live else ("WebSocket" if websocket else "SSE")))
     if transcription:
         label = "OpenAI.Transcription"
     parser = argparse.ArgumentParser(description=f"Local FastAPI + Unreal {label} integration tests")
@@ -39,7 +39,7 @@ def main(suite="sse"):
     tls_args = ["--ssl-certfile", str(args.tls_cert.resolve()), "--ssl-keyfile", str(args.tls_key.resolve())] if tls else []
     health_context = ssl.create_default_context(cafile=str(args.tls_cert.resolve())) if tls else None
     project = args.project.resolve()
-    prefix = "JWNUApi-" if api else ("JWNUTypeSafe-" if typesafe else ("JWNUOpenAILive-" if live else ("JWNUWebSocket-" if websocket else "JWNUSse-")))
+    prefix = "JWNUApi-" if api else ("JWNUSystemOne-" if systemone else ("JWNUOpenAILive-" if live else ("JWNUWebSocket-" if websocket else "JWNUSse-")))
     if transcription:
         prefix = "JWNUOpenAITranscription-"
     output = project.parent / "Saved" / "Automation" / (prefix + time.strftime("%Y%m%d-%H%M%S"))
@@ -76,8 +76,8 @@ def main(suite="sse"):
             command = [str(args.engine / "Engine/Binaries/Win64/UnrealEditor-Cmd.exe"), str(project),
                        "/Engine/Maps/Entry",
                        "-unattended", "-nop4", "-NullRHI", "-nosplash", "-nosound",
-                       "-JWNUApiIntegration" if api else ("-JWNUTypeSafeIntegration" if typesafe else ("-JWNULiveIntegration" if live else ("-JWNUWebSocketIntegration" if websocket else "-JWNUSseIntegration"))),
-                       f"-JWNUApiTestURL={base}" if api else (f"-JWNUTypeSafeTestURL={base}" if typesafe else (f"-JWNULiveTestURL={socket_base}" if live else (f"-JWNUWebSocketTestURL={socket_base}" if websocket else f"-JWNUSseTestURL={base}"))),
+                       "-JWNUApiIntegration" if api else ("-JWNUSystemOneIntegration" if systemone else ("-JWNULiveIntegration" if live else ("-JWNUWebSocketIntegration" if websocket else "-JWNUSseIntegration"))),
+                       f"-JWNUApiTestURL={base}" if api else (f"-JWNUSystemOneTestURL={base}" if systemone else (f"-JWNULiveTestURL={socket_base}" if live else (f"-JWNUWebSocketTestURL={socket_base}" if websocket else f"-JWNUSseTestURL={base}"))),
                        f"-ExecCmds=Automation RunTests JWNetworkUtility.{label}",
                        "-TestExit=Automation Test Queue Empty", f"-ReportExportPath={output}",
                        f"-abslog={output / 'Unreal.log'}"]
@@ -98,7 +98,7 @@ def main(suite="sse"):
             report = json.loads(index.read_text(encoding="utf-8-sig"))
             passed = report.get("succeeded", 0) + report.get("succeededWithWarnings", 0)
             expected = 6 if api else (1 if live else (2 if websocket else 3))
-            if transcription:
+            if systemone or transcription:
                 expected = 5
             if report.get("failed", 0) or report.get("notRun", 0) or report.get("inProcess", 0) or passed != expected:
                 raise RuntimeError(f"Automation did not pass; see {index}")

@@ -1,5 +1,11 @@
 # CLAUDE.md — JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-30 — TypeSafe 전용 모듈·공개 타입·호환 계층을 제거하고 System One API와 테스트로 통합.
+
+> 부분 갱신 일자: 2026-09-30 — JWNU가 공급자 키 관리·내부 암호화를 독립 소유하도록 이관. 기존 키 API·자동 이관 제거.
+
+> 부분 갱신 일자: 2026-09-30 — SystemOne 공통 모듈·OpenRouter 경로·TypeSafe 호환 계층 추가. [정본](Docs/SystemOne.md).
+
 > 부분 갱신 일자: 2026-09-28 — Audio 모듈 공통 전사 계약과 JWNetworkUtilityElevenLabs 모듈 추가. [Scribe·공통 전사 가이드](Docs/ScribeTranscription.md).
 
 > 부분 갱신 일자: 2026-09-27 — `UJWNU_GptLiveTranscriptor`의 PCM 청크화·누적 자막·최종문 정렬·C++/BP API와 subsystem 수명 관리 추가. [전사 가이드](Docs/OpenAITranscription.md).
@@ -74,7 +80,10 @@ SSE endpoints: `/sse/events` (public), `/api/sse/events` (JWT), GET/POST. `run_s
 
 ## Module Structure
 
-`JWNetworkUtilityTypeSafe` is a provider-specific Runtime module depending on core JWNU only. `UJWNU_TypeSafeRequest` exposes single-use C++/BP requests; `UJWNU_GIS_TypeSafe` retains active requests and cancels them on world/GameInstance cleanup. `FJWNU_TypeSafeCodec` validates Choice/Score/Noul JSON, retaining fractional scores and Noul probabilities. Core `UJWNU_JsonHttpJob` reuses request construction but has independent bounded buffering, wall-clock deadlines, raw error bodies, and 429/529 backoff with Retry-After. It does not use game JWT refresh or custom-response normalization. Environment credentials require the exact official endpoint; keyless HTTP is limited to loopback fixtures. `run_typesafe_tests.py` runs Codec and FastAPI tests (25 integration scenarios). See `Docs/TypeSafe.md` for BP setup and contracts.
+`JWNetworkUtilityAI` owns provider settings, public key metadata and the GameInstance subsystem. Its DPAPI crypto, disk store and vault are private native classes without exports or Blueprint exposure. It does not depend on JWCU. `JWNetworkUtilityEditor` registers the key UI at PostEngineInit. Old JWCU APIs and credential migration were removed; keys must be re-registered. See [AIProviders.md](Docs/AIProviders.md).
+
+`JWNetworkUtilitySystemOne` is the sole Runtime module for Choice/Score/Noul requests, codec, Blueprint helpers and request lifetime. It depends on core JWNU and accepts explicit keys; JWNU AI lookup is composed by callers. The TypeSafe module, reflected API and compatibility conversions were removed without redirects. TypeSafe service calls remain supported by MakeTypeSafeOptions and TYPESAFE_API_KEY; default unconnected options target OpenRouter. `UJWNU_GIS_SystemOne` retains active requests and cancels them at world/GameInstance cleanup. Core JsonHttpJob provides bounded buffering, deadlines, raw error bodies and retry backoff. `run_systemone_tests.py` runs five tests, including both 25-scenario transport regressions migrated from TypeSafe. See [Docs/SystemOne.md](Docs/SystemOne.md).
+
 
 `JWNetworkUtilityAudio` owns provider-independent `UJWNU_MicrophoneCaptureComponent`, `UJWNU_PCMPlayerComponent`, PCM/error/device types and conversion. It has no JWNU network or OpenAI dependency. `JWNetworkUtilityOpenAI` depends on Audio and translates audio errors to Live errors; its 16/24kHz restriction stays at the session layer. `AJWNU_AudioTestActor` and `UJWNU_AudioTestWidget` in Test provide a ten-second local recorder and paced playback panel. Use `ShowTestPanel` from Level BP; callers choose input mode/cursor. `run_audio_tests.py` runs `JWNetworkUtility.Audio` without a server or hardware; Live now has one integration test, with PCM tests moved to Audio. Class redirects are in plugin Config; independent audio OnError BP pins now use AudioError and require refresh.
 
@@ -110,7 +119,7 @@ Contains test actors and auth widget Blueprint helpers. Separated from the core 
 
 ### Editor Module (K2Node — planned, not yet in source)
 
-An editor module `JWNetworkUtilityEditor` was designed for a custom K2Node (`UJWNU_K2Node_CallApi`) that provides async Blueprint nodes with automatic struct parsing. Intermediate build artifacts exist but source files are not yet present. See the Architecture section for the intended design.
+A custom K2Node was previously designed for a custom K2Node (`UJWNU_K2Node_CallApi`) that provides async Blueprint nodes with automatic struct parsing. The K2Node remains unimplemented; the current JWNetworkUtilityEditor module owns provider key UI. See the Architecture section for the intended design.
 
 ## Architecture
 

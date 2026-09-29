@@ -1,6 +1,10 @@
 <!-- Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT -->
 
-# HTTP·API·OpenAI Live·TypeSafe 요청 사용 규약
+# HTTP·API·OpenAI Live·System One 요청 사용 규약
+
+> 부분 갱신 일자: 2026-09-30 — TypeSafe 전용 모듈·공개 타입·호환 계층을 제거하고 System One API와 테스트로 통합.
+
+> 부분 갱신 일자: 2026-09-30 — SystemOneRequest 공통 부모·Create/Call·Start·종료 계약 추가.
 
 > 부분 갱신 일자: 2026-09-26 — OpenAI 전사 세션도 Create → Bind → Start, Cancel·IsActive 규약 적용. [전사 수명과 발화 확정](OpenAITranscription.md).
 
@@ -24,13 +28,14 @@
 
 ## 공통 Request 타입
 
-HTTP·API·TypeSafe와 SSE 요청은 코어 모듈의 `UJWNU_RequestBase`를 상속한다. SSE의 직접 URL/서비스 타입은 기존 `UJWNU_SseRequestBase` 아래에 유지한다. OpenAI Live 세션과 WebSocket 연결은 별도 수명 모델을 사용한다.
+HTTP·API·System One와 SSE 요청은 코어 모듈의 `UJWNU_RequestBase`를 상속한다. SSE의 직접 URL/서비스 타입은 기존 `UJWNU_SseRequestBase` 아래에 유지한다. OpenAI Live 세션과 WebSocket 연결은 별도 수명 모델을 사용한다.
 
 ```mermaid
 classDiagram
     UJWNU_RequestBase <|-- UJWNU_HttpRequest
     UJWNU_RequestBase <|-- UJWNU_ApiRequest
-    UJWNU_RequestBase <|-- UJWNU_TypeSafeRequest
+
+    UJWNU_RequestBase <|-- UJWNU_SystemOneRequest
     UJWNU_RequestBase <|-- UJWNU_SseRequestBase
     UJWNU_SseRequestBase <|-- UJWNU_SseRequest
     UJWNU_SseRequestBase <|-- UJWNU_SseApiRequest
@@ -59,10 +64,10 @@ OpenAI 전사는 **Create OpenAI Transcription Session → Bind → Start**를 �
 
 요청 객체 방식은 **생성 → 변수 저장 → 성공·실패 이벤트 바인딩 → Start**를 사용한다. 생성은 전송하지 않는다. 핸들은 일회용이다. 다시 실행할 때는 새 요청·세션을 만든다. 일반 API는 즉시 실행 **Call API**, 직접 HTTP는 **Send HTTP Request** 방식도 사용할 수 있다. 공개 함수와 이벤트는 게임 스레드에서 사용한다.
 
-| 역할 | 직접 HTTP | 일반 API | OpenAI Live 세션 | TypeSafe Jev |
+| 역할 | 직접 HTTP | 일반 API | OpenAI Live 세션 | System One |
 | --- | --- | --- | --- | --- |
-| 생성 노드 | Create HTTP Request | Create API Request | Create OpenAI Live Session | Create TypeSafe Request |
-| 객체 | `UJWNU_HttpRequest` | `UJWNU_ApiRequest` | `UJWNU_OpenAILiveSession` | `UJWNU_TypeSafeRequest` |
+| 생성 노드 | Create HTTP Request | Create API Request | Create OpenAI Live Session | Create System One Request |
+| 객체 | `UJWNU_HttpRequest` | `UJWNU_ApiRequest` | `UJWNU_OpenAILiveSession` | `UJWNU_SystemOneRequest` |
 | 실행 | Start | Start | Start / Start From Environment | Start / Start From Environment |
 | 활성 상태 | IsActive | IsActive | IsActive | IsActive |
 | 성공 결과 | OnCompleted | OnCompleted | OnReady 이후 OnTranscript·OnAudio 등 | OnCompleted |
@@ -72,11 +77,11 @@ OpenAI 전사는 **Create OpenAI Transcription Session → Bind → Start**를 �
 
 생성 노드는 대상을 이름에 포함한다. 생성된 객체의 공통 함수 이름은 짧게 유지한다. Live의 연결 준비·지속 데이터·정상 종료 이벤트는 단건 요청의 완료 이벤트와 별도로 유지한다. Live `Cancel`은 기존 즉시 중단 동작이며 최종 사용량을 받지 못할 수 있다. `Close`는 서버의 종료 응답을 기다린다.
 
-OpenAI 세션·컴포넌트와 TypeSafe의 직접 키 입력은 **API Key**로 표시하며 C++ 인자 이름은 `ApiKey`다. 기존 TypeSafe Start의 `Credential` 핀은 PropertyRedirect로 연결선과 직접 입력값을 새 핀에 보존한다. 에디터 재시작 후 기존 노드를 Refresh/Compile한다. 환경변수 이름은 공급자별 `OPENAI_API_KEY`·`TYPESAFE_API_KEY`다. 일반 API의 JWT AccessToken·RefreshToken은 토큰 종류를 나타내는 이름을 사용한다.
+OpenAI 세션·컴포넌트와 System One의 직접 키 입력은 **API Key**로 표시하며 C++ 인자 이름은 `ApiKey`다. [Deprecated 2026-09-30] TypeSafe 전용 노드·핀 redirect를 제거했으므로 기존 그래프는 System One 노드·타입으로 교체한다. 환경변수 이름은 공급자별 `OPENAI_API_KEY`·`OPENROUTER_API_KEY`·`TYPESAFE_API_KEY`다. 일반 API의 JWT AccessToken·RefreshToken은 토큰 종류를 나타내는 이름을 사용한다.
 
 Create가 null이면 World·GameInstance가 유효한지 확인한다. Start 전에는 호출자가 BP 변수·C++ UPROPERTY 참조로 객체를 보관한다. Start 이후 활성 요청은 서브시스템이 GC로부터 보호하며, 소유 월드·GameInstance 종료 시 취소한다. 결과를 계속 사용하려면 요청 또는 결과를 보관한다.
 
-**Start가 반환되기 전에 오류 이벤트가 발생할 수 있으므로 반드시 먼저 바인딩한다.** TypeSafe는 결과 전달을 다음 Pump까지 미루지만 그 지연에 의존하는 그래프를 만들지 않는다. `Start=false`는 새 실행을 접수하지 못했다는 뜻이다. 이미 사용한 핸들로 Start를 반복해도 새 결과 이벤트가 발생하지 않는다. TypeSafe의 입력 검증 실패는 false를 반환하면서 OnFailed를 다음 Pump에 예약할 수 있다.
+**Start가 반환되기 전에 오류 이벤트가 발생할 수 있으므로 반드시 먼저 바인딩한다.** System One은 결과 전달을 다음 Pump까지 미루지만 그 지연에 의존하는 그래프를 만들지 않는다. `Start=false`는 새 실행을 접수하지 못했다는 뜻이다. 이미 사용한 핸들로 Start를 반복해도 새 결과 이벤트가 발생하지 않는다. System One의 입력 검증 실패는 false를 반환하면서 OnFailed를 다음 Pump에 예약할 수 있다.
 
 ## 일반 API
 
@@ -135,11 +140,11 @@ Send HTTP Request는 Deprecated 함수가 아니며 요청 객체 방식과 함�
 
 **Call SSE API**는 콜백 입력 후 즉시 실행하는 방식이다. QueryParams·Options·콜백 핀은 미연결 기본값을 지원한다. 정상 종료는 OnCompleted, 오류는 OnError, 취소는 OnCancelled로 전달한다. 반환 SSE API Request는 선택적 취소·조회용이며 Start를 다시 호출하지 않는다. 잘못된 월드는 nullptr와 OnError(InvalidRequest)를 전달한다. 자세한 사용법은 [SSE 가이드](SSE.md)의 즉시 실행 절을 따른다.
 
-## TypeSafe 즉시 실행
+## System One 즉시 실행
 
-`Call TypeSafe API` 또는 `Call TypeSafe API From Environment`에 State·Questions·Options와 OnCompleted·OnFailed 콜백을 연결한다. 명시적 키 방식은 API Key를 입력한다. Options·콜백은 미연결 상태로 둘 수 있다. 내부에서 생성·콜백 바인딩·Start를 수행하고, 반환 TypeSafe Request는 선택적 취소·조회 또는 공통 RequestBase 변수 저장에 사용한다.
+`Call System One API` 또는 `Call System One API From Environment`에 State·Questions·Options와 OnCompleted·OnFailed 콜백을 연결한다. 명시적 키 방식은 API Key를 입력한다. Options·콜백은 미연결 상태로 둘 수 있다. 내부에서 생성·콜백 바인딩·Start를 수행하고, 반환 System One Request는 선택적 취소·조회 또는 공통 RequestBase 변수 저장에 사용한다.
 
-일반 입력 오류도 기존 Pump를 통해 한 번 전달한다. Start=false를 보고 편의 함수가 추가 오류를 만들지 않는다. 월드가 유효하지 않으면 nullptr와 OnFailed(Configuration)를 즉시 전달한다. 환경변수 방식의 공식 endpoint 제한을 유지하며 실제 전송은 기존 요청 스케줄을 따른다. [TypeSafe 가이드](TypeSafe.md).
+일반 입력 오류도 기존 Pump를 통해 한 번 전달한다. Start=false를 보고 편의 함수가 추가 오류를 만들지 않는다. 월드가 유효하지 않으면 nullptr와 OnFailed(Configuration)를 즉시 전달한다. 환경변수 방식의 공식 endpoint 제한을 유지하며 실제 전송은 기존 요청 스케줄을 따른다. [System One 가이드](SystemOne.md).
 
 ## OpenAI Live 컴포넌트
 
@@ -157,8 +162,8 @@ Send HTTP Request는 Deprecated 함수가 아니며 요청 객체 방식과 함�
 | Send SSE Request | Create SSE Request → 이벤트 바인딩 → Start |
 | Call SSE API | 즉시 실행 사용 가능. 반환 변수는 SSE API Request로 교체. 기존 콜백 핀 유지 |
 | Call API | 즉시 실행 방식으로 사용 가능. 반환 변수는 API Request로 교체. 요청 객체 방식을 원하면 Create API Request → Bind → Start 사용 |
-| TypeSafe Create Request | Create TypeSafe Request |
-| TypeSafe Evaluate / Evaluate From Environment | Create TypeSafe Request → 이벤트 바인딩 → Start / Start From Environment |
+| TypeSafe Create Request | Create System One Request |
+| TypeSafe Evaluate / Evaluate From Environment | Create System One Request → 이벤트 바인딩 → Start / Start From Environment |
 | Create Live Session | Create OpenAI Live Session |
 | Live Abort | Cancel |
 | Live 컴포넌트 Start Live / Start Live From Environment / Stop Live | Start / Start From Environment / Close |
@@ -170,7 +175,7 @@ Call API의 옛 반환 타입은 `UJWNU_HttpRequestJobHandle`이고 현재 반�
 
 `run_api_tests.py --engine <UE-root> --project <uproject>`는 격리된 로컬 서버와 `JWNetworkUtility.API.Nodes`·`FastAPI`·`HTTP`·`Immediate`·`HTTPImmediate`·`CommonRequest` 6종을 실행한다. 현재 노드 노출과 삭제된 함수의 부재, 실제 BP 결과 전달, 성공·HTTP 실패·동기 설정 실패·취소·GC·월드·GameInstance 종료를 검사한다. 외부 API나 키를 사용하지 않는다.
 
-일반 API의 공개 계약은 [JWNU_ApiRequest.h](../Source/JWNetworkUtility/Public/JWNU_ApiRequest.h), 수명 관리는 [ApiClientService_Requests.cpp](../Source/JWNetworkUtility/Private/JWNU_GIS_ApiClientService_Requests.cpp)다. 상세 공급자 동작은 [OpenAI Live](OpenAILive.md), [TypeSafe](TypeSafe.md)를 따른다. 공용 HTTP·JWT 계층을 바꿀 때는 API 외에 SSE·Live·TypeSafe 회귀 테스트도 실행한다.
+일반 API의 공개 계약은 [JWNU_ApiRequest.h](../Source/JWNetworkUtility/Public/JWNU_ApiRequest.h), 수명 관리는 [ApiClientService_Requests.cpp](../Source/JWNetworkUtility/Private/JWNU_GIS_ApiClientService_Requests.cpp)다. 상세 공급자 동작은 [OpenAI Live](OpenAILive.md), [System One](SystemOne.md)를 따른다. 공용 HTTP·JWT 계층을 바꿀 때는 API 외에 SSE·Live·System One 회귀 테스트도 실행한다.
 
 2026-09-26 검증: UE 5.7 Win64 Development Game·Editor 빌드 성공. `Saved/Automation`의 `JWNUApi-20260926-125534`(노드 검사·9개 요청 시나리오), `JWNUTypeSafe-20260926-125238`, `JWNUOpenAILive-20260926-125313`, `JWNUSse-20260926-125608`에서 총 테스트 7종 성공·실패 0을 확인했다. API·SSE는 마지막 GameInstance 종료 정리 변경까지 반영한 빌드로 재검증했다. 실제 외부 서비스·키·오디오 장치는 사용하지 않았다.
 
@@ -191,3 +196,9 @@ Call API의 옛 반환 타입은 `UJWNU_HttpRequestJobHandle`이고 현재 반�
 2026-09-26 Call SSE API 복원 검증: UE 5.7 Editor 빌드 성공. `JWNUSse-20260926-152330`의 Parser·FastAPI·Immediate 3종이 모두 성공했다. 요청 객체와 즉시 실행 각각 21개 시나리오로 BP JSON 변환·POST·추가 헤더·오류 본문·시간 제한·취소·GC·월드/GameInstance 종료·JWT 갱신 및 갱신 중 취소를 확인했다. 잘못된 월드의 nullptr/OnError(InvalidRequest)와 노드 노출·Options 기본값 메타데이터도 확인했다. 외부 서비스나 실제 API 키를 사용하지 않았다.
 
 2026-09-26 공통 부모·TypeSafe 즉시 실행 검증: UE 5.7 Win64 Development Editor 빌드 성공. `JWNUApi-20260926-160633`(6), `JWNUTypeSafe-20260926-160437`(3), `JWNUSse-20260926-160800`(3)의 총 12개 자동화 테스트 성공·실패 0. CommonRequest는 부모 타입만 받는 실제 BP 그래프에서 HTTP·API·SSE·SSE API·TypeSafe 취소와 공통 종료 이벤트를 검증했다. TypeSafe는 두 호출 방식 각각 25개 시나리오 및 새 BP 즉시 실행 노드의 Options·콜백 미연결 컴파일/실행, 지연 오류 단일 통지·공통 이벤트 순서를 검증했다. HTTP·API와 SSE의 기존 즉시 실행·요청 객체·GC·인증·종료 테스트도 통과했다. 외부 서비스와 실제 API 키는 사용하지 않았다. 저장된 사용자 BP 에셋은 자동 변경하지 않았다.
+
+## System One 공통 요청
+
+`Create System One Request → Bind → Start` 또는 콜백 입력형 `Call System One API`를 사용한다. `UJWNU_SystemOneRequest`는 RequestBase를 상속하며 공통 Cancel·IsActive·GetState·OnFinished를 제공한다. 기본 주소는 OpenRouter Decisions이고 모델 ID는 Options.Model로 선택한다. 환경변수 경로는 공식 URL에 맞는 키만 조회한다. [Deprecated 2026-09-30] 기존 TypeSafe 노드는 제거했다. TypeSafe 직접 서비스는 MakeTypeSafeOptions를 같은 요청에 전달한다. [System One 사용법과 키 연결](SystemOne.md).
+
+2026-09-30: TypeSafe 전용 타입 제거 후 SystemOne을 사용하는 API.CommonRequest·API.Nodes가 모두 통과했다. 부모 타입 BP 취소·종료 이벤트와 공통 생성/시작 노드 노출을 검증했다. 보고서: `Saved/Automation/JWNUSystemOneCommon/index.json`.

@@ -4,7 +4,7 @@
 #include "JWNU_HttpRequest.h"
 #include "JWNU_ApiRequest.h"
 #include "JWNU_SseRequest.h"
-#include "JWNU_TypeSafeRequest.h"
+#include "JWNU_SystemOneRequest.h"
 #include "JWNU_GIS_ApiHostProvider.h"
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
@@ -52,7 +52,7 @@ bool FJWNU_RequestBaseTest::RunTest(const FString& Parameters)
     TArray<TStrongObjectPtr<UJWNU_RequestBase>> Requests;
     Requests.Emplace(UJWNU_HttpRequest::CreateHttpRequest(World)); Requests.Emplace(UJWNU_ApiRequest::CreateApiRequest(World));
     Requests.Emplace(UJWNU_SseRequest::CreateSseRequest(World)); Requests.Emplace(UJWNU_SseApiRequest::CreateSseApiRequest(World));
-    Requests.Emplace(UJWNU_TypeSafeRequest::CreateTypeSafeRequest(World));
+    Requests.Emplace(UJWNU_SystemOneRequest::CreateSystemOneRequest(World));
     int32 ExpectedCount = 0;
     for (const auto& Request : Requests)
     {
@@ -63,7 +63,7 @@ bool FJWNU_RequestBaseTest::RunTest(const FString& Parameters)
         else if (auto* Api = Cast<UJWNU_ApiRequest>(Request.Get())) { Api->Start(EJWNU_ServiceType::GameServer, EJWNU_HttpMethod::Get, TEXT("/health"), TEXT(""), {}, false); }
         else if (auto* Sse = Cast<UJWNU_SseRequest>(Request.Get())) { Sse->Start(EJWNU_HttpMethod::Get, TEXT("http://127.0.0.1:18573/sse/events"), TEXT(""), {}, {}); }
         else if (auto* SseApi = Cast<UJWNU_SseApiRequest>(Request.Get())) { SseApi->Start(EJWNU_ServiceType::GameServer, EJWNU_HttpMethod::Get, TEXT("/sse/events"), TEXT(""), {}, {}, false); }
-        else { CastChecked<UJWNU_TypeSafeRequest>(Request.Get())->Start({}, {}, {}, TEXT("")); }
+        else { CastChecked<UJWNU_SystemOneRequest>(Request.Get())->Start({}, {}, {}, TEXT("")); }
         TestEqual(TEXT("Common active state"), Request->GetState(), EJWNU_RequestState::Active);
         Receiver->CancelInBlueprint(Request.Get()); Receiver->CancelInBlueprint(Request.Get());
         TestEqual(TEXT("Inherited BP Cancel dispatch"), Request->GetState(), EJWNU_RequestState::Cancelled);

@@ -10,7 +10,7 @@
 #include "JWNU_GIS_ApiIdentityProvider.h"
 #include "JWNU_OpenAILiveSession.h"
 #include "JWNU_OpenAILiveComponent.h"
-#include "JWNU_TypeSafeRequest.h"
+#include "JWNU_SystemOneRequest.h"
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
@@ -37,13 +37,13 @@ bool FJWNU_ApiNamesTest::RunTest(const FString& Parameters)
         {UJWNU_BFL_ApiClientService::StaticClass(), TEXT("CallApi")},
         {UJWNU_SseRequest::StaticClass(), TEXT("CreateSseRequest")}, {UJWNU_SseApiRequest::StaticClass(), TEXT("CreateSseApiRequest")},
         {UJWNU_HttpRequest::StaticClass(), TEXT("CreateHttpRequest")},
-        {UJWNU_ApiRequest::StaticClass(), TEXT("CreateApiRequest")}, {UJWNU_TypeSafeRequest::StaticClass(), TEXT("CreateTypeSafeRequest")},
+        {UJWNU_ApiRequest::StaticClass(), TEXT("CreateApiRequest")}, {UJWNU_SystemOneRequest::StaticClass(), TEXT("CreateSystemOneRequest")},
         {UJWNU_OpenAILiveSession::StaticClass(), TEXT("CreateOpenAILiveSession")}};
     for (const auto& Entry : Public)
     {
         TestTrue(TEXT("Named factory visible"), UEdGraphSchema_K2::CanUserKismetCallFunction(Entry.Key->FindFunctionByName(Entry.Value)));
     }
-    for (auto* Class : {UJWNU_SseRequest::StaticClass(), UJWNU_SseApiRequest::StaticClass(), UJWNU_HttpRequest::StaticClass(), UJWNU_ApiRequest::StaticClass(), UJWNU_TypeSafeRequest::StaticClass(), UJWNU_OpenAILiveSession::StaticClass(), UJWNU_OpenAILiveComponent::StaticClass()})
+    for (auto* Class : {UJWNU_SseRequest::StaticClass(), UJWNU_SseApiRequest::StaticClass(), UJWNU_HttpRequest::StaticClass(), UJWNU_ApiRequest::StaticClass(), UJWNU_SystemOneRequest::StaticClass(), UJWNU_OpenAILiveSession::StaticClass(), UJWNU_OpenAILiveComponent::StaticClass()})
     {
         for (const TCHAR* Name : {TEXT("Start"), TEXT("Cancel")})
         { TestTrue(TEXT("Common lifecycle visible"), UEdGraphSchema_K2::CanUserKismetCallFunction(Class->FindFunctionByName(Name))); }
@@ -52,7 +52,7 @@ bool FJWNU_ApiNamesTest::RunTest(const FString& Parameters)
     }
     const TArray<TPair<UClass*, FName>> Legacy = {
         {UJWNU_HttpRequestJobHandle::StaticClass(), TEXT("Cancel")}, {UJWNU_HttpRequestJobHandle::StaticClass(), TEXT("IsActive")},
-        {UJWNU_TypeSafeRequest::StaticClass(), TEXT("CreateRequest")},
+        {UJWNU_SystemOneRequest::StaticClass(), TEXT("CreateRequest")},
         {UJWNU_OpenAILiveSession::StaticClass(), TEXT("CreateLiveSession")}, {UJWNU_OpenAILiveSession::StaticClass(), TEXT("Abort")},
         {UJWNU_HttpRequestJobHandle::StaticClass(), TEXT("IsRunning")}, {UJWNU_OpenAILiveComponent::StaticClass(), TEXT("StartLive")},
         {UJWNU_OpenAILiveComponent::StaticClass(), TEXT("StartLiveFromEnvironment")}, {UJWNU_OpenAILiveComponent::StaticClass(), TEXT("StopLive")}};

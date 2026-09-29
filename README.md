@@ -1,5 +1,11 @@
 # JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-09-30 — TypeSafe 전용 모듈·공개 타입·호환 계층을 제거하고 System One API와 테스트로 통합.
+
+> 부분 갱신 일자: 2026-09-30 — 공급자 키·비공개 암호화·설정 UI를 AI/Editor 모듈로 이관. [키 관리](Docs/AIProviders.md).
+
+> 부분 갱신 일자: 2026-09-30 — System One 공통 모듈·OpenRouter 모델 선택·TypeSafe 호환 연결 추가. [사용 가이드](Docs/SystemOne.md).
+
 > 부분 갱신 일자: 2026-09-27 — `UJWNU_GptLiveTranscriptor`의 PCM 청크화·누적 자막·최종문 정렬·C++/BP API와 subsystem 수명 관리 추가. [전사 가이드](Docs/OpenAITranscription.md).
 
 > 부분 갱신 일자: 2026-09-26 — OpenAI 전사 모델을 문자열로 전환(기본 gpt-live-transcribe, gpt-transcribe 추가). 모델별 필드 허용 여부는 서버가 판정한다.
@@ -93,7 +99,9 @@ uv run uvicorn main:app --host 127.0.0.1 --port 5000 --reload
 | Module | Type | Description |
 |---|---|---|
 | `JWNetworkUtility` | Runtime | Core plugin — HTTP Job, HTTP Client, API Client, Token Provider, Host Provider |
-| `JWNetworkUtilityTypeSafe` | Runtime | Jev Choice/Score/Noul typed HTTP evaluation, C++/BP requests |
+| `JWNetworkUtilitySystemOne` | Runtime | Shared Choice/Score/Noul requests, OpenRouter models and TypeSafe-compatible API |
+| `JWNetworkUtilityAI` | Runtime | Provider catalog, per-GameInstance keys and private DPAPI storage; no JWCU dependency |
+| `JWNetworkUtilityEditor` | Editor | AI Provider Settings key management UI |
 | `JWNetworkUtilityOpenAI` | Runtime | OpenAI Live conversations, Realtime transcription (model selected by name), and BP microphone integration |
 | `JWNetworkUtilityAudio` | Runtime | Provider-independent microphone capture and PCM playback |
 | `JWNetworkUtilityTest` | Runtime | Test/demo module — API test actor |
