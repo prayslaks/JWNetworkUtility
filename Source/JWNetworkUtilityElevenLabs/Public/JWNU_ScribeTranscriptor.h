@@ -18,6 +18,10 @@ struct JWNETWORKUTILITYELEVENLABS_API FJWNU_ScribeOptions
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Scribe") FString Endpoint = TEXT("wss://api.elevenlabs.io/v1/speech-to-text/realtime");
 	/** ISO 언어 코드. 빈 값은 자동 감지한다. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Scribe") FString Language;
+	/** 인식을 유도할 고유명사·용어 목록. 최대 50개, 각 1~20자이며 기본 전사 비용에 20%가 추가된다. 빈 목록은 사용하지 않는다. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Scribe") TArray<FString> Keyterms;
+	/** 첫 오디오 청크에 한 번 전달할 이전 전사 또는 짧은 문맥. 50자 미만을 권장하며 클라이언트 상한은 16,384 UTF-16 단위다. 명령 실행 지시 프롬프트가 아니다. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Scribe", meta=(MultiLine="true")) FString PreviousText;
 	/** 서버 session_started 응답 대기 시간(초). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Scribe", meta=(ClampMin="1")) float StartTimeoutSeconds = 20.f;
 	/** 최종 Commit 후 결과를 수신할 시간(초). 종료 ACK가 없어 전체 구간을 기다린다. */
@@ -57,6 +61,7 @@ public:
 private:
 	friend class FJWNU_ScribeProtocolTest;
 	friend class FJWNU_ScribeIntegrationTest;
+	bool ValidateContextOptions(const FJWNU_ScribeOptions& Options) const;
 	void Receive(const FString& Json);
 	bool SendChunk(const TArray<float>& Audio, bool bCommit);
 	void Fail(const FString& Message);
@@ -74,4 +79,5 @@ private:
 	bool bActive = false;
 	bool bReady = false;
 	bool bFinishing = false;
+	bool bPreviousTextSent = false;
 };

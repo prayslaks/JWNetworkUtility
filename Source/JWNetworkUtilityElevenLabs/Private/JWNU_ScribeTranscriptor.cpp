@@ -23,12 +23,33 @@ UJWNU_ScribeTranscriptor* UJWNU_ScribeTranscriptor::CreateScribeTranscriptor(con
 
 UWorld* UJWNU_ScribeTranscriptor::GetWorld() const { return OwnerWorld.Get(); }
 
+bool UJWNU_ScribeTranscriptor::ValidateContextOptions(const FJWNU_ScribeOptions& Options) const
+{
+	if (Options.Keyterms.Num() > 50 || Options.PreviousText.Len() > 16384) return false;
+	for (const FString& Term : Options.Keyterms)
+	{
+		if (Term.TrimStartAndEnd().IsEmpty()) return false;
+		// API의 문자 수 기준에 맞게 UTF-16 surrogate pair는 한 문자로 센다.
+		int32 Characters = 0;
+		for (int32 Index = 0; Index < Term.Len(); ++Index)
+		{
+			const uint32 Code = static_cast<uint32>(Term[Index]);
+			if (Code >= 0xD800 && Code <= 0xDBFF && Index + 1 < Term.Len()
+				&& Term[Index + 1] >= 0xDC00 && Term[Index + 1] <= 0xDFFF) ++Index;
+			if (++Characters > 20) return false;
+		}
+	}
+	return true;
+}
+
 bool UJWNU_ScribeTranscriptor::Start(const FJWNU_ScribeOptions& Options, const FString& ApiKey)
 {
 	check(IsInGameThread());
 	TStrongObjectPtr<UJWNU_ScribeTranscriptor> KeepAlive(this);
 	if (bActive) return false;
 	Cancel();
+	if (!ValidateContextOptions(Options))
+	{ Fail(TEXT("Scribe context options are invalid: max 50 nonblank keyterms of 1-20 characters and 16384 UTF-16 units of previous text.")); return false; }
 	const bool bLocal = Options.Endpoint.StartsWith(TEXT("ws://127.0.0.1:")) || Options.Endpoint.StartsWith(TEXT("ws://localhost:"));
 	if ((!Options.Endpoint.StartsWith(TEXT("wss://")) && !(bLocal && ApiKey.IsEmpty()))
 		|| Options.Endpoint.Contains(TEXT("?")) || Options.Endpoint.Contains(TEXT("#")) || Options.Language.Len() > 16
@@ -49,6 +70,7 @@ bool UJWNU_ScribeTranscriptor::Start(const FJWNU_ScribeOptions& Options, const F
 	// 공급자 사양은 구현에 고정한다. 호스트는 ProviderManaged 정책만 읽는다.
 	FString URL = Options.Endpoint + TEXT("?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=vad&vad_silence_threshold_secs=0.7&min_speech_duration_ms=100&min_silence_duration_ms=100&include_timestamps=false");
 	if (!Options.Language.IsEmpty()) URL += TEXT("&language_code=") + FGenericPlatformHttp::UrlEncode(Options.Language);
+	for (const FString& Term : Options.Keyterms) URL += TEXT("&keyterms=") + FGenericPlatformHttp::UrlEncode(Term);
 	FJWNU_WebSocketOptions Transport;
 	Transport.ConnectTimeoutSeconds = Options.StartTimeoutSeconds;
 	Transport.MaxSendQueuedBytes = 256 * 1024;
@@ -77,9 +99,12 @@ bool UJWNU_ScribeTranscriptor::SendChunk(const TArray<float>& Audio, bool bCommi
 	Event->SetStringField(TEXT("audio_base_64"), FBase64::Encode(PCM));
 	Event->SetNumberField(TEXT("sample_rate"), GetSampleRate());
 	Event->SetBoolField(TEXT("commit"), bCommit);
+	const bool bSendPreviousText = !bPreviousTextSent && !Audio.IsEmpty() && !Settings.PreviousText.IsEmpty();
+	if (bSendPreviousText) Event->SetStringField(TEXT("previous_text"), Settings.PreviousText);
 	FString Json;
 	FJsonSerializer::Serialize(Event, TJsonWriterFactory<>::Create(&Json));
 	if (!Socket || !Socket->SendText(Json)) { Fail(TEXT("Scribe bounded send queue rejected audio.")); return false; }
+	if (!Audio.IsEmpty()) bPreviousTextSent = true;
 	SentSamples += Audio.Num();
 	return true;
 }
@@ -202,6 +227,7 @@ void UJWNU_ScribeTranscriptor::Cancel()
 	check(IsInGameThread());
 	++Generation;
 	bActive = bReady = bFinishing = false;
+	bPreviousTextSent = false;
 	Deadline = 0;
 	Segment = 1;
 	SentSamples = 0;

@@ -31,6 +31,11 @@ public:
 			FJWNU_ScribeOptions Options;
 			Options.Endpoint = URL;
 			Options.Language = TEXT("ko");
+			if (Phase < 2)
+			{
+				Options.Keyterms = {TEXT("Strider 1"), TEXT("대형 유지"), TEXT("Alpha&Bravo+#")};
+				Options.PreviousText = TEXT("Strider 편대의 비행 명령.");
+			}
 			Options.FinishDrainSeconds = 2;
 			Started = FPlatformTime::Seconds();
 			if (!Test->TestTrue(TEXT("Start accepts local fixture"), Backend->Start(Options, FString()))) { Cleanup(); return true; }
@@ -45,7 +50,8 @@ public:
 		if (bReady && !bSent)
 		{
 			bSent = true;
-			TArray<float> Audio; Audio.SetNumZeroed(8017);
+			Backend->AppendAudio({}); // 빈 입력은 첫 PCM의 문맥을 소비하지 않는다.
+			TArray<float> Audio; Audio.SetNumZeroed(Phase == 0 ? 8017 : 17);
 			Audio[0] = -1.f; Audio[1] = 1.f;
 			Backend->AppendAudio(Audio);
 			Backend->CommitUtterance(); // 서버 VAD이므로 wire Commit이 발생하면 fixture가 실패한다.
@@ -64,7 +70,14 @@ public:
 		Test->TestEqual(TEXT("Corrected partial snapshots are not appended"), Results.Num(), 5);
 		if (Results.Num() >= 2) Test->TestEqual(TEXT("Second snapshot corrects first"), Results[1].Text, FString(TEXT("대형 유지")));
 		for (const auto& Update : Results) Test->TestTrue(TEXT("Scribe supplies no synthetic Delta"), Update.Delta.IsEmpty());
-		Cleanup(); return true;
+		Cleanup();
+		if (++Phase < 3)
+		{
+			bReady = bSent = bFinished = false;
+			Results.Reset(); Error.Reset();
+			return false;
+		}
+		return true;
 	}
 private:
 	void Cleanup()
@@ -78,6 +91,7 @@ private:
 	UJWNU_ScribeTranscriptor* Backend = nullptr;
 	TArray<FJWNU_TranscriptUpdate> Results;
 	double Started = 0;
+	int32 Phase = 0;
 	bool bReady = false, bSent = false, bFinished = false;
 };
 }

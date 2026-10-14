@@ -20,6 +20,12 @@ async def run(args):
             query = parse_qs(urlsplit(socket.request.path).query)
             assert query["commit_strategy"] == ["vad"]
             assert query["audio_format"] == ["pcm_16000"]
+
+            with_context = len(sessions) < 2
+            if with_context:
+                assert query["keyterms"] == ["Strider 1", "대형 유지", "Alpha&Bravo+#"]
+            else:
+                assert "keyterms" not in query, "default session enabled paid keyword prompting"
             assert "xi-api-key" not in socket.request.headers
             await socket.send(json.dumps({"message_type": "session_started", "config": {
                 "audio_format": "pcm_16000", "sample_rate": 16000, "model_id": "scribe_v2_realtime"}}))
@@ -34,8 +40,14 @@ async def run(args):
                 if pcm:
                     chunks += 1
                     if chunks == 1:
+                        if with_context:
+                            assert message["previous_text"] == "Strider 편대의 비행 명령."
+                        else:
+                            assert "previous_text" not in message, "default session sent previous text"
                         assert pcm[:4] == b"\x00\x80\xff\x7f"
                         await socket.send(json.dumps({"message_type": "partial_transcript", "text": "대열"}, ensure_ascii=False))
+                    else:
+                        assert "previous_text" not in message, "context repeated after first audio chunk"
                     if chunks == 2:
                         await socket.send(json.dumps({"message_type": "partial_transcript", "text": "대형 유지"}, ensure_ascii=False))
                     if chunks == 3:
@@ -44,6 +56,7 @@ async def run(args):
                     if chunks == 4:
                         await socket.send(json.dumps({"message_type": "partial_transcript", "text": "대형"}, ensure_ascii=False))
                 if message["commit"]:
+                    assert "previous_text" not in message, "context repeated on final Commit"
                     commits += 1
                     assert samples == 32000, "tail or initial short-session padding was lost"
                     assert not pcm and commits == 1, "external/repeated Commit reached server"
@@ -77,7 +90,7 @@ async def run(args):
     print(json.dumps({"exit": result, "passed": report["succeeded"] + report.get("succeededWithWarnings", 0),
                       "warnings": report.get("succeededWithWarnings", 0), "failed": report["failed"],
                       "fixture_sessions": len(sessions), "fixture_errors": failures}, ensure_ascii=False))
-    assert result == 0 and report["failed"] == 0 and len(sessions) == 1 and not failures
+    assert result == 0 and report["failed"] == 0 and len(sessions) == 3 and not failures
 
 
 if __name__ == "__main__":

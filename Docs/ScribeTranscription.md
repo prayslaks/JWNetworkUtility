@@ -2,6 +2,8 @@
 
 # Scribe V2 Realtime와 공통 전사 계약
 
+> 부분 갱신 일자: 2026-10-03 — Keyterms 연결 query와 첫 PCM의 PreviousText 지원 및 로컬 wire 검증 추가.
+
 > 부분 갱신 일자: 2026-09-28 — 공급자 중립 결과·실행 계약, Scribe 서버 VAD 전사기 및 로컬 소켓 검증 추가.
 
 ## 모듈과 소유권
@@ -22,7 +24,15 @@ GPT는 `ExternalCommit`으로 동작하며 기존 `OnReady/Transcript/Finished/E
 4. 공급자 관리 모드이므로 외부 Commit은 하지 않는다. 일반 발화는 서버가 확정한다.
 5. 녹음을 끝낼 때 캡처의 마지막 PCM을 전달한 뒤 Finish한다. 즉시 중단은 Cancel이다.
 
-모델 `scribe_v2_realtime`, `commit_strategy=vad`, PCM16 LE 16kHz, 서버 무음 경계 0.7초, 최소 speech/silence 100ms는 구현에 고정한다. 호스트는 공급자 이름에 따라 분기하지 않고 `ProviderManaged` 정책만 읽는다. 사용자 옵션은 endpoint, 언어 코드, 시작 timeout, Finish 결과 수신 시간이다.
+모델 `scribe_v2_realtime`, `commit_strategy=vad`, PCM16 LE 16kHz, 서버 무음 경계 0.7초, 최소 speech/silence 100ms는 구현에 고정한다. 호스트는 공급자 이름에 따라 분기하지 않고 `ProviderManaged` 정책만 읽는다. 사용자 옵션은 endpoint, 언어 코드, Keyterms, PreviousText, 시작 timeout, Finish 결과 수신 시간이다.
+
+## 인식 용어와 문맥 설정
+
+2026-10-03 공식 문서 확인 기준으로 `FJWNU_ScribeOptions.Keyterms`는 최대 50개, 각 1~20자의 고유명사·용어 목록이다. 빈 목록은 전송하지 않는다. 연결 query에 각각 `keyterms=<URL encoded term>`으로 보내며 한글·공백·`&`·`+` 등의 문자를 인코딩한다. 공백만 있는 항목과 상한 초과는 Start에서 거절하며 자동으로 잘라내지 않는다. 사용 시 기본 전사 비용에 20%가 추가된다. [Keyterm 가이드](https://elevenlabs.io/docs/eleven-api/guides/how-to/speech-to-text/batch/keyterm-prompting), [Realtime API](https://elevenlabs.io/docs/api-reference/speech-to-text/v-1-speech-to-text-realtime).
+
+`PreviousText`는 이전 전사 또는 짧은 상황 설명이다. 첫 실제 PCM 청크에만 `previous_text` JSON 문자열로 보내며 이후 청크·종료 Commit에서는 생략한다. 100ms 미만 입력도 Finish의 tail 전송에 문맥을 포함한다. Cancel/재시작은 첫 청크 전송 상태를 초기화한다. 빈 문자열은 전송하지 않는다. 공식 권장 길이는 50자 미만이며 강제 API 상한으로 취급하지 않는다. 클라이언트는 payload 상한으로 16,384 UTF-16 단위를 제한한다. [문맥 전송 가이드](https://elevenlabs.io/docs/eleven-api/guides/how-to/speech-to-text/realtime/transcripts-and-commit-strategies).
+
+일반 지시형 Prompt와 RSR InitialPrompt를 Scribe 문맥으로 자동 변환하지 않는다. `transcript_edit`는 확정문을 후처리하고 별도 edited_transcript를 보내는 API이며 이 전사기의 명령 Final 경로에는 지원하지 않는다. Keyterms/PreviousText는 기본값이 비어 있어 기존 세션 동작을 유지한다. 설정이 wire로 전달됨과 실제 인식 정확도 향상은 별도로 검증한다.
 
 공식 endpoint는 `wss://api.elevenlabs.io/v1/speech-to-text/realtime`이며 키는 `xi-api-key` header로 전달한다. 키 없는 loopback `ws://127.0.0.1:port`/`ws://localhost:port`는 테스트용이다. endpoint의 query/fragment는 거절하여 구현에 고정한 정책을 덮어쓰지 못하게 한다. 키 저장/선택은 호스트가 제공한다. [공식 API](https://elevenlabs.io/docs/api-reference/speech-to-text/v-1-speech-to-text-realtime)
 
@@ -37,6 +47,8 @@ GPT는 `ExternalCommit`으로 동작하며 기존 `OnReady/Transcript/Finished/E
 - 오류는 분류 코드 또는 고정 로컬 메시지로 전달한다. 원격 원문·인증 header를 로그에 반사하지 않는다. 자동 재접속/오디오 재전송은 하지 않는다.
 
 ## 로컬 검증
+
+2026-10-03: 호스트 Editor 빌드 및 runner 12개 테스트 통과, 실패 0(기존 경고 동반 2개). loopback 세션 3개에서 Keyterms 인코딩·첫 청크 문맥·짧은 Finish tail·빈 옵션 생략을 검증했다. 용어 상한과 Config 저장·복원도 검사했다. 실서비스 인식 정확도·유료 호출·마이크 시험은 수행하지 않았다.
 
 TestServer의 잠긴 환경에서 실행한다. 실제 키, 마이크 또는 외부 API를 사용하지 않는다.
 

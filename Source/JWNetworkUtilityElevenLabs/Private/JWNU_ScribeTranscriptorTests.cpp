@@ -10,6 +10,20 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FJWNU_ScribeProtocolTest, "JWNetworkUtility.Scr
 bool FJWNU_ScribeProtocolTest::RunTest(const FString& Parameters)
 {
 	auto* Scribe = NewObject<UJWNU_ScribeTranscriptor>();
+	FJWNU_ScribeOptions Context;
+	TestTrue(TEXT("Default session omits optional context"), Scribe->ValidateContextOptions(Context));
+	Context.Keyterms.Init(FString::ChrN(20, TEXT('가')), 50);
+	TestTrue(TEXT("Realtime accepts exactly 50 terms of 20 characters"), Scribe->ValidateContextOptions(Context));
+	Context.Keyterms.Add(TEXT("extra"));
+	TestFalse(TEXT("Realtime rejects a 51st term instead of truncating"), Scribe->ValidateContextOptions(Context));
+	Context.Keyterms = {FString::ChrN(21, TEXT('가'))};
+	TestFalse(TEXT("Realtime rejects terms over 20 characters"), Scribe->ValidateContextOptions(Context));
+	Context.Keyterms = {TEXT("  ")};
+	TestFalse(TEXT("Blank keyterms are rejected"), Scribe->ValidateContextOptions(Context));
+	Context.Keyterms.Reset(); Context.PreviousText = FString::ChrN(60, TEXT('가'));
+	TestTrue(TEXT("Recommended context length is not treated as an API limit"), Scribe->ValidateContextOptions(Context));
+	Context.PreviousText = FString::ChrN(16385, TEXT('가'));
+	TestFalse(TEXT("Context has a bounded client payload"), Scribe->ValidateContextOptions(Context));
 	TestEqual(TEXT("Provider owns boundaries"), Scribe->GetBoundaryMode(), EJWNU_TranscriptBoundaryMode::ProviderManaged);
 	Scribe->bActive = true;
 	int32 Ready = 0, Errors = 0, Finished = 0;
@@ -37,6 +51,7 @@ bool FJWNU_ScribeProtocolTest::RunTest(const FString& Parameters)
 	Scribe->CommitUtterance();
 	TestFalse(TEXT("External commit cannot finish server VAD"), Scribe->bFinishing);
 	Scribe->Cancel();
+	TestFalse(TEXT("Restart can send previous text with its first audio chunk"), Scribe->bPreviousTextSent);
 	Scribe->Receive(TEXT("{\"message_type\":\"partial_transcript\",\"text\":\"stale\"}"));
 	TestEqual(TEXT("Cancel suppresses stale results"), Results.Num(), 4);
 	TestEqual(TEXT("Cancel does not finish"), Finished, 0);
