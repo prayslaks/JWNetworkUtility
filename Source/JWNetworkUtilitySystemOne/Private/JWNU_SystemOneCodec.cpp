@@ -73,7 +73,7 @@ bool FJWNU_SystemOneCodec::ParseResponse(const FString& Body, const TArray<FJWNU
         {
             FJWNU_SystemOneChoiceAnswer Choice;
             TSet<FString> Keys;
-            for (const auto& Pair : Definition->GetObjectField(TEXT("criteria"))->Values) { Keys.Add(Pair.Key); }
+            for (const auto& Pair : Definition->GetObjectField(TEXT("criteria"))->Values) { Keys.Add(FString(Pair.Key)); }
             if (!(*Answer)->TryGetStringField(TEXT("choice"), Choice.Choice) || !Keys.Contains(Choice.Choice)
                 || !Number(*Answer, TEXT("confidence"), Choice.Confidence, 0, 1)
                 || !Distribution(*Answer, Keys, Choice.Probabilities)) { return false; }
