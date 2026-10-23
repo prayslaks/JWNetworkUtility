@@ -1,5 +1,7 @@
 <!-- Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT -->
 
+> [Deprecated 2026-10-23] 이 문서의 현재 정본은 [JWAIUtility/SystemOne.md](../../JWAIUtility/Docs/SystemOne.md)로 이동했다. 아래는 이동 전 기록이다.
+
 # System One — 공통 판단 요청
 
 > 부분 갱신 일자: 2026-09-30 — TypeSafe 전용 모듈·공개 타입·호환 계층을 제거하고 System One API와 테스트로 통합.

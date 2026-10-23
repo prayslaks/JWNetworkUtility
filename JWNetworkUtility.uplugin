@@ -1,73 +1,58 @@
 {
-	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.0",
+    "FileVersion": 3,
+    "Version": 1,
+    "VersionName": "1.0",
     "EngineVersion": "5.6",
-    "PlatformAllowList": [ "Win64" ],
-    "PlatformDenyList": [ "Win32", "Mac", "IOS", "Android" ],
-	"FriendlyName": "JWNetworkUtility",
-	"Description": "Unreal Network Utility Plugin by JungWoo. HTTP Client Helper, API Client Service, Access and Refresh Token Management with Encryption and Services.",
-	"Category": "Code Plugins > Networking",
-	"CreatedBy": "prayslaks",
-	"CreatedByURL": "https://github.com/prayslaks",
-	"DocsURL": "https://github.com/prayslaks/JWNetworkUtility/wiki",
-	"MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/bf6dd857-dceb-4b7c-ab63-239d6d47a682",
-	"SupportURL": "https://github.com/prayslaks/JWNetworkUtility/issues",
-	"CanContainContent": true,
-	"IsBetaVersion": true,
-	"IsExperimentalVersion": false,
-	"Installed": false,
-	"Modules": [
-        { "Name": "JWNetworkUtilityAI", "Type": "Runtime", "LoadingPhase": "Default", "PlatformAllowList": [ "Win64" ] },
-        { "Name": "JWNetworkUtilityEditor", "Type": "Editor", "LoadingPhase": "PostEngineInit", "PlatformAllowList": [ "Win64" ] },
-        { "Name": "JWNetworkUtilitySystemOne", "Type": "Runtime", "LoadingPhase": "Default", "PlatformAllowList": [ "Win64" ] },
-		{
-			"Name": "JWNetworkUtilityAudio",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"PlatformAllowList": [ "Win64" ]
-		},
-		{
-			"Name": "JWNetworkUtilityElevenLabs",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"PlatformAllowList": [ "Win64" ]
-		},
-		{
-			"Name": "JWNetworkUtilityOpenAI",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"PlatformAllowList": [ "Win64" ]
-		},
-		{
-			"Name": "JWNetworkUtility",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
+    "PlatformAllowList": [
+        "Win64"
+    ],
+    "PlatformDenyList": [
+        "Win32",
+        "Mac",
+        "IOS",
+        "Android"
+    ],
+    "FriendlyName": "JWNetworkUtility",
+    "Description": "Unreal Network Utility Plugin by JungWoo. HTTP Client Helper, API Client Service, Access and Refresh Token Management with Encryption and Services.",
+    "Category": "Code Plugins > Networking",
+    "CreatedBy": "prayslaks",
+    "CreatedByURL": "https://github.com/prayslaks",
+    "DocsURL": "https://github.com/prayslaks/JWNetworkUtility/wiki",
+    "MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/bf6dd857-dceb-4b7c-ab63-239d6d47a682",
+    "SupportURL": "https://github.com/prayslaks/JWNetworkUtility/issues",
+    "CanContainContent": true,
+    "IsBetaVersion": true,
+    "IsExperimentalVersion": false,
+    "Installed": false,
+    "Modules": [
+        {
+            "Name": "JWNetworkUtility",
+            "Type": "Runtime",
+            "LoadingPhase": "Default",
             "PlatformAllowList": [
-              "Win64"
+                "Win64"
             ],
             "PlatformDenyList": [
-              "Win32",
-              "Mac",
-              "IOS",
-              "Android"
+                "Win32",
+                "Mac",
+                "IOS",
+                "Android"
             ]
-		},
-		{
-			"Name": "JWNetworkUtilityTest",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
+        },
+        {
+            "Name": "JWNetworkUtilityTest",
+            "Type": "Runtime",
+            "LoadingPhase": "Default",
             "PlatformAllowList": [
-              "Win64"
+                "Win64"
             ],
             "PlatformDenyList": [
-              "Win32",
-              "Mac",
-              "IOS",
-              "Android"
+                "Win32",
+                "Mac",
+                "IOS",
+                "Android"
             ]
-		}
-	],
-	"Plugins": [
-	]
+        }
+    ],
+    "Plugins": []
 }

@@ -1,5 +1,9 @@
 # CLAUDE.md — JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-10-23 — AI 공급자·전사 계약·키 관리를 JWAIUtility로, 범용 오디오를 JWCommonUtilityAudio로 분리. 저장 암호화 식별자는 보존.
+
+현재 모듈은 JWNetworkUtility와 JWNetworkUtilityTest다. 아래 AI·Audio 소유권 설명은 [Deprecated 2026-10-23] 기록이며 [JWAIUtility](../JWAIUtility/README.md)와 [JWCU Audio](../JWCommonUtility/Docs/Audio.md)가 현재 정본이다.
+
 > 부분 갱신 일자: 2026-09-30 — TypeSafe 전용 모듈·공개 타입·호환 계층을 제거하고 System One API와 테스트로 통합.
 
 > 부분 갱신 일자: 2026-09-30 — JWNU가 공급자 키 관리·내부 암호화를 독립 소유하도록 이관. 기존 키 API·자동 이관 제거.

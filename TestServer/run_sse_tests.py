@@ -15,15 +15,12 @@ import urllib.request
 
 
 def main(suite="sse"):
-    """HTTP·SSE·WebSocket 공급자 테스트가 서버·UE 프로세스 수명 관리를 공유한다."""
+    """HTTP·SSE·WebSocket 테스트가 서버·UE 프로세스 수명 관리를 공유한다."""
+    if suite not in {"sse", "websocket", "api"}:
+        raise ValueError("Provider suites moved to JWAIUtility/TestServer")
     websocket = suite == "websocket"
-    live = suite == "live"
-    transcription = suite == "transcription"
-    systemone = suite == "systemone"
     api = suite == "api"
-    label = "API" if api else ("SystemOne" if systemone else ("OpenAI.Live" if live else ("WebSocket" if websocket else "SSE")))
-    if transcription:
-        label = "OpenAI.Transcription"
+    label = "API" if api else ("WebSocket" if websocket else "SSE")
     parser = argparse.ArgumentParser(description=f"Local FastAPI + Unreal {label} integration tests")
     parser.add_argument("--engine", type=Path, required=True, help="UE 설치 루트")
     parser.add_argument("--project", type=Path, required=True, help="호스트 .uproject")
@@ -39,9 +36,7 @@ def main(suite="sse"):
     tls_args = ["--ssl-certfile", str(args.tls_cert.resolve()), "--ssl-keyfile", str(args.tls_key.resolve())] if tls else []
     health_context = ssl.create_default_context(cafile=str(args.tls_cert.resolve())) if tls else None
     project = args.project.resolve()
-    prefix = "JWNUApi-" if api else ("JWNUSystemOne-" if systemone else ("JWNUOpenAILive-" if live else ("JWNUWebSocket-" if websocket else "JWNUSse-")))
-    if transcription:
-        prefix = "JWNUOpenAITranscription-"
+    prefix = "JWNUApi-" if api else ("JWNUWebSocket-" if websocket else "JWNUSse-")
     output = project.parent / "Saved" / "Automation" / (prefix + time.strftime("%Y%m%d-%H%M%S"))
     output.mkdir(parents=True, exist_ok=True)
     # 이미 실행 중인 다른 서버를 테스트 대상으로 오인하지 않는다.
@@ -76,8 +71,8 @@ def main(suite="sse"):
             command = [str(args.engine / "Engine/Binaries/Win64/UnrealEditor-Cmd.exe"), str(project),
                        "/Engine/Maps/Entry",
                        "-unattended", "-nop4", "-NullRHI", "-nosplash", "-nosound",
-                       "-JWNUApiIntegration" if api else ("-JWNUSystemOneIntegration" if systemone else ("-JWNULiveIntegration" if live else ("-JWNUWebSocketIntegration" if websocket else "-JWNUSseIntegration"))),
-                       f"-JWNUApiTestURL={base}" if api else (f"-JWNUSystemOneTestURL={base}" if systemone else (f"-JWNULiveTestURL={socket_base}" if live else (f"-JWNUWebSocketTestURL={socket_base}" if websocket else f"-JWNUSseTestURL={base}"))),
+                       "-JWNUApiIntegration" if api else ("-JWNUWebSocketIntegration" if websocket else "-JWNUSseIntegration"),
+                       f"-JWNUApiTestURL={base}" if api else (f"-JWNUWebSocketTestURL={socket_base}" if websocket else f"-JWNUSseTestURL={base}"),
                        f"-ExecCmds=Automation RunTests JWNetworkUtility.{label}",
                        "-TestExit=Automation Test Queue Empty", f"-ReportExportPath={output}",
                        f"-abslog={output / 'Unreal.log'}"]
@@ -86,8 +81,6 @@ def main(suite="sse"):
                     command.append("-JWNUWebSocketExpectTlsFailure")
                 else:
                     command.append(f"-ini:Engine:[SSL]:OverrideCertificateBundlePath={args.tls_cert.resolve()}")
-            if transcription:
-                command.extend(["-JWNUTranscriptionIntegration", f"-JWNUTranscriptionTestURL={socket_base}"])
             print(f"{label} test report: {output}", flush=True)
             with (output / "console.log").open("w", encoding="utf-8") as unreal_log:
                 result = subprocess.run(command, stdout=unreal_log, stderr=subprocess.STDOUT,
@@ -97,9 +90,7 @@ def main(suite="sse"):
                 raise RuntimeError(f"Unreal tests failed (exit {result.returncode}); see {output}")
             report = json.loads(index.read_text(encoding="utf-8-sig"))
             passed = report.get("succeeded", 0) + report.get("succeededWithWarnings", 0)
-            expected = 6 if api else (1 if live else (2 if websocket else 3))
-            if systemone or transcription:
-                expected = 5
+            expected = 5 if api else (2 if websocket else 3)
             if report.get("failed", 0) or report.get("notRun", 0) or report.get("inProcess", 0) or passed != expected:
                 raise RuntimeError(f"Automation did not pass; see {index}")
             print(f"Passed: {passed}; failed: {report.get('failed', 0)}; with warnings: {report.get('succeededWithWarnings', 0)}", flush=True)

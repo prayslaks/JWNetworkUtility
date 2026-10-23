@@ -1,5 +1,7 @@
 <!-- Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT -->
 
+> [Deprecated 2026-10-23] 이 문서의 현재 정본은 [JWAIUtility/OpenAILive.md](../../JWAIUtility/Docs/OpenAILive.md)로 이동했다. 아래는 이동 전 기록이다.
+
 # OpenAI GPT-Live — C++ / Blueprint
 
 > 부분 갱신 일자: 2026-09-26 — 같은 OpenAI 모듈의 [실시간 전사](OpenAITranscription.md) 지원 추가. gpt-realtime-whisper·gpt-live-transcribe는 별도 TranscriptionSession/Component를 사용한다.

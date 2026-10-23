@@ -1,5 +1,7 @@
 <!-- Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT -->
 
+> [Deprecated 2026-10-23] 이 문서의 현재 정본은 [JWAIUtility/ScribeTranscription.md](../../JWAIUtility/Docs/ScribeTranscription.md)로 이동했다. 아래는 이동 전 기록이다.
+
 # Scribe V2 Realtime와 공통 전사 계약
 
 > 부분 갱신 일자: 2026-10-03 — Keyterms 연결 query와 첫 PCM의 PreviousText 지원 및 로컬 wire 검증 추가.

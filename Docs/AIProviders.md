@@ -1,5 +1,7 @@
 <!-- Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT -->
 
+> [Deprecated 2026-10-23] 이 문서의 현재 정본은 [JWAIUtility/AIProviders.md](../../JWAIUtility/Docs/AIProviders.md)로 이동했다. 아래는 이동 전 기록이다.
+
 # AI 공급자 키 관리
 
 > 부분 갱신 일자: 2026-09-30 — JWCU에서 독립한 JWNU 공급자 설정·GIS·비공개 암호화 저장소.

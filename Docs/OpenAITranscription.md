@@ -1,5 +1,7 @@
 <!-- Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT -->
 
+> [Deprecated 2026-10-23] 이 문서의 현재 정본은 [JWAIUtility/OpenAITranscription.md](../../JWAIUtility/Docs/OpenAITranscription.md)로 이동했다. 아래는 이동 전 기록이다.
+
 # OpenAI 실시간 전사 — C++ / Blueprint
 
 > 부분 갱신 일자: 2026-09-28 — `UJWNU_Transcriptor` 기반과 공통 OnTranscription 이벤트 추가. 기존 GPT 이벤트는 호환 유지.

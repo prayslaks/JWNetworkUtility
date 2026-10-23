@@ -7,6 +7,7 @@ public class JWNetworkUtility : ModuleRules
 	public JWNetworkUtility(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+		if (Target.Platform == UnrealTargetPlatform.Win64) PublicSystemLibraries.Add("Winhttp.lib");
 		
 		PublicIncludePaths.AddRange(
 			[

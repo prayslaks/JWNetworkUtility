@@ -1,5 +1,7 @@
 <!-- Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT -->
 
+> [Deprecated 2026-10-23] 범용 오디오 정본은 [JWCommonUtility/Audio.md](../../JWCommonUtility/Docs/Audio.md)로 이동했다. 전사 계약은 JWAIUtility가 소유한다. 아래는 이동 전 기록이다.
+
 # 범용 음성 입출력과 UMG 테스트
 
 > 부분 갱신 일자: 2026-09-26 — JWNetworkUtilityAudio 분리, 범용 컴포넌트와 로컬 녹음·재생 UMG 패널 추가.

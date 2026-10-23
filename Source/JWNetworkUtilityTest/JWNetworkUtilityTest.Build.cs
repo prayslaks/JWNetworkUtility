@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Prayslaks. SPDX-License-Identifier: MIT
 
 using UnrealBuildTool;
 
@@ -16,7 +16,6 @@ public class JWNetworkUtilityTest : ModuleRules
             new string[]
             {
                 "Core",
-                "JWNetworkUtilityAudio",
                 "CoreUObject",
                 "Engine",
                 "UMG",
@@ -33,8 +32,6 @@ public class JWNetworkUtilityTest : ModuleRules
                 "Slate",
                 "SlateCore", 
                 "JWNetworkUtility",
-                "JWNetworkUtilityOpenAI",
-                "JWNetworkUtilitySystemOne"
             }
         );
     }
