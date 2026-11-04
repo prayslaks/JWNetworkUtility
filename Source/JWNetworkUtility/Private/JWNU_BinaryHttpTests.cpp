@@ -33,6 +33,17 @@ bool FJWNU_BinaryHttpTest::RunTest(const FString& Parameters)
 		return FJWNU_BinaryHttp::Post(TEXT("127.0.0.1"), TEXT("/large"), Port, false, {{TEXT("X-Test-Key"), TEXT("fake-local-only")}}, FString::ChrN(70000, 'x'), 2, 1024, Cancelled, {}, 100000);
 	}).Get();
 	TestTrue(TEXT("Explicit large request reaches server intact"), Large.Error.IsEmpty() && Large.StatusCode == 200);
+    const auto Get = [Port](const FString& Path)
+    {
+        return Async(EAsyncExecution::ThreadPool, [Port, Path]
+        {
+            TAtomic<bool> Cancelled(false);
+            return FJWNU_BinaryHttp::Get(TEXT("127.0.0.1"), Path, Port, false, {{TEXT("X-Test-Key"), TEXT("fake-local-only")}}, 2, 1024, Cancelled);
+        }).Get();
+    };
+    const auto Read = Get(TEXT("/voices"));
+    TestTrue(TEXT("GET preserves custom header and response bytes without request body"), Read.Error.IsEmpty() && Read.StatusCode == 200 && Read.Bytes == TArray<uint8>{0,255,128,1});
+    TestEqual(TEXT("GET does not follow redirects"), Get(TEXT("/redirect-get")).StatusCode, 302);
 	return true;
 }
 

@@ -111,6 +111,19 @@ namespace JWNU::BinaryHttp
 FJWNU_BinaryHttpResult FJWNU_BinaryHttp::Post(const FString& Host, const FString& Path, uint16 Port, bool bSecure,
 	const TMap<FString, FString>& Headers, const FString& JsonBody, double TimeoutSeconds, int32 MaxResponseBytes, const TAtomic<bool>& Cancelled, const TArray<FString>& ResponseHeaderNames, int32 MaxRequestBytes)
 {
+    return Execute(TEXT("POST"), Host, Path, Port, bSecure, Headers, JsonBody, TimeoutSeconds, MaxResponseBytes, Cancelled, ResponseHeaderNames, MaxRequestBytes);
+}
+
+FJWNU_BinaryHttpResult FJWNU_BinaryHttp::Get(const FString& Host, const FString& Path, uint16 Port, bool bSecure,
+    const TMap<FString, FString>& Headers, double TimeoutSeconds, int32 MaxResponseBytes, const TAtomic<bool>& Cancelled)
+{
+    return Execute(TEXT("GET"), Host, Path, Port, bSecure, Headers, FString(), TimeoutSeconds, MaxResponseBytes, Cancelled, {}, 65536);
+}
+
+FJWNU_BinaryHttpResult FJWNU_BinaryHttp::Execute(const TCHAR* Method, const FString& Host, const FString& Path, uint16 Port, bool bSecure,
+    const TMap<FString, FString>& Headers, const FString& JsonBody, double TimeoutSeconds, int32 MaxResponseBytes,
+    const TAtomic<bool>& Cancelled, const TArray<FString>& ResponseHeaderNames, int32 MaxRequestBytes)
+{
 	FJWNU_BinaryHttpResult Result;
 	if (IsInGameThread() || Host.IsEmpty() || Host.Contains(TEXT("/")) || !Path.StartsWith(TEXT("/"))
 		|| (!bSecure && Host != TEXT("127.0.0.1")) || !FMath::IsFinite(TimeoutSeconds) || TimeoutSeconds <= 0 || TimeoutSeconds > 300
@@ -135,7 +148,7 @@ FJWNU_BinaryHttpResult FJWNU_BinaryHttp::Post(const FString& Host, const FString
 	if (!Session.Value) { Result.Error = TEXT("Network"); return Result; }
 	FHandle Connection{WinHttpConnect(Session.Value, *Host, Port, 0)};
 	if (!Connection.Value) { Result.Error = TEXT("Network"); return Result; }
-	FHandle Request{WinHttpOpenRequest(Connection.Value, L"POST", *Path, nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, bSecure ? WINHTTP_FLAG_SECURE : 0)};
+	FHandle Request{WinHttpOpenRequest(Connection.Value, Method, *Path, nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, bSecure ? WINHTTP_FLAG_SECURE : 0)};
 	if (!Request.Value) { Result.Error = TEXT("Network"); return Result; }
 	DWORD Redirect = WINHTTP_OPTION_REDIRECT_POLICY_NEVER;
 	DWORD Disable = WINHTTP_DISABLE_COOKIES | WINHTTP_DISABLE_AUTHENTICATION;

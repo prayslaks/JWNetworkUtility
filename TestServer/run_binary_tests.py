@@ -12,6 +12,15 @@ requests = []
 errors = []
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args): pass
+    def do_GET(self):
+        requests.append(self.path)
+        if self.headers.get('X-Test-Key') != 'fake-local-only': errors.append('Missing GET fixture header')
+        if int(self.headers.get('Content-Length', 0)) != 0: errors.append('Unexpected GET request body')
+        self.send_response(302 if self.path == '/redirect-get' else 200)
+        if self.path == '/redirect-get': self.send_header('Location', '/must-not-follow')
+        self.send_header('Content-Length', '4')
+        self.end_headers()
+        self.wfile.write(bytes([0,255,128,1]))
     def do_POST(self):
         requests.append(self.path)
         if self.headers.get('X-Test-Key') != 'fake-local-only': errors.append('Missing fixture header')
@@ -44,5 +53,5 @@ with ThreadingHTTPServer(('127.0.0.1',0),Handler) as server:
 report=json.loads((output/'index.json').read_text(encoding='utf-8-sig'))
 passed=report['succeeded']+report.get('succeededWithWarnings',0)
 assert result.returncode==0 and passed>=2 and report['failed']==0 and report['notRun']==0, output
-assert requests.count('/binary')==2 and requests.count('/redirect')==1 and requests.count('/rate')==1 and requests.count('/slow')==1 and requests.count('/large')==1 and len(requests)==6 and not errors, (requests,errors)
+assert requests.count('/binary')==2 and requests.count('/redirect')==1 and requests.count('/rate')==1 and requests.count('/slow')==1 and requests.count('/large')==1 and requests.count('/voices')==1 and requests.count('/redirect-get')==1 and len(requests)==8 and not errors, (requests,errors)
 print(f'Passed {passed}; no redirects or retries. Report: {output}')
