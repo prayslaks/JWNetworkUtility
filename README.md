@@ -1,5 +1,7 @@
 # JWNetworkUtility Plugin
 
+> 부분 갱신 일자: 2026-11-04 — BinaryHttp의 기존 요청 기본값을 보존하며 호출자별 UTF-8 요청 상한을 추가. [전송·한도·loopback 검증](Docs/BinaryHttp.md).
+
 > 부분 갱신 일자: 2026-09-30 — TypeSafe 전용 모듈·공개 타입·호환 계층을 제거하고 System One API와 테스트로 통합.
 
 > 부분 갱신 일자: 2026-09-30 — 공급자 키·비공개 암호화·설정 UI를 AI/Editor 모듈로 이관. [키 관리](Docs/AIProviders.md).

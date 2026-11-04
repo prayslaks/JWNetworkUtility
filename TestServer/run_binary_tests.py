@@ -15,7 +15,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         requests.append(self.path)
         if self.headers.get('X-Test-Key') != 'fake-local-only': errors.append('Missing fixture header')
-        if self.rfile.read(int(self.headers.get('Content-Length', 0))) != b'{"fixture":true}': errors.append('Unexpected request body')
+        expected = b'x' * 70000 if self.path == '/large' else b'{"fixture":true}'
+        if self.rfile.read(int(self.headers.get('Content-Length', 0))) != expected: errors.append('Unexpected request body')
         if self.path == '/slow': time.sleep(.5)
         status = 302 if self.path == '/redirect' else 429 if self.path == '/rate' else 200
         self.send_response(status)
@@ -43,5 +44,5 @@ with ThreadingHTTPServer(('127.0.0.1',0),Handler) as server:
 report=json.loads((output/'index.json').read_text(encoding='utf-8-sig'))
 passed=report['succeeded']+report.get('succeededWithWarnings',0)
 assert result.returncode==0 and passed>=2 and report['failed']==0 and report['notRun']==0, output
-assert requests.count('/binary')==2 and requests.count('/redirect')==1 and requests.count('/rate')==1 and requests.count('/slow')==1 and len(requests)==5 and not errors, (requests,errors)
+assert requests.count('/binary')==2 and requests.count('/redirect')==1 and requests.count('/rate')==1 and requests.count('/slow')==1 and requests.count('/large')==1 and len(requests)==6 and not errors, (requests,errors)
 print(f'Passed {passed}; no redirects or retries. Report: {output}')

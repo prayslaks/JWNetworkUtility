@@ -27,6 +27,29 @@ bool FJWNU_BinaryHttpTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Rate limit returned without retry"), Send(TEXT("/rate"), 1024, 2, false).StatusCode, 429);
 	TestEqual(TEXT("Cancellation before send"), Send(TEXT("/cancelled"), 1024, 2, true).Error, FString(TEXT("Cancelled")));
 	TestEqual(TEXT("Receive timeout"), Send(TEXT("/slow"), 1024, .1, false).Error, FString(TEXT("Timeout")));
+	const auto Large = Async(EAsyncExecution::ThreadPool, [Port]
+	{
+		TAtomic<bool> Cancelled(false);
+		return FJWNU_BinaryHttp::Post(TEXT("127.0.0.1"), TEXT("/large"), Port, false, {{TEXT("X-Test-Key"), TEXT("fake-local-only")}}, FString::ChrN(70000, 'x'), 2, 1024, Cancelled, {}, 100000);
+	}).Get();
+	TestTrue(TEXT("Explicit large request reaches server intact"), Large.Error.IsEmpty() && Large.StatusCode == 200);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FJWNU_BinaryHttpLimitsTest, "JWNetworkUtility.BinaryHttp.Limits", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FJWNU_BinaryHttpLimitsTest::RunTest(const FString& Parameters)
+{
+	const auto Check = [](const FString& Body, int32 RequestLimit)
+	{
+		return Async(EAsyncExecution::ThreadPool, [Body, RequestLimit]
+		{
+			TAtomic<bool> Cancelled(true);
+			return FJWNU_BinaryHttp::Post(TEXT("127.0.0.1"), TEXT("/never-sent"), 1, false, {}, Body, 2, 1024, Cancelled, {}, RequestLimit).Error;
+		}).Get();
+	};
+	TestEqual(TEXT("Default cap stays 64KiB"), Check(FString::ChrN(70000, 'x'), 65536), FString(TEXT("InvalidRequest")));
+	TestEqual(TEXT("UTF8 byte count enforced"), Check(FString::ChrN(30000, TCHAR(0xAC00)), 65536), FString(TEXT("RequestLimit")));
+	TestEqual(TEXT("Hard request cap enforced"), Check(TEXT("{}"), 65 * 1024 * 1024), FString(TEXT("InvalidRequest")));
 	return true;
 }
 #endif

@@ -109,13 +109,16 @@ namespace JWNU::BinaryHttp
 #endif
 
 FJWNU_BinaryHttpResult FJWNU_BinaryHttp::Post(const FString& Host, const FString& Path, uint16 Port, bool bSecure,
-	const TMap<FString, FString>& Headers, const FString& JsonBody, double TimeoutSeconds, int32 MaxResponseBytes, const TAtomic<bool>& Cancelled, const TArray<FString>& ResponseHeaderNames)
+	const TMap<FString, FString>& Headers, const FString& JsonBody, double TimeoutSeconds, int32 MaxResponseBytes, const TAtomic<bool>& Cancelled, const TArray<FString>& ResponseHeaderNames, int32 MaxRequestBytes)
 {
 	FJWNU_BinaryHttpResult Result;
 	if (IsInGameThread() || Host.IsEmpty() || Host.Contains(TEXT("/")) || !Path.StartsWith(TEXT("/"))
 		|| (!bSecure && Host != TEXT("127.0.0.1")) || !FMath::IsFinite(TimeoutSeconds) || TimeoutSeconds <= 0 || TimeoutSeconds > 300
-		|| MaxResponseBytes <= 0 || MaxResponseBytes > 64 * 1024 * 1024 || JsonBody.Len() > 65536 || ResponseHeaderNames.Num() > 16)
+		|| MaxResponseBytes <= 0 || MaxResponseBytes > 256 * 1024 * 1024 || MaxRequestBytes <= 0 || MaxRequestBytes > 64 * 1024 * 1024
+		|| JsonBody.Len() > MaxRequestBytes || ResponseHeaderNames.Num() > 16)
 	{ Result.Error = TEXT("InvalidRequest"); return Result; }
+	FTCHARToUTF8 Body(*JsonBody);
+	if (Body.Length() > MaxRequestBytes) { Result.Error = TEXT("RequestLimit"); return Result; }
 	FString HeaderText = TEXT("Content-Type: application/json\r\nAccept: application/octet-stream\r\n");
 	ON_SCOPE_EXIT { if (!HeaderText.IsEmpty()) FMemory::Memzero(HeaderText.GetCharArray().GetData(), HeaderText.GetCharArray().Num() * sizeof(TCHAR)); };
 	for (const auto& Pair : Headers)
@@ -141,7 +144,6 @@ FJWNU_BinaryHttpResult FJWNU_BinaryHttp::Post(const FString& Host, const FString
 		|| !WinHttpSetTimeouts(Request.Value, 5000, 5000, 10000, static_cast<int32>(TimeoutSeconds * 1000)))
 	{ Result.Error = TEXT("Network"); return Result; }
 	if (Cancelled.Load()) { Result.Error = TEXT("Cancelled"); return Result; }
-	FTCHARToUTF8 Body(*JsonBody);
 	if (!WinHttpSendRequest(Request.Value, *HeaderText, HeaderText.Len(), const_cast<ANSICHAR*>(Body.Get()), Body.Length(), Body.Length(), 0)
 		|| !WinHttpReceiveResponse(Request.Value, nullptr))
 	{ Result.Error = GetLastError() == ERROR_WINHTTP_TIMEOUT ? TEXT("Timeout") : TEXT("Network"); return Result; }
